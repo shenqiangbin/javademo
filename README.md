@@ -12,3 +12,5 @@
 * 随机画线
 ### 随机数生成 [RandomCode.java](https://github.com/shenqiangbin/javademo/blob/master/src/main/java/MyImage/RandomCode.java)
 * 由大小写字母和数字组成的字符串
+### 发送请求的HttpClient
+* 通过接口下载图片
