@@ -43,4 +43,40 @@ public class ResultSetHelper {
 
         return list;
     }
+
+    public static <T> List<T> toKbaseList(ResultSet resultSet, Class<T> type, String[] dbfields) throws SQLException, InstantiationException,
+            IllegalAccessException, NoSuchFieldException, SecurityException {
+        List<T> list = new ArrayList<T>();
+
+        if (resultSet != null) {
+
+            ResultSetMetaData md = resultSet.getMetaData();// 获取键名
+            int columnCount = dbfields.length;
+
+            while (resultSet.next()) {
+
+                // 此类要有默认的构造函数
+                T instance = type.newInstance();
+                Field[] fields = type.getDeclaredFields();
+
+                for (int i = 0; i < columnCount; i++) {
+                    String colName = dbfields[i];
+
+                    for (Field field : fields) {
+                        if (field.getName().equalsIgnoreCase(colName)) {
+                            field.setAccessible(true);
+
+                            Object val = resultSet.getString(i);
+                            field.set(instance, val);
+                        }
+                    }
+                }
+
+                list.add(instance);
+
+            }
+        }
+
+        return list;
+    }
 }
