@@ -18,3 +18,5 @@
 ### 访问 MS Access 数据库 [AccessHelper.java](https://github.com/shenqiangbin/javademo/blob/master/src/main/java/dbmgr/microsoftAccess/AccessHelper.java)
 * 支持 jdk1.8
 * 支持 *.mdb文件类型 (2007版本的文件格式待测)
+### 获取服务器目录结构 [BrowseHelper.java](https://github.com/shenqiangbin/javademo/blob/master/src/main/java/fileDemo/BrowseHelper.java)
+
