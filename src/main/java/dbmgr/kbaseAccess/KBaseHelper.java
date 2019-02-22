@@ -1,10 +1,15 @@
 package dbmgr.kbaseAccess;
 
 import com.kbase.jdbc.ResultSetImpl;
+import com.kbase.jdbc.StringUtils;
+import com.zaxxer.hikari.HikariConfig;
 import common.P;
 import dbmgr.microsoftAccess.ResultSetHelper;
+import dbmgr.mySqlAccess.MySqlHelper;
 
 import java.sql.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class KBaseHelper {
@@ -74,5 +79,69 @@ public class KBaseHelper {
         }
 
         return null;
+    }
+
+    public void tmpSync(String sql,String[] dbfields,HikariConfig config){
+
+        MySqlHelper mySqlHelper = new MySqlHelper(config);
+
+        Statement statement = null;
+        ResultSet resultSet = null;
+        try {
+
+            Connection connection = getConnection();
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery(sql);
+
+            while (resultSet.next()) {
+
+                StringBuilder builder = new StringBuilder();
+                builder.append("insert guizhou500 values(");
+                for(int i=0;i<55;i++){
+
+                    String area = resultSet.getString(i);// 获取字段值
+                    if(StringUtils.isEmptyOrWhitespaceOnly(area))
+                        area="0";
+                    area = area.replace("######","");
+                    if(StringUtils.isEmptyOrWhitespaceOnly(area))
+                        area="0";
+
+
+                    if(i==54)
+                        builder.append("'").append(area).append("'");
+                    else
+                        builder.append("'").append(area).append("',");
+                }
+
+                builder.append(")");
+                P.print(builder.toString());
+
+
+                mySqlHelper.insert(builder.toString());
+
+
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            try{
+                if(resultSet!=null)
+                    resultSet.close();
+                if(statement!=null)
+                    statement.close();
+                if(connection!=null)
+                    connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+//        StringBuilder builder = new StringBuilder();
+//        String now = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+//        now = "2019-01-09 21:46:04";
+
     }
 }

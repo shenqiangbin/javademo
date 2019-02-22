@@ -23,7 +23,7 @@ public class Program {
 
             //P.print("addid:" + addid);
 
-            String coutSql = "select count(0) from user";
+            String coutSql = "select max(id) from user";
             String val = accessHelper.executeScalar(coutSql, null);
 
             P.print("countVal:" + val);
