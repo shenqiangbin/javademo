@@ -2,6 +2,8 @@ package dbmgr.mongoDbAccess;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
+import com.mongodb.MongoCredential;
+import com.mongodb.ServerAddress;
 import com.mongodb.client.*;
 import com.mongodb.client.model.Filters;
 import common.P;
@@ -21,6 +23,12 @@ public class MongoDBHelperTest {
 
         P.print("MongoDBHelperTest");
 
+        //init2();
+        //client.close();
+
+    }
+
+    public static void init1(){
         //String connectionString = "mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb";
         String uri = "mongodb://exceldbmgr:123456@192.168.100.92:27017/exceldb";
         MongoClientURI connectionString = new MongoClientURI(uri);
@@ -43,10 +51,6 @@ public class MongoDBHelperTest {
             P.print(docment);
             P.print(new Date());
         }
-
-
-        //client.close();
-
     }
 
     public static void add(MongoCollection<Document> collection){
