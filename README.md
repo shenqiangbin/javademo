@@ -17,3 +17,11 @@
 
 ### 随机数生成 [RandomCode.java](https://github.com/shenqiangbin/javademo/blob/master/src/main/java/MyImage/RandomCode.java)
 * 由大小写字母和数字组成的字符串
+### 发送请求的HttpClient
+* 通过接口下载文件(图片)
+* 通过接口上传文件
+### 访问 MS Access 数据库 [AccessHelper.java](https://github.com/shenqiangbin/javademo/blob/master/src/main/java/dbmgr/microsoftAccess/AccessHelper.java)
+* 支持 jdk1.8
+* 支持 *.mdb文件类型 (2007版本的文件格式待测)
+### 获取服务器目录结构 [BrowseHelper.java](https://github.com/shenqiangbin/javademo/blob/master/src/main/java/fileDemo/BrowseHelper.java)
+
