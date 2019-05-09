@@ -22,7 +22,10 @@ public class demo01 {
         //thread2.start();
 
         P.print("当前活动的线程数:" + Thread.activeCount());
-        while(Thread.activeCount() > 1){
+
+
+        //由于idea有个守护线程，所以这里的activeCount是2，而不是1
+        while(Thread.activeCount() > 2){
             P.print("当前活动的线程数:" + Thread.activeCount());
             Thread.yield();
         }

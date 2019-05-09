@@ -1,7 +1,6 @@
 package dbmgr.kbaseAccess;
 
-import com.kbase.jdbc.ResultSetImpl;
-import com.kbase.jdbc.StringUtils;
+import com.mysql.cj.util.StringUtils;
 import com.zaxxer.hikari.HikariConfig;
 import common.P;
 import dbmgr.microsoftAccess.ResultSetHelper;
