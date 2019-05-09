@@ -10,5 +10,10 @@
 * 随机位置放文字
 * 随机画多边形
 * 随机画线
+
+#### 实践
+* 验证码生成
+* 为图片添加水印
+
 ### 随机数生成 [RandomCode.java](https://github.com/shenqiangbin/javademo/blob/master/src/main/java/MyImage/RandomCode.java)
 * 由大小写字母和数字组成的字符串
