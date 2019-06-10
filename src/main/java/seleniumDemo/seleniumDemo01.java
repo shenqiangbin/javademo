@@ -1,9 +1,7 @@
 package seleniumDemo;
 
 import common.P;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
@@ -14,10 +12,13 @@ import java.io.IOException;
 import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static java.lang.Thread.*;
+
 public class seleniumDemo01 {
-    public static void main(String[] args){
+    public static void main(String[] args) throws InterruptedException {
 
         /*
         https://chromedriver.storage.googleapis.com/index.html?path=73.0.3683.68/
@@ -32,25 +33,56 @@ public class seleniumDemo01 {
         WebDriver driver = new ChromeDriver(chromeOptions);
 
         //driver.get("http://www.sqber.com");
-        driver.get("http://192.168.25.76:8080/boat?modelid=489053");
+        driver.get("http://10.170.2.161:8161/models");
         //driver.get("http://www.baidu.com");
         driver.manage().window().maximize();
 
-        File srcFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
-        String val = srcFile.getPath();
 
-        P.print(val);
+        WebElement element = driver.findElement(By.className("el-pager"));
+
+        List<WebElement> eles = element.findElements(By.tagName("li"));
+        WebElement lastEle = eles.get(eles.size() - 1);
+
+        String text = lastEle.getText();
+
+
+        int currentPage = getCurrentPage(driver);
+
+        while (currentPage <= Integer.parseInt(text)) {
+
+            WebElement ele = null;
+            try {
+                ele = getNextButton(driver);
+            } catch (Exception e) {
+
+            }
+
+            find(driver);
+
+            if (ele != null)
+                ele.click();
+            {
+                break;
+            }
+
+        }
+
+
+//        File srcFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+//        String val = srcFile.getPath();
+//
+//        P.print(val);
 
         // 与浏览器同步非常重要，必须等待浏览器加载完毕
         //driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 
-        try {
-            Files.copy(new File(val).toPath(),new File("d:/a.png").toPath());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Files.copy(new File(val).toPath(),new File("d:/a.png").toPath());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
-        driver.quit();
+        //driver.quit();
 
         //FileUtils.copyFile(srcFile,new File("d:\\screenshot.png"));
 
@@ -58,7 +90,7 @@ public class seleniumDemo01 {
         //String title = driver.getTitle();
         //System.out.printf(title);
 
-        //driver.close();
+        driver.close();
 
         /*
         ChromeOptions chromeOptions = new ChromeOptions();
@@ -85,4 +117,40 @@ public class seleniumDemo01 {
 //            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".map-box")
         * */
     }
+
+    private static WebElement getNextButton(WebDriver driver) {
+        WebElement elementPager = driver.findElement(By.className("el-pager"));
+        List<WebElement> elesLi = elementPager.findElements(By.tagName("li"));
+        for (int i = 0; i < elesLi.size(); i++) {
+
+            WebElement item = elesLi.get(i);
+            String cssVal = item.getAttribute("class");
+
+            if (cssVal.contains("active")) {
+                return elesLi.get(i + 1);
+            }
+        }
+        return null;
+    }
+
+    private static int getCurrentPage(WebDriver driver) {
+        WebElement elementActive = driver.findElement(By.className("active"));
+        String val = elementActive.getText();
+        return Integer.parseInt(val);
+    }
+
+
+    private static void find(WebDriver driver) throws InterruptedException {
+        List<WebElement> imgs = driver.findElements(By.tagName("img"));
+        for (WebElement img : imgs) {
+            if (img.getAttribute("src").contains("/images/img.png")) {
+                img.click();
+
+                Thread.sleep(2000);
+                driver.findElement(By.className("ht-d")).click();
+                Thread.sleep(2000);
+            }
+        }
+    }
+
 }

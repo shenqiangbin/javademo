@@ -16,7 +16,7 @@ public class PersonOperator {
         });
 
         ExecutorService executorService = Executors.newCachedThreadPool();
-        for(int i=0; i<3; i++){
+        for(int i=0; i<5; i++){
             executorService.execute(new Person(cyclicBarrier,i));
         }
 
