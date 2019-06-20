@@ -2,6 +2,8 @@ package ThreadDemo.demo;
 
 public class AccountService {
     public void transferMoney(Account fromAccount, Account toAccount, double amount) {
+
+        System.out.println("获取FromAccount的锁");
         synchronized (fromAccount) {
             try {
                 Thread.sleep(2000);
@@ -9,7 +11,7 @@ public class AccountService {
                 e.printStackTrace();
             }
 
-            System.out.println("aa");
+            System.out.println("获取toAccount的锁");
             synchronized (toAccount) {
                 try {
                     fromAccount.debit(amount);
