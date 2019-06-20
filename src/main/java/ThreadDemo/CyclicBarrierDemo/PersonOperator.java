@@ -1,7 +1,6 @@
 package ThreadDemo.CyclicBarrierDemo;
 
 import java.util.concurrent.CyclicBarrier;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -16,7 +15,7 @@ public class PersonOperator {
         });
 
         ExecutorService executorService = Executors.newCachedThreadPool();
-        for(int i=0; i<5; i++){
+        for(int i=0; i<6; i++){
             executorService.execute(new Person(cyclicBarrier,i));
         }
 

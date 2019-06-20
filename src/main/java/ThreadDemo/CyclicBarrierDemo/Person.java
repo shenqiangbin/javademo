@@ -1,6 +1,5 @@
 package ThreadDemo.CyclicBarrierDemo;
 
-import java.io.File;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
