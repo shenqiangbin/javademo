@@ -2,13 +2,15 @@ package dbmgr.kbaseAccess;
 
 import common.P;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public class KBaseHelperTest {
     public static void main(String[] args){
         P.print("ok");
         //search();
-        testSearch();
+        //testSearch();
+        testSort();
     }
 
     public static void search(){
@@ -44,6 +46,14 @@ public class KBaseHelperTest {
         System.out.println(builder.toString());
     }
 
+    public static void testSort(){
+        KBaseHelper kBaseHelper = new KBaseHelper("jdbc:kbase://192.168.105.89","DBOWN","");
+        try {
+            kBaseHelper.showRs();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
 }
 
