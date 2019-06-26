@@ -1,7 +1,5 @@
 package ThreadDemo;
 
-import common.P;
-
 public class MyWorkThread implements Runnable {
 
     private String name;
@@ -12,6 +10,14 @@ public class MyWorkThread implements Runnable {
 
     @Override
     public void run() {
-        P.print(this.name);
+        System.out.println(this.name+"开始干活了...");
+        try {
+            //模拟业务耗时
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println(this.name+"干完活了...");
     }
+
 }
