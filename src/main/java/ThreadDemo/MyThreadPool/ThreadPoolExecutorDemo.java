@@ -41,7 +41,7 @@ public class ThreadPoolExecutorDemo {
 
 
 
-        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(4, 4, 60L, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(1, 3, 60L, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
 
         getInfo(threadPoolExecutor);
 

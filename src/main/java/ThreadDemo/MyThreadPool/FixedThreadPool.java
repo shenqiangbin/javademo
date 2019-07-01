@@ -40,7 +40,7 @@ class Task implements Runnable {
         System.out.println(this.name + " 运行中... ");
 
         try {
-            Thread.sleep(2000);
+            Thread.sleep(12000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
