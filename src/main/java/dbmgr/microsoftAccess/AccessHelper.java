@@ -35,7 +35,7 @@ public class AccessHelper {
             if (connection == null)
                 connection = DriverManager.getConnection(dbURL);
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

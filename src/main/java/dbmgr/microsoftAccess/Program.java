@@ -13,7 +13,10 @@ public class Program {
     public static void main(String[] args) {
 
         try {
-            AccessHelper accessHelper = new AccessHelper("Ammache-Fawzi-database.mdb");
+            String file = "D:/BGKDB_new.MDB";
+            file="D:/BGKDB.MDB;keepMirror=d:/mirrorName";
+            //file = "Ammache-Fawzi-database.mdb";
+            AccessHelper accessHelper = new AccessHelper(file);
 
             query(accessHelper);
 

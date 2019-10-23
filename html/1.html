@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>分屏显示</title>    
+    <script type="text/javascript">        
+    	var func = function(){
+    		console.log('ok')    		
+    		window.parent.pfunc();            
+    	}
+    	function func2(){
+    		console.log('funce2')
+    	}
+
+        var s1 = "alert('hello')"
+        var s2 = "alert('asd')"
+
+        function execute(str){
+            eval(str);
+        }
+
+        function invokeStr(){
+            execute("window.parent.pfunc()");
+        }
+
+    </script>
+    <style>	
+    		html{
+    			background-color:#ccc;
+    		}
+	</style>
+</head>
+<body>
+    1
+    <button onclick='func()'>Click me</button>
+    <button onclick='invokeStr()'>Click me</button>
+</body>
+</html>
