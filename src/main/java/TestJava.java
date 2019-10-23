@@ -3,6 +3,11 @@ import common.P;
 public class TestJava {
 
     public static void main(String[] args) throws Exception{
+
+
+
+
+
         P.print("ok");
 
         StringBuilder builder = new StringBuilder();
@@ -46,5 +51,22 @@ public class TestJava {
 
     public static String padLeftZeros(String str, int n) {
         return String.format("%1$" + n + "s", str).replace(' ', '0');
+    }
+
+
+
+}
+
+class Person{
+    private String name;
+    private int age;
+
+    private static String height = "";
+
+    public void say(String msg){
+        String other = "";
+        System.out.println("say");
+
+        height = "asdf";
     }
 }
