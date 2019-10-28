@@ -136,6 +136,14 @@
             <version>3.17</version>
         </dependency>
 
+        <dependency>
+            <groupId>cnki.kbase</groupId>
+            <artifactId>cnki-kbase-sdk-core</artifactId>
+            <version>1.0.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/kbase-java.jar</systemPath>
+        </dependency>
+
     </dependencies>
 
 </project>

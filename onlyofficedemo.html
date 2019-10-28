@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />       
+        <!-- <link rel="stylesheet" type="text/css" th:href="@{/css/editor.css}" /> -->
+        <style>             
+        </style>
+    </head>
+<body>
+<div class="form" style="height:100vh">
+    <div id="placeholder"></div>
+</div>
+</body>
+<script type="text/javascript" src="http://10.170.128.54:9000/web-apps/apps/api/documents/api.js"></script>
+<script th:inline="javascript">
+    var docEditor;
+    var platform = "desktop";//浏览平台
+    if(/AppleWebKit.*Mobile/i.test(navigator.userAgent) || (/MIDP|SymbianOS|NOKIA|SAMSUNG|LG|NEC|TCL|Alcatel|BIRD|DBTEL|Dopod|PHILIPS|HAIER|LENOVO|MOT-|Nokia|SonyEricsson|SIE-|Amoi|ZTE/.test(navigator.userAgent))){
+        if(window.location.href.indexOf("?mobile")<0){
+            try{
+                if(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)){
+                    platform = "mobile";
+                }
+            }catch(e){}
+        }
+    }
+    var config = {
+        "type": "desktop",
+        "documentType": "spreadsheet", //文档类-text、表格类-spreadsheet、ppt类-presentation
+        "document": {
+            "title": "123",
+            "url": "http://www.sqber.com/1.xlsx",
+            "fileType": "xlsx",
+            "key": null
+        },
+        "editorConfig": {
+            "mode": "view",
+            "callbackUrl": "",
+            "user": {
+                "id": "",
+                "name": ""
+            },
+            "customization": {
+                "goback": {
+                    "url": null
+                }
+            },
+            "embedded": null,
+            "lang": "zh-CN"
+        },
+        "token": null
+    };
+    config.type = platform;
+    docEditor = new DocsAPI.DocEditor("placeholder", config);
+    /* new DocsAPI.DocEditor("placeholder", {
+       "document": {
+           "title": "sample (2).docx",
+           "url": "http://192.168.105.89:8080/getfile/index?filename=sample (2).docx",
+           "fileType": "docx",
+       },
+       "documentType": "text",
+       "editorConfig": {
+           "callbackUrl": "http://192.168.26.17:8080/IndexServlet",
+       }
+   });  */
+
+</script>
+
+</html>
