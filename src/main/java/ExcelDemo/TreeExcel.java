@@ -41,44 +41,46 @@ public class TreeExcel {
             wb = new XSSFWorkbook(stream);
         }
 
-        Sheet sheet = wb.getSheetAt(0);
-        if (sheet == null || sheet.getLastRowNum() == 0)
-            return;
+        for (int i = 0; i < wb.getNumberOfSheets(); i++) {
+            Sheet sheet = wb.getSheetAt(i);
+            if (sheet == null || sheet.getLastRowNum() == 0)
+                return;
 
-        Row row = null;
-        int totalRow = sheet.getLastRowNum();
-        if (this.debug)
-            System.out.println("共有" + totalRow + "行");
+            Row row = null;
+            int totalRow = sheet.getLastRowNum();
+            if (this.debug)
+                System.out.println("共有" + totalRow + "行");
 
-        for (int r = 0; r <= sheet.getLastRowNum(); r++) {
-            row = sheet.getRow(r);
-            short minColIx = row.getFirstCellNum();
-            short maxColIx = row.getLastCellNum();
+            for (int r = 0; r <= sheet.getLastRowNum(); r++) {
+                row = sheet.getRow(r);
+                short minColIx = row.getFirstCellNum();
+                short maxColIx = row.getLastCellNum();
 
-            for (short colIx = minColIx; colIx < maxColIx; colIx++) {
+                for (short colIx = minColIx; colIx < maxColIx; colIx++) {
 
-                Cell cell = row.getCell(colIx);
-                String cellVal = getCellVal(cell);
+                    Cell cell = row.getCell(colIx);
+                    String cellVal = getCellVal(cell);
 
-                String parentId = "0";
-                if (colIx > minColIx) {
-                    CellModel cellModel = getCellValIfMerged(wb, sheet, row, r, colIx - 1);
-                    if (cellModel != null) {
-                        parentId = cellModel.getFontName();
+                    String parentId = "0";
+                    if (colIx > minColIx) {
+                        CellModel cellModel = getCellValIfMerged(wb, sheet, row, r, colIx - 1);
+                        if (cellModel != null) {
+                            parentId = cellModel.getFontName();
+                        }
                     }
+
+                    String recordId = "";
+                    boolean isLeaf = colIx == maxColIx - 1;
+                    if (StringUtils.isNotBlank(cellVal)) {
+                        recordId = resultHandler.store(cellVal, parentId, isLeaf);
+                        setFont(wb, recordId, colIx, row);
+                    }
+
+                    if (this.debug)
+                        System.out.println(String.format("cellVal:%s recordId:%s parentId:%s isLeaf:%s", cellVal, recordId, parentId, isLeaf));
                 }
 
-                String recordId = "";
-                boolean isLeaf = colIx == maxColIx - 1;
-                if (StringUtils.isNotBlank(cellVal)) {
-                    recordId = resultHandler.store(cellVal, parentId, isLeaf);
-                    setFont(wb, recordId, colIx, row);
-                }
-
-                if (this.debug)
-                    System.out.println(String.format("cellVal:%s recordId:%s parentId:%s isLeaf:%s", cellVal, recordId, parentId, isLeaf));
             }
-
         }
     }
 
