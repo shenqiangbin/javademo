@@ -144,6 +144,28 @@
             <systemPath>${project.basedir}/lib/kbase-java.jar</systemPath>
         </dependency>
 
+        <dependency>
+            <groupId>com.artofsolving</groupId>
+            <artifactId>jodconverter</artifactId>
+            <version>2.2.2</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/jodconverter-2.2.2.jar</systemPath>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.github.livesense/jodconverter-core -->
+        <dependency>
+            <groupId>com.github.livesense</groupId>
+            <artifactId>jodconverter-core</artifactId>
+            <version>1.0.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.abc</groupId>
+            <artifactId>jacob</artifactId>
+            <version>2.2.2</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/jacob.jar</systemPath>
+        </dependency>
+
     </dependencies>
 
 </project>
