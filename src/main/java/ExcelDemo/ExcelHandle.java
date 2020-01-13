@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
@@ -62,7 +63,7 @@ public class ExcelHandle {
     /*
       测试 从某个EXCLE 导入到 树结构 表
      */
-    public static void testTreeExcel() throws IOException {
+    public static void testTreeExcel() throws IOException, InvalidFormatException {
         String fileName = "f:/目录.xls";
         TreeExcel excel = new TreeExcel(fileName, new IResultHandler() {
             int num = 1;
