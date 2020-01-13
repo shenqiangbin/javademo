@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
@@ -29,17 +30,19 @@ public class TreeExcel {
         this.debug = true;
     }
 
-    public void handle() throws IOException {
+    public void handle() throws IOException, InvalidFormatException {
         InputStream stream = new FileInputStream(filePath);
 
 //        String thefileName = new File(filePath).getName();
 //        String thefileNameWithoutExt = thefileName.substring(0, thefileName.indexOf("."));
 
-        if (isExcel2003) {
-            wb = new HSSFWorkbook(stream);
-        } else {
-            wb = new XSSFWorkbook(stream);
-        }
+        // 通过后缀判断不准确
+        wb = WorkbookFactory.create(stream);
+//        if (isExcel2003) {
+//            wb = new HSSFWorkbook(stream);
+//        } else {
+//            wb = new XSSFWorkbook(stream);
+//        }
 
         for (int i = 0; i < wb.getNumberOfSheets(); i++) {
             Sheet sheet = wb.getSheetAt(i);
