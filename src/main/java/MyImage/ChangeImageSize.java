@@ -3,13 +3,17 @@ package MyImage;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.net.URL;
 
 public class ChangeImageSize {
     public static void main(String[] args) {
         try {
-            resizeImage(300);
+            //resizeImage(300);
+            OutputStream outputStream = new FileOutputStream("d:/th-thumbnail.png");
+            ImgUtil.thumbnailImg(new File("d:/th.jpg"),400,null,outputStream);
+            ImgUtil.thumbnailImg(new URL("http://bigdata.cnki.net/img/1.bed4469b.png"),100,null,outputStream);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -18,6 +22,8 @@ public class ChangeImageSize {
 //        test4();
         //test5();
     }
+
+
 
 
     //暂不支持gif

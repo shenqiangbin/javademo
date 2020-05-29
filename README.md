@@ -1,4 +1,18 @@
 # java研究室
+
+### 图片压缩获取缩略图 [ImgUtil.java](https://github.com/shenqiangbin/javademo/blob/master/src/main/java/MyImage/ImgUtil.java)
+
+```
+OutputStream outputStream = new FileOutputStream("d:/th-thumbnail.png");
+ImgUtil.thumbnailImg(new File("d:/th.jpg"),400,null,outputStream);
+ImgUtil.thumbnailImg(new URL("http://bigdata.cnki.net/img/1.bed4469b.png"),100,null,outputStream);
+
+// 网页输出流使用方法
+//HttpServletResponse response
+OutputStream outputStream = response.getOutputStream();
+ImgUtil.thumbnailImg(new File("d:/th.jpg"),400,null,outputStream);
+```
+
 ### 图片操作 [ImageTest.java](https://github.com/shenqiangbin/javademo/blob/master/src/main/java/MyImage/ImageTest.java)
 * 图片上写字
 * 图片保存到磁盘,并打开
