@@ -95,7 +95,7 @@ public class BrowseHelper {
         if (file.exists()) {
             File[] files = file.listFiles(new BrowseFileFilter(allowExts,content));
             if (files != null && files.length != 0) {
-                for (File file2 : files) {
+                    for (File file2 : files) {
                     list.add(
                             new TreeItem(
                                 file2.getAbsolutePath(),
