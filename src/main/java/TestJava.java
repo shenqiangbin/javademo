@@ -1,14 +1,22 @@
 import common.P;
 import org.apache.commons.lang3.StringUtils;
 
+<<<<<<< HEAD
 import java.text.SimpleDateFormat;
 import java.util.Date;
+=======
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
+>>>>>>> 0d0f091166dcf4b04acd8725d03620b88bdd9162
 
 public class TestJava {
 
     public static void main(String[] args) throws Exception {
         P.print("ok");
 
+<<<<<<< HEAD
         String resetSyncEndTime = "2020-01-02 08:12:30";
         //Date d = new Date(resetSyncEndTime);
 
@@ -16,6 +24,38 @@ public class TestJava {
 
         P.print(padLeftZeros1("123",5));
         P.print(padLeftZeros2("123",5));
+=======
+        testImg();
+        //P.print(builder.toString());
+    }
+
+    public static void testImg() throws IOException {
+        String pic = "I:\\pic\\00bdae0d0dda17ab2c4f6a8e85c56ddd_720w.jpg";
+        BufferedImage bi = ImageIO.read(new FileInputStream(pic));
+        Color wColor = new Color(255, 255, 255);
+        for (int i = 0; i < bi.getWidth(); i++) {
+            for (int j = 0; j < bi.getHeight(); j++) {
+                System.out.println(bi.getRGB(i, j));
+
+                int color = bi.getRGB(i, j);
+                Color oriColor = new Color(color);
+                int red = oriColor.getRed();
+                int green = oriColor.getGreen();
+                int blue = oriColor.getBlue();
+                if(red == 255 && green == 255){
+                    bi.setRGB(i, j, wColor.getRGB());
+                }
+            }
+        }
+        String type = pic.substring(pic.lastIndexOf(".") + 1, pic.length());
+        OutputStream outputStream = new FileOutputStream("I:\\pic\\1." + type);
+        ImageIO.write(bi, type, outputStream);
+    }
+
+    public static void test() {
+        P.print(padLeftZeros1("123", 5));
+        P.print(padLeftZeros2("123", 5));
+>>>>>>> 0d0f091166dcf4b04acd8725d03620b88bdd9162
 
         StringBuilder builder = new StringBuilder();
 
@@ -51,9 +91,6 @@ public class TestJava {
             String sql = String.format(format, i);
             builder.append(sql + "\r\n");
         }
-
-
-        //P.print(builder.toString());
     }
 
     public static String padLeftZeros(String str, int n) {
@@ -67,4 +104,24 @@ public class TestJava {
     public static String padLeftZeros2(String str, int n) {
         return StringUtils.leftPad(str, n, "0");
     }
+
+
 }
+
+class Person {
+    private String name;
+    private int age;
+
+    private static String height = "";
+
+    public void say(String msg) {
+        String other = "";
+        System.out.println("say");
+
+        height = "asdf";
+    }
+
+}
+
+
+
