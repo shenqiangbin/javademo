@@ -1,22 +1,21 @@
 import common.P;
 import org.apache.commons.lang3.StringUtils;
 
-<<<<<<< HEAD
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
-=======
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
->>>>>>> 0d0f091166dcf4b04acd8725d03620b88bdd9162
+
 
 public class TestJava {
 
     public static void main(String[] args) throws Exception {
         P.print("ok");
 
-<<<<<<< HEAD
+
         String resetSyncEndTime = "2020-01-02 08:12:30";
         //Date d = new Date(resetSyncEndTime);
 
@@ -24,7 +23,7 @@ public class TestJava {
 
         P.print(padLeftZeros1("123",5));
         P.print(padLeftZeros2("123",5));
-=======
+
         testImg();
         //P.print(builder.toString());
     }
@@ -55,7 +54,6 @@ public class TestJava {
     public static void test() {
         P.print(padLeftZeros1("123", 5));
         P.print(padLeftZeros2("123", 5));
->>>>>>> 0d0f091166dcf4b04acd8725d03620b88bdd9162
 
         StringBuilder builder = new StringBuilder();
 
