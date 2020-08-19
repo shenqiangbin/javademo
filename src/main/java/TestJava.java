@@ -1,10 +1,18 @@
 import common.P;
 import org.apache.commons.lang3.StringUtils;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class TestJava {
 
     public static void main(String[] args) throws Exception {
         P.print("ok");
+
+        String resetSyncEndTime = "2020-01-02 08:12:30";
+        //Date d = new Date(resetSyncEndTime);
+
+        Date d = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(resetSyncEndTime);
 
         P.print(padLeftZeros1("123",5));
         P.print(padLeftZeros2("123",5));

@@ -82,6 +82,40 @@ public class KBaseHelper {
         return null;
     }
 
+    public void query(String sql, IResultHandler resultHandler) throws SQLException {
+
+        Statement statement = null;
+        ResultSet resultSet = null;
+        try {
+
+            Connection connection = getConnection();
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery(sql);
+
+//            while (resultSet.next()) {
+//                String area = resultSet.getString(0);// 获取字段值
+//                P.print("area:" + area);
+//            }
+
+            if(resultHandler!=null)
+                resultHandler.handle(resultSet);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (resultSet != null)
+                    resultSet.close();
+                if (statement != null)
+                    statement.close();
+                if (connection != null)
+                    connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public void tmpSync(String sql, String[] dbfields, HikariConfig config) {
 
         MySqlHelper mySqlHelper = new MySqlHelper(config);
