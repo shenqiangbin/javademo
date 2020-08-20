@@ -2,6 +2,7 @@ package MyHttpClient;
 
 import common.P;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -28,14 +29,28 @@ import java.util.Set;
 
 public class HttpHelper {
 
+    public static String httpGet(String url) throws IOException {
+        return httpGet(url,null);
+    }
+
     public static String httpGet(String url, Map<String, String> headMap) throws IOException {
         String responseContent = null;
         CloseableHttpClient httpclient = HttpClients.createDefault();
         try {
             HttpGet httpGet = new HttpGet(url);
+
+            //setSocketTimeout 获取数据的超时时间
+            RequestConfig requestConfig = RequestConfig.custom()
+                    .setConnectTimeout(5000).setConnectionRequestTimeout(1000)
+                    .setSocketTimeout(5000).build();
+            httpGet.setConfig(requestConfig);
+
             setHead(httpGet, headMap);
             CloseableHttpResponse response = httpclient.execute(httpGet);
             try {
+                if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+                    throw new IOException("状态码不是200");
+                }
                 HttpEntity entity = response.getEntity();
                 responseContent = EntityUtils.toString(entity);
                 EntityUtils.consume(entity);
