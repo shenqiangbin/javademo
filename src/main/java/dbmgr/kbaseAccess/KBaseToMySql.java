@@ -20,13 +20,13 @@ public class KBaseToMySql {
     public static void main(String[] args) throws SQLException, IOException {
 
         //Sync1();
-        SyncZhiBiao();
+        ///SyncZhiBiao();
         //SyncZhiBiaoLike();
         //getMoHuFromTxt("abc");
         //getMoHuFromTxt();
         //SyncToSql();
         //SyncToSql();
-
+        System.out.println("----hello world----");
         System.out.println("----end----");
     }
 
