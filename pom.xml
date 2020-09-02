@@ -162,6 +162,13 @@
             <version>3.17</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.opencsv/opencsv -->
+        <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>4.6</version>
+        </dependency>
+
         <dependency>
             <groupId>cnki.kbase</groupId>
             <artifactId>cnki-kbase-sdk-core</artifactId>
