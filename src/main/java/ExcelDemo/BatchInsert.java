@@ -16,8 +16,8 @@ import java.util.List;
  *     params.add("张三"); // 赋值
  *     params.add(20);  // 赋值
  *     batchInsert.save(); // 保存后，默认每 1000 条会真正提交保存到数据库
- *     batchInsert.flush(); // 必须调用
  * }
+ *     batchInsert.flush(); // 必须调用
  *
  **/
 public class BatchInsert {
