@@ -198,6 +198,7 @@ public class CommonExcel {
         print("ok");
         String file = "F:\\daoru.xlsx";
         //file = "F:\\daoru.csv";
+        file = "d:/data/1.xlsx";
         CommonExcel commonExcel = new CommonExcel(file, new ICommonResultHandler() {
             @Override
             public String store(String[] cellVals, String[] titles) {

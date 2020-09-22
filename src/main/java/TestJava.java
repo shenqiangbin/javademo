@@ -15,6 +15,9 @@ public class TestJava {
     public static void main(String[] args) throws Exception {
         P.print("ok");
 
+        String str = "1,2,3,4,5,6,76,1,2,3,4,5,6,76,1,2,3,4,5,6,76,1,2,3,4,5,6,76,1,2,3,4,5,6,76,1,2,3,4,5,6,76,1,2,3,4,5,6,76,1,2,3,4,5,6,76";
+        String[] arr =  str.split(",");
+        String[] arr2 =  str.split(",", -1);
 
         String resetSyncEndTime = "2020-01-02 08:12:30";
         //Date d = new Date(resetSyncEndTime);
