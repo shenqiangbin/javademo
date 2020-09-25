@@ -22,6 +22,7 @@ import org.apache.http.util.EntityUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -133,7 +134,7 @@ public class HttpHelper {
             for (String key : keySet) {
                 nvps.add(new BasicNameValuePair(key, paramsMap.get(key)));
             }
-            httpPost.setEntity(new UrlEncodedFormEntity(nvps));
+            httpPost.setEntity(new UrlEncodedFormEntity(nvps, StandardCharsets.UTF_8));
         }
     }
 
@@ -213,7 +214,8 @@ public class HttpHelper {
         byte[] buffer = new byte[4096];
         int r = 0;
         while ((r = is.read(buffer)) > 0) {
-            strBuf.append(new String(buffer, 0, r, "GB2312"));
+            //strBuf.append(new String(buffer, 0, r, "GB2312"));
+            strBuf.append(new String(buffer, 0, r, "UTF-8"));
         }
         return strBuf.toString();
     }
