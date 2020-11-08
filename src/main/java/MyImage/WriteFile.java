@@ -25,33 +25,33 @@ public class WriteFile {
     private static String getContent() {
         StringBuilder builder = new StringBuilder();
 
-        builder.append("学校系统 100 \r\n");
+        builder.append("学校系统\t100\r\n");
 
-        builder.append("学校表 50 \r\n");
-        builder.append("学生表 50 \r\n");
+        builder.append("学校表\t50\r\n");
+        builder.append("学生表\t50\r\n");
 
-        builder.append("成绩 20 \r\n");
-        builder.append("学生姓名 20 \r\n");
-        builder.append("学科 20 \r\n");
-        builder.append("分数 20 \r\n");
-        builder.append("学校名称 20 \r\n");
-        builder.append("创建年份 20 \r\n");
-        builder.append("规模 20 \r\n");
-        builder.append("级别 20 \r\n");
-        builder.append("类型 20 \r\n");
+        builder.append("成绩\t20\r\n");
+        builder.append("学生姓名\t20\r\n");
+        builder.append("学科\t20\r\n");
+        builder.append("分数\t20\r\n");
+        builder.append("学校名称\t20\r\n");
+        builder.append("创建年份\t20\r\n");
+        builder.append("规模\t20\r\n");
+        builder.append("级别\t20\r\n");
+        builder.append("类型\t20\r\n");
 
-        builder.append("沙流小学 10 \r\n");
-        builder.append("北京大学 10 \r\n");
-        builder.append("实验小学 10 \r\n");
-        builder.append("新华中学 10 \r\n");
-        builder.append("定州一中 10 \r\n");
-        builder.append("定州二中 10 \r\n");
-        builder.append("北京大学 10 \r\n");
-        builder.append("清华大学 10 \r\n");
-        builder.append("无名大学 10 \r\n");
+        builder.append("沙流小学\t10\r\n");
+        builder.append("北京大学\t10\r\n");
+        builder.append("实验小学\t10\r\n");
+        builder.append("新华中学\t10\r\n");
+        builder.append("定州一中\t10\r\n");
+        builder.append("定州二中\t10\r\n");
+        builder.append("北京大学\t10\r\n");
+        builder.append("清华大学\t10\r\n");
+        builder.append("无名大学\t10\r\n");
 
-        builder.append("小李 10 \r\n");
-        builder.append("小明 10 \r\n");
+        builder.append("小李\t10\r\n");
+        builder.append("小明\t10\r\n");
 
         return builder.toString();
     }
