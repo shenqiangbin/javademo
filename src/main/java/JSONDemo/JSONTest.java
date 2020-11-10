@@ -4,11 +4,21 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class JSONTest {
 
     public static void main(String[] args) throws IOException {
-        test();
+        //test();
+
+        ObjectMapper mapper = new ObjectMapper();
+        List<String> list = new ArrayList<String>();
+        list.add("学校");
+        list.add("学校,大学");
+        list.add("学校\"大学");
+        String jsonString2 = mapper.writeValueAsString(list);
+        System.out.println(jsonString2);
     }
 
     /*

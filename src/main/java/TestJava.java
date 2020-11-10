@@ -13,6 +13,12 @@ import java.io.*;
 public class TestJava {
 
     public static void main(String[] args) throws Exception {
+
+        System.out.println(containHanZi("AZ1234142"));
+        System.out.println(containHanZi("1234142"));
+        System.out.println(containHanZi("中12342134"));
+        System.out.println(containHanZi("id"));
+
         P.print("ok");
 
         String str = "1,2,3,4,5,6,76,1,2,3,4,5,6,76,1,2,3,4,5,6,76,1,2,3,4,5,6,76,1,2,3,4,5,6,76,1,2,3,4,5,6,76,1,2,3,4,5,6,76,1,2,3,4,5,6,76";
@@ -29,6 +35,10 @@ public class TestJava {
 
         testImg();
         //P.print(builder.toString());
+    }
+
+    public static boolean containHanZi(String str){
+        return  str.length() != str.getBytes().length;
     }
 
     public static void testImg() throws IOException {
