@@ -3,6 +3,10 @@ import com.zaxxer.hikari.HikariDataSource;
 import common.P;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class HikariTest {
 
@@ -11,13 +15,22 @@ public class HikariTest {
     public static void main(String[] args) throws Exception{
         P.print("hello");
 
-        String sql = "select * from resourceitem";
-        for (int i = 0; i < 280000; i++) {
-            //Thread.sleep(1000);
+        List<String> list = new ArrayList();
+        list.add("abc");
+        list.add("abc");
 
-            P.print(i);
-            simpleQuery(sql);
-        }
+        Set<String> list2 = new HashSet<>();
+        list2.add("abc");
+        list2.add("abc");
+
+
+        String sql = "select * from resourceitem";
+//        for (int i = 0; i < 280000; i++) {
+//            //Thread.sleep(1000);
+//
+//            P.print(i);
+//            simpleQuery(sql);
+//        }
 
     }
 
