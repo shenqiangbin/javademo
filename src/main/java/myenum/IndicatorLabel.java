@@ -1,6 +1,6 @@
 package myenum;
 
-public enum IndicatorLabel {
+public enum IndicatorLabel implements IEnum{
     primaryKey("主键", 0),
     time("时间", 1),
     location("地点", 2),
@@ -40,10 +40,12 @@ public enum IndicatorLabel {
 
     private  Integer value;
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public final Integer getValue() {
         return value;
     }

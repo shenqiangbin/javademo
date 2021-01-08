@@ -18,23 +18,38 @@ public class TestJava {
         System.out.println(containHanZi("1234142"));
         System.out.println(containHanZi("中12342134"));
         System.out.println(containHanZi("id"));
-
-        P.print("ok");
-
-        String str = "1,2,3,4,5,6,76,1,2,3,4,5,6,76,1,2,3,4,5,6,76,1,2,3,4,5,6,76,1,2,3,4,5,6,76,1,2,3,4,5,6,76,1,2,3,4,5,6,76,1,2,3,4,5,6,76";
-        String[] arr =  str.split(",");
-        String[] arr2 =  str.split(",", -1);
-
-        String resetSyncEndTime = "2020-01-02 08:12:30";
+//
+//        P.print("ok");
+//
+//        String str = "1,2,3,4,5,6,76,1,2,3,4,5,6,76,1,2,3,4,5,6,76,1,2,3,4,5,6,76,1,2,3,4,5,6,76,1,2,3,4,5,6,76,1,2,3,4,5,6,76,1,2,3,4,5,6,76";
+//        String[] arr =  str.split(",");
+//        String[] arr2 =  str.split(",", -1);
+//
+//        String resetSyncEndTime = "2020-01-02 08:12:30";
         //Date d = new Date(resetSyncEndTime);
 
-        Date d = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(resetSyncEndTime);
-
-        P.print(padLeftZeros1("123",5));
-        P.print(padLeftZeros2("123",5));
-
-        testImg();
+//        Date d = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(resetSyncEndTime);
+//
+//        P.print(padLeftZeros1("123",5));
+//        P.print(padLeftZeros2("123",5));
+//
+//        testImg();
         //P.print(builder.toString());
+        test2();
+    }
+
+    public static void  test2(){
+        String txt = "";
+        StringBuilder result = new StringBuilder();
+        String[] arr = txt.split("\n");
+        for(int i =0; i<arr.length; i++){
+            String item = arr[i];
+            String[] itemArr = item.split(" ");
+            String first = itemArr[0];
+            if(!first.startsWith("SYS"))
+                result.append(first).append(",");
+        }
+        System.out.println(result.toString());
     }
 
     public static boolean containHanZi(String str){
