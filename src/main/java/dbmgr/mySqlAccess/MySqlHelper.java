@@ -75,4 +75,29 @@ public class MySqlHelper {
             connection.close();
     }
 
+    public String executeScalar(String sql, List<Object> params) throws SQLException {
+        Connection connection = null;
+        try {
+            HikariDataSource dataSource = getDataSource();
+            connection = dataSource.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql);
+
+            if (params != null) {
+                for (int i = 0; i < params.size(); i++) {
+                    statement.setObject(i + 1, params.get(i));
+                }
+            }
+
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet != null && resultSet.next()) {
+                return resultSet.getString(1);
+            }
+        } finally {
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
+        }
+        return "";
+    }
+
 }
