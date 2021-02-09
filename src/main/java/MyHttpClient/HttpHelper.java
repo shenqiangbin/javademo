@@ -1,5 +1,6 @@
 package MyHttpClient;
 
+import com.alibaba.fastjson.JSONObject;
 import common.P;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
@@ -31,7 +33,7 @@ import java.util.Set;
 public class HttpHelper {
 
     public static String httpGet(String url) throws IOException {
-        return httpGet(url,null);
+        return httpGet(url, null);
     }
 
     public static String httpGet(String url, Map<String, String> headMap) throws IOException {
@@ -82,6 +84,38 @@ public class HttpHelper {
             HttpPost httpPost = new HttpPost(url);
             setHead(httpPost, headMap);
             setPostParams(httpPost, paramsMap);
+            CloseableHttpResponse response = httpclient.execute(httpPost);
+            try {
+                System.out.println(response.getStatusLine());
+                HttpEntity entity = response.getEntity();
+                responseContent = getRespString(entity);
+                EntityUtils.consume(entity);
+            } finally {
+                response.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                httpclient.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("responseContent = " + responseContent);
+        return responseContent;
+    }
+
+    public static String httpPostJSON(String url, JSONObject param, Map<String, String> headMap) {
+        String responseContent = null;
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        try {
+            HttpPost httpPost = new HttpPost(url);
+            setHead(httpPost, headMap);
+            //setPostParams(httpPost, paramsMap);
+            StringEntity se = new StringEntity(param.toString());
+            httpPost.setEntity(se);
+
             CloseableHttpResponse response = httpclient.execute(httpPost);
             try {
                 System.out.println(response.getStatusLine());

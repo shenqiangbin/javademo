@@ -1,19 +1,33 @@
 package mycat;
 
+import java.sql.SQLSyntaxErrorException;
+
 public class CreateTable {
     public static void main(String[] args) {
-        String prefix = "a";
-        prefix = "read_b";
-        int nodenum = 20;
 
-        StringBuilder builder = new StringBuilder();
-        for (int i = 1; i < nodenum; i++) {
-            String dbName = "db_" + prefix + i;
-            builder.append("create database `").append(dbName).append("`;");
-            builder.append("use `").append(dbName).append("`;");
-            builder.append(getCreateTableSql());
+        dropDatabase();
+
+//        String prefix = "a";
+//        prefix = "read_b";
+//        int nodenum = 20;
+//
+//        StringBuilder builder = new StringBuilder();
+//        for (int i = 1; i < nodenum; i++) {
+//            String dbName = "db_" + prefix + i;
+//            builder.append("create database `").append(dbName).append("`;");
+//            builder.append("use `").append(dbName).append("`;");
+//            builder.append(getCreateTableSql());
+//        }
+//        System.out.println(builder.toString());
+    }
+
+    static void dropDatabase(){
+        for (int i = 1; i <= 30; i++) {
+            String prefix = "statistic_b";
+            String db = prefix + i;
+            String sql = "drop database " + db + ";";
+            System.out.println(sql);
         }
-        System.out.println(builder.toString());
     }
 
     public static String getCreateTableSql() {

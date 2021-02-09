@@ -8,7 +8,19 @@ import java.sql.SQLException;
 public class StatisticHandler {
     public static void main(String[] args) throws SQLException {
         //loop();
-        loopAndHandle();
+        //loopAndHandle();
+        //createDb();
+        loopAndBack();
+
+    }
+
+    static void createDb() {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 1; i <= 30; i++) {
+            String prefix = "statistic_19_";
+            builder.append("create database " + prefix + i + ";\r\n");
+        }
+        System.out.println(builder.toString());
     }
 
     static void loop() {
@@ -24,14 +36,38 @@ public class StatisticHandler {
         return String.format("select count(0) from %s%s.`%s`;", prefix, i, table);
     }
 
+    static void loopAndBack() {
+        StringBuilder builder = new StringBuilder();
+        StringBuilder reBuilder = new StringBuilder();
+        for (int i = 1; i <= 30; i++) {
+            String prefix = "statistic_41_";
+            String db = prefix + i;
+            String format = "\"C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin\\mysqldump.exe\"  -uroot -p!@#$1q2w3e4r --port=3306 --compress --skip-add-drop-table --databases %s > E:/back-data/shengji/%s.sql";
+            format = format.replace("\"C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin\\mysqldump.exe\"","\"E:\\bigtable\\mysql-8.0.23-winx64\\bin\\mysqldump.exe\"");
+            String s = String.format(format, db, db);
+            builder.append(s + "\r\n");
+
+            format = "\"C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin\\mysql.exe\"  -uroot -p!@#$1q2w3e4r --port=33061 < E:/back-data/shengji/%s.sql";
+            format = format.replace("\"C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin\\mysql.exe\"","\"E:\\bigtable\\mysql-8.0.23-winx64\\bin\\mysql.exe\"");
+            s = String.format(format, db, db);
+            reBuilder.append(s + "\r\n");
+        }
+
+
+        System.out.println(builder.toString());
+        System.out.println(reBuilder.toString());
+    }
+
+
     static void loopAndHandle() throws SQLException {
         MySqlHelper mySqlHelper = new MySqlHelper(getConfig());
-        for (int i = 1; i <= 10; i++) {
-            String prefix = "statistic2";
+        for (int i = 1; i <= 30; i++) {
+            String prefix = "statistic_42_";
             String table = "nv_excel_pickup";
             String sql = countSql(prefix, i, table);
-            String count = mySqlHelper.executeScalar(sql, null);
-            System.out.println(String.format("%s : %s", sql, count));
+            //String count = mySqlHelper.executeScalar(sql, null);
+            //System.out.println(String.format("%s : %s", sql, count));
+            System.out.println(String.format("%s", sql));
         }
         /**
          select count(0) from statistic11.`nv_excel_pickup`; : 94

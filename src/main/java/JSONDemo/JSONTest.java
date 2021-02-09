@@ -1,6 +1,7 @@
 package JSONDemo;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.BufferedReader;
@@ -16,6 +17,8 @@ public class JSONTest {
 
     public static void main(String[] args) throws IOException {
         //test();
+        test2();
+
         handle();
 
         ObjectMapper mapper = new ObjectMapper();
@@ -79,6 +82,21 @@ public class JSONTest {
         // 可以使用此方法实现 JSON 的规范化 和 去规范化
         System.out.println(jsonString);
         System.out.println(jsonString2);
+    }
+
+    public static void test2() throws IOException {
+        String str = "[{\"name\":\"小明\",\"age\":10},{\"name\":\"小王\",\"age\":20}]";
+//        ObjectMapper mapper = new ObjectMapper();
+//        JavaType javaType = mapper.getTypeFactory().constructParametricType(ArrayList.class, Person.class);
+//        List<Person> list = mapper.readValue(str, javaType);
+        List<Person> list = toListObject(str,Person.class);
+        System.out.println(list);
+    }
+
+    public static <T> List<T> toListObject(String content, Class<T> valueType) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        JavaType javaType = mapper.getTypeFactory().constructParametricType(ArrayList.class, valueType);
+        return mapper.readValue(content, javaType);
     }
 }
 
