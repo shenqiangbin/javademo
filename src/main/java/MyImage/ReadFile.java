@@ -1,6 +1,8 @@
 package MyImage;
 
+import JSONDemo.JSONUtil;
 import MyHttpClient.HttpHelper;
+import MyImage.Model.ParseModel;
 import com.alibaba.fastjson.JSONObject;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
@@ -23,7 +25,7 @@ public class ReadFile {
         String content2 = fileToByteConent("e:/html2.txt");
         String strVal = byteContentToString(content2);
 
-        String content23 = content2.replace("\r","\\r").replace("\n","\\n");
+        String content23 = content2.replace("\r", "\\r").replace("\n", "\\n");
         String strVal2 = byteContentToString(content23);
 
         // base64 对 byte 数组加密后的内容
@@ -40,6 +42,20 @@ public class ReadFile {
         param.put("html_str", content2);
         String val = HttpHelper.httpPostJSON("http://10.120.146.10:8088/HtmlExtractRes/", param, null);
         System.out.println(val);
+
+        String newVal = val.replace("\"", "").replace("'", "\"");
+
+        ParseModel parseModel = JSONUtil.toObject(newVal, ParseModel.class);
+        System.out.println("ok");
+
+        parseModel.getExcels().forEach(m -> {
+            try {
+                byteContentToFile(String.format("e:/%s.xlsx", m.getTitle()), m.getContent());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
     }
 
     public static String fileToPlainConent(String path) throws IOException {
@@ -54,7 +70,7 @@ public class ReadFile {
             arrayOutputStream.write(ch);
         }
         String val = arrayOutputStream.toString();
-       return  val;
+        return val;
     }
 
     public static String fileToByteConent(String path) throws IOException {
