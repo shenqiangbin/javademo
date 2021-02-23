@@ -14,6 +14,8 @@ public class TestJava {
 
     public static void main(String[] args) throws Exception {
 
+        String[] arr = new String[5];
+
         System.out.println(containHanZi("AZ1234142"));
         System.out.println(containHanZi("1234142"));
         System.out.println(containHanZi("中12342134"));

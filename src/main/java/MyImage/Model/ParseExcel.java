@@ -1,6 +1,6 @@
 package MyImage.Model;
 
-public class Excel {
+public class ParseExcel {
     private String title;
     private String content;
 

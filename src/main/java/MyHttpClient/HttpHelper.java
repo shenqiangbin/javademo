@@ -120,7 +120,8 @@ public class HttpHelper {
             try {
                 System.out.println(response.getStatusLine());
                 HttpEntity entity = response.getEntity();
-                responseContent = getRespString(entity);
+                //responseContent = getRespString(entity);
+                responseContent = EntityUtils.toString(response.getEntity(), "UTF-8");
                 EntityUtils.consume(entity);
             } finally {
                 response.close();
@@ -249,6 +250,7 @@ public class HttpHelper {
         int r = 0;
         while ((r = is.read(buffer)) > 0) {
             //strBuf.append(new String(buffer, 0, r, "GB2312"));
+            //strBuf.append(new String(buffer, 0, r, "GBK"));
             strBuf.append(new String(buffer, 0, r, "UTF-8"));
         }
         return strBuf.toString();
