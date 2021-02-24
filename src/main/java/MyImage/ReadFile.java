@@ -69,7 +69,7 @@ public class ReadFile {
         String str = encoder.encode("平潭综合实验区2019年国民经济和社会发展统计公报".getBytes());
         param.put("title",str);
 
-        String val = HttpHelper.httpPostJSON("http://10.120.146.10:8088/HtmlExtractRes/", param, null);
+        String val = HttpHelper.httpPostJSON("http://10.120.146.10:8088/HtmlExtractRes/", param.toString(), null);
         System.out.println(val);
 
         String newVal = val.replace("\"", "").replace("'", "\"");

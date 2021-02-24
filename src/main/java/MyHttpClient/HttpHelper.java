@@ -1,7 +1,5 @@
 package MyHttpClient;
 
-import com.alibaba.fastjson.JSONObject;
-import common.P;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
@@ -21,9 +19,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,37 +33,17 @@ public class HttpHelper {
     }
 
     public static String httpGet(String url, Map<String, String> headMap) throws IOException {
-        String responseContent = null;
         CloseableHttpClient httpclient = HttpClients.createDefault();
         try {
             HttpGet httpGet = new HttpGet(url);
-
-            //setSocketTimeout 获取数据的超时时间
-            RequestConfig requestConfig = RequestConfig.custom()
-                    .setConnectTimeout(5000).setConnectionRequestTimeout(1000)
-                    .setSocketTimeout(5000).build();
-            httpGet.setConfig(requestConfig);
-
+            httpGet.setConfig(getRequestConfig());
             setHead(httpGet, headMap);
+
             CloseableHttpResponse response = httpclient.execute(httpGet);
-            try {
-                if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-                    throw new IOException("状态码不是200");
-                }
-                HttpEntity entity = response.getEntity();
-                responseContent = EntityUtils.toString(entity);
-                EntityUtils.consume(entity);
-            } finally {
-                response.close();
-            }
+            return getResult(response);
         } finally {
-            try {
-                httpclient.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            httpclient.close();
         }
-        return responseContent;
     }
 
     /**
@@ -77,66 +53,129 @@ public class HttpHelper {
      * @param paramsMap
      * @return
      */
-    public static String httpPost(String url, Map<String, String> paramsMap, Map<String, String> headMap) {
-        String responseContent = null;
+    public static String httpPost(String url, Map<String, String> paramsMap, Map<String, String> headMap) throws IOException {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         try {
             HttpPost httpPost = new HttpPost(url);
+            httpPost.setConfig(getRequestConfig());
             setHead(httpPost, headMap);
+
             setPostParams(httpPost, paramsMap);
             CloseableHttpResponse response = httpclient.execute(httpPost);
-            try {
-                System.out.println(response.getStatusLine());
-                HttpEntity entity = response.getEntity();
-                responseContent = getRespString(entity);
-                EntityUtils.consume(entity);
-            } finally {
-                response.close();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+            return getResult(response);
         } finally {
-            try {
-                httpclient.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            httpclient.close();
         }
-        System.out.println("responseContent = " + responseContent);
-        return responseContent;
     }
 
-    public static String httpPostJSON(String url, JSONObject param, Map<String, String> headMap) {
-        String responseContent = null;
+    public static String httpPostJSON(String url, String json, Map<String, String> headMap) throws IOException {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         try {
             HttpPost httpPost = new HttpPost(url);
             setHead(httpPost, headMap);
-            //setPostParams(httpPost, paramsMap);
-            StringEntity se = new StringEntity(param.toString());
+            httpPost.setConfig(getRequestConfig());
+
+            StringEntity se = new StringEntity(json);
             httpPost.setEntity(se);
 
             CloseableHttpResponse response = httpclient.execute(httpPost);
-            try {
-                System.out.println(response.getStatusLine());
-                HttpEntity entity = response.getEntity();
-                //responseContent = getRespString(entity);
-                responseContent = EntityUtils.toString(response.getEntity(), "UTF-8");
-                EntityUtils.consume(entity);
-            } finally {
-                response.close();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+            return getResult(response);
         } finally {
-            try {
-                httpclient.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            httpclient.close();
+        }
+    }
+
+    /**
+     * 上传文件
+     *
+     * @param url
+     * @param localFilePath
+     * @param serverFieldName
+     * @param paramsMap
+     * @param headMap
+     * @return
+     * @throws IOException
+     */
+    public static String uploadFile(String url, String localFilePath, String serverFieldName, Map<String, String> paramsMap, Map<String, String> headMap) throws IOException {
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        try {
+            HttpPost httpPost = new HttpPost(url);
+            httpPost.setConfig(getRequestConfig());
+            setHead(httpPost, headMap);
+
+            MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
+            // add the file params
+            FileBody binFileBody = new FileBody(new File(localFilePath));
+            multipartEntityBuilder.addPart(serverFieldName, binFileBody);
+            // 设置上传的其他参数
+            setUploadParams(multipartEntityBuilder, paramsMap);
+
+            HttpEntity reqEntity = multipartEntityBuilder.build();
+            httpPost.setEntity(reqEntity);
+
+            CloseableHttpResponse response = httpclient.execute(httpPost);
+            return getResult(response);
+        } finally {
+            httpclient.close();
+        }
+    }
+
+    /**
+     * 下载文件到本地
+     * @param url
+     * @param headMap
+     * @param filePath
+     * @throws IOException
+     */
+    public static void downloadFile(String url, Map<String, String> headMap, String filePath) throws IOException {
+        File newFile = new File(filePath);
+        if (!newFile.exists()) {
+            newFile.createNewFile();
+        }
+
+        FileOutputStream stream = null;
+        try {
+            stream = new FileOutputStream(newFile);
+            downloadFile(url, headMap, stream);
+        } finally {
+            if (stream != null) {
+                stream.close();
             }
         }
-        System.out.println("responseContent = " + responseContent);
-        return responseContent;
+    }
+
+    /**
+     * 下载文件
+     *
+     * @param url
+     * @param stream
+     */
+    public static void downloadFile(String url, Map<String, String> headMap, OutputStream stream) throws IOException {
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        try {
+            HttpGet httpGet = new HttpGet(url);
+            httpGet.setConfig(getRequestConfig());
+            setHead(httpGet, headMap);
+
+            CloseableHttpResponse response = httpclient.execute(httpGet);
+
+            HttpEntity httpEntity = response.getEntity();
+            //long contentLength = httpEntity.getContentLength();
+            InputStream is = httpEntity.getContent();
+
+//            byte[] byteArr = EntityUtils.toByteArray(httpEntity);
+//            stream.write(byteArr, 0, byteArr.length);
+
+            byte[] buffer = new byte[4096];
+            int r;
+            while ((r = is.read(buffer)) > 0) {
+                stream.write(buffer, 0, r);
+            }
+            stream.flush();
+
+        } finally {
+            httpclient.close();
+        }
     }
 
     /**
@@ -145,7 +184,7 @@ public class HttpHelper {
      * @param httpGetPost
      * @param headMap
      */
-    static void setHead(HttpRequestBase httpGetPost, Map<String, String> headMap) {
+    private static void setHead(HttpRequestBase httpGetPost, Map<String, String> headMap) {
         if (headMap != null && headMap.size() > 0) {
             Set<String> keySet = headMap.keySet();
             for (String key : keySet) {
@@ -158,62 +197,39 @@ public class HttpHelper {
      * 设置POST的参数
      *
      * @param httpPost
-     * @param paramsMap
+     * @param map
      * @throws Exception
      */
-    static void setPostParams(HttpPost httpPost, Map<String, String> paramsMap)
-            throws Exception {
-        if (paramsMap != null && paramsMap.size() > 0) {
+    private static void setPostParams(HttpPost httpPost, Map<String, String> map) {
+        if (map != null && map.size() > 0) {
             List<NameValuePair> nvps = new ArrayList<NameValuePair>();
-            Set<String> keySet = paramsMap.keySet();
-            for (String key : keySet) {
-                nvps.add(new BasicNameValuePair(key, paramsMap.get(key)));
+            for (String key : map.keySet()) {
+                nvps.add(new BasicNameValuePair(key, map.get(key)));
             }
             httpPost.setEntity(new UrlEncodedFormEntity(nvps, StandardCharsets.UTF_8));
         }
     }
 
     /**
-     * 上传文件
+     * 从 Response 中获取返回的结果字符串
      *
-     * @param serverUrl
-     * @param localFilePath
-     * @param serverFieldName
-     * @param params
+     * @param response
      * @return
      * @throws IOException
      */
-    public static String uploadFile(String serverUrl, String localFilePath, String serverFieldName, Map<String, String> params) throws IOException {
-        String respStr = null;
-        CloseableHttpClient httpclient = HttpClients.createDefault();
+    private static String getResult(CloseableHttpResponse response) throws IOException {
+        String responseContent = null;
         try {
-            HttpPost httppost = new HttpPost(serverUrl);
-            FileBody binFileBody = new FileBody(new File(localFilePath));
-
-            MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder
-                    .create();
-            // add the file params
-            multipartEntityBuilder.addPart(serverFieldName, binFileBody);
-            // 设置上传的其他参数
-            setUploadParams(multipartEntityBuilder, params);
-
-            HttpEntity reqEntity = multipartEntityBuilder.build();
-            httppost.setEntity(reqEntity);
-
-            CloseableHttpResponse response = httpclient.execute(httppost);
-            try {
-                HttpEntity resEntity = response.getEntity();
-                //respStr = getRespString(resEntity);
-                respStr = EntityUtils.toString(resEntity);
-                EntityUtils.consume(resEntity);
-
-            } finally {
-                response.close();
+            if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+                throw new IOException("状态码不是200:" + response.getStatusLine().getStatusCode());
             }
+            HttpEntity entity = response.getEntity();
+            responseContent = EntityUtils.toString(response.getEntity(), "UTF-8");
+            EntityUtils.consume(entity);
         } finally {
-            httpclient.close();
+            response.close();
         }
-        return respStr;
+        return responseContent;
     }
 
     /**
@@ -234,29 +250,16 @@ public class HttpHelper {
     }
 
     /**
-     * 将返回结果转化为String
+     * 设置接口调用超时配
      *
-     * @param entity
-     * @return
-     * @throws Exception
+     * @return RequestConfig
      */
-    private static String getRespString(HttpEntity entity) throws Exception {
-        if (entity == null) {
-            return null;
-        }
-        InputStream is = entity.getContent();
-        StringBuffer strBuf = new StringBuffer();
-        byte[] buffer = new byte[4096];
-        int r = 0;
-        while ((r = is.read(buffer)) > 0) {
-            //strBuf.append(new String(buffer, 0, r, "GB2312"));
-            //strBuf.append(new String(buffer, 0, r, "GBK"));
-            strBuf.append(new String(buffer, 0, r, "UTF-8"));
-        }
-        return strBuf.toString();
-    }
-
-    private void log(String msg) {
-        P.print(msg);
+    private static RequestConfig getRequestConfig() {
+        //setSocketTimeout 获取数据的超时时间
+        return RequestConfig.custom()
+                .setConnectTimeout(5000)
+                .setConnectionRequestTimeout(1000)
+                .setSocketTimeout(5000)
+                .build();
     }
 }

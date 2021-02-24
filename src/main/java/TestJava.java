@@ -37,25 +37,35 @@ public class TestJava {
 //
 //        testImg();
         //P.print(builder.toString());
+        testMethod();
         test2();
     }
 
-    public static void  test2(){
+    private static String testMethod() {
+        String result;
+        try {
+            return "abc";
+        } finally {
+            System.out.println("finally");
+        }
+    }
+
+    public static void test2() {
         String txt = "";
         StringBuilder result = new StringBuilder();
         String[] arr = txt.split("\n");
-        for(int i =0; i<arr.length; i++){
+        for (int i = 0; i < arr.length; i++) {
             String item = arr[i];
             String[] itemArr = item.split(" ");
             String first = itemArr[0];
-            if(!first.startsWith("SYS"))
+            if (!first.startsWith("SYS"))
                 result.append(first).append(",");
         }
         System.out.println(result.toString());
     }
 
-    public static boolean containHanZi(String str){
-        return  str.length() != str.getBytes().length;
+    public static boolean containHanZi(String str) {
+        return str.length() != str.getBytes().length;
     }
 
     public static void testImg() throws IOException {
@@ -71,7 +81,7 @@ public class TestJava {
                 int red = oriColor.getRed();
                 int green = oriColor.getGreen();
                 int blue = oriColor.getBlue();
-                if(red == 255 && green == 255){
+                if (red == 255 && green == 255) {
                     bi.setRGB(i, j, wColor.getRGB());
                 }
             }

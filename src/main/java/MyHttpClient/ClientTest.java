@@ -50,7 +50,7 @@ public class ClientTest {
         String fileName = "F:/girl.jpg";
         Map<String, String> map = new HashMap<>();
         map.put("filename", "girl.jpg");
-        String result = HttpHelper.uploadFile(serverUrl, fileName, "girl.jpg", map);
+        String result = HttpHelper.uploadFile(serverUrl, fileName, "girl.jpg", map, null);
         System.out.println(result);
 
         Reulst theResult = JSON.parseObject(result, Reulst.class);
@@ -97,7 +97,7 @@ public class ClientTest {
 
             stream = new FileOutputStream(newFile);
             String url = "http://oimagec6.ydstatic.com/image?id=7347104849285270631&product=dict-homepage&w=&h=&fill=0&cw=&ch=&sbc=0&cgra=CENTER&of=jpeg";
-            httpDownloadFile(url, stream);
+            httpH(url, stream);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -111,38 +111,7 @@ public class ClientTest {
         }
     }
 
-    public static void httpDownloadFile(String url, OutputStream stream) {
-        CloseableHttpClient httpclient = HttpClients.createDefault();
-        try {
-            HttpGet httpGet = new HttpGet(url);
-            CloseableHttpResponse response = httpclient.execute(httpGet);
-
-            P.print("status:" + response.getStatusLine());
-            HttpEntity httpEntity = response.getEntity();
-            //long contentLength = httpEntity.getContentLength();
-            InputStream is = httpEntity.getContent();
-
-            byte[] buffer = new byte[4096];
-            int r;
-            while ((r = is.read(buffer)) > 0) {
-                stream.write(buffer, 0, r);
-            }
-
-            stream.flush();
-
-            httpclient.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                httpclient.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
+    // 从接口获取的文件，直接返回给页面， 通过 HttpServletResponse 获取到 OutputStream 流即可。
 //    public void httpDownloadFile(String url, HttpServletResponse response) {
 //
 //        CloseableHttpClient httpclient = HttpClients.createDefault();
