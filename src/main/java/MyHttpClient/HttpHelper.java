@@ -107,6 +107,8 @@ public class HttpHelper {
             // add the file params
             FileBody binFileBody = new FileBody(new File(localFilePath));
             multipartEntityBuilder.addPart(serverFieldName, binFileBody);
+            // 这样可以上传多个文件
+            // multipartEntityBuilder.addPart(serverFieldName, binFileBody);
             // 设置上传的其他参数
             setUploadParams(multipartEntityBuilder, paramsMap);
 

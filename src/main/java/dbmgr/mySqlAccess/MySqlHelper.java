@@ -12,19 +12,6 @@ public class MySqlHelper {
     private HikariDataSource ds = null;
     private HikariConfig config = null;
 
-//    public static void main(String[] args) throws Exception{
-//        P.print("hello");
-//
-//        String sql = "select * from resourceitem";
-//        for (int i = 0; i < 280000; i++) {
-//            //Thread.sleep(1000);
-//
-//            P.print(i);
-//            simpleQuery(sql);
-//        }
-//
-//    }
-
     public MySqlHelper(HikariConfig ds){
         this.config = ds;
     }
