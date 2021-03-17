@@ -1,6 +1,7 @@
 package dbmgr.kbaseAccess;
 
 import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import common.P;
 import dbmgr.mySqlAccess.MySqlHelper;
 import org.apache.commons.io.FileUtils;
@@ -215,14 +216,15 @@ public class KBaseToMySql {
         String now = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         now = "2019-01-09 21:46:04";
 
-        MySqlHelper mySqlHelper = new MySqlHelper(getConfig());
+        HikariDataSource dataSource = new HikariDataSource(getConfig());
+        MySqlHelper mySqlHelper = new MySqlHelper(dataSource);
 
         for (SyncItem item : list) {
             String insertSql = String.format("insert region(name,FullName,RegionLevel,LocationX,LocationY,CreateOn,ParentId,RegionCode,ParentRegionCode,Suffix,UpdateOn) values('%s','',-9,%s,%s,'%s',-9,'','','','%s');", item.getArea(), item.getLng(), item.getLat(), now, now);
             //builder.append(insertSql);
 
             try {
-                mySqlHelper.insert(insertSql);
+                mySqlHelper.add(insertSql, null);
                 P.print(insertSql);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -316,4 +318,5 @@ public class KBaseToMySql {
 
         return config;
     }
+
 }

@@ -2,6 +2,18 @@ package mycat;
 
 public class CreateTable {
     public static void main(String[] args) {
+        drop();
+    }
+
+    static void drop(){
+        int nodenum = 20;
+        for(int i = 1; i< nodenum; i++){
+            String sql = String.format("drop database db_a%s;",i);
+            System.out.println(sql);
+        }
+    }
+
+    static void getCreateSql(){
         String prefix = "a";
         prefix = "read_b";
         int nodenum = 20;

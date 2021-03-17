@@ -4,6 +4,7 @@ import com.kbase.jdbc.ResultSetImpl;
 import com.kbase.jdbc.StatementImpl;
 import com.mysql.cj.util.StringUtils;
 import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import common.P;
 import dbmgr.microsoftAccess.ResultSetHelper;
 import dbmgr.mySqlAccess.MySqlHelper;
@@ -118,7 +119,8 @@ public class KBaseHelper {
 
     public void tmpSync(String sql, String[] dbfields, HikariConfig config) {
 
-        MySqlHelper mySqlHelper = new MySqlHelper(config);
+        HikariDataSource dataSource = new HikariDataSource(config);
+        MySqlHelper mySqlHelper = new MySqlHelper(dataSource);
 
         Statement statement = null;
         ResultSet resultSet = null;
@@ -152,7 +154,7 @@ public class KBaseHelper {
                 P.print(builder.toString());
 
 
-                mySqlHelper.insert(builder.toString());
+                mySqlHelper.add(builder.toString(),null);
 
 
             }

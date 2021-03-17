@@ -5,12 +5,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class JSONTest {
 
     public static void main(String[] args) throws IOException {
         //test();
+
+        HashMap<String,String> hashMap = new HashMap();
+        Object asd = hashMap.put("a", "b");
+
+        String put = hashMap.put("", "");
+        System.out.println("put = " + put);
+        System.out.println(put);
+
+
 
         ObjectMapper mapper = new ObjectMapper();
         List<String> list = new ArrayList<String>();
