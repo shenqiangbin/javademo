@@ -2,8 +2,10 @@ package MyDate;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class DateUtil {
 
@@ -25,6 +27,9 @@ public class DateUtil {
 
         long diff = DateUtil.diff(DateUtil.parse("2021-1-3 12:11:10"), DateUtil.parse("2021-1-1 12:11:10"), Type.HOUR);
         System.out.println(diff);
+
+        List<String> list = Arrays.asList("1,2,3,4","123");
+        System.out.println(list);
     }
 
     public static String format(Date date) {
@@ -34,6 +39,7 @@ public class DateUtil {
 
     /**
      * 格式化时间，只格式到天（常用在 SQL 时间查询的 between and 中）
+     *
      * @param date
      * @return
      */
@@ -44,6 +50,7 @@ public class DateUtil {
 
     /**
      * 新增一天并格式化时间，只格式到天（常用在 SQL 时间查询的 between and 中）
+     *
      * @param date
      * @return
      */
@@ -65,8 +72,9 @@ public class DateUtil {
 
     /**
      * 两个时间差
+     *
      * @param from 开始时间
-     * @param to 结束时间
+     * @param to   结束时间
      * @param type 以 type 单位来表示时间差
      * @return
      */

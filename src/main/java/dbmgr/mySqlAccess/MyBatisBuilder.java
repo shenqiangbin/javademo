@@ -19,7 +19,7 @@ public class MyBatisBuilder {
     public static void main(String[] args) throws Exception {
 
         String dbName = "medicine_mining";
-        String tableName = "validatecode";
+        String tableName = "payOrder";
         List<Col> cols = getCols(dbName, tableName);
 
         String resultMap = buildResultMap(tableName, cols);
@@ -75,7 +75,7 @@ public class MyBatisBuilder {
         return sql;
     }
 
-    public static String buildInsert(String tableName, List<Col> cols){
+    public static String    buildInsert(String tableName, List<Col> cols){
         StringBuilder builder = new StringBuilder();
         builder.append("<insert id=\"insert\" parameterType=\"modelName\" useGeneratedKeys=\"true\" keyProperty=\"id\" keyColumn=\"id\"> \n"
         .replace("modelName",getModelName(tableName)));
@@ -90,6 +90,9 @@ public class MyBatisBuilder {
 
         String fieldInertStr = String.join(",\n", cols.stream().filter(m -> !isPrimaryKey(m)).map(m-> getInsertField(m)).collect(Collectors.toList()));
         builder.append(fieldInertStr);
+
+        builder.append("       ) \n");
+
 
         builder.append("\n</insert>");
         return builder.toString();
@@ -171,6 +174,7 @@ public class MyBatisBuilder {
             case "bigint": return "INTEGER";
             case "tinyint": return "INTEGER";
             case "datetime": return "TIMESTAMP";
+            case "varchar": return "VARCHAR";
             default:
                 throw new RuntimeException("未知类型：" + dataType);
         }
@@ -182,6 +186,7 @@ public class MyBatisBuilder {
             case "bigint": return "Integer";
             case "tinyint": return "Integer";
             case "datetime": return "Date";
+            case "varchar": return "String";
             default:
                 throw new RuntimeException("未知类型：" + dataType);
         }
