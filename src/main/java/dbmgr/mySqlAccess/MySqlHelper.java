@@ -1,13 +1,10 @@
 package dbmgr.mySqlAccess;
 
-import com.zaxxer.hikari.HikariDataSource;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.*;
-import java.text.MessageFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -18,6 +15,7 @@ public class MySqlHelper {
     private DataSource dataSource;
 
     public MySqlHelper() {
+
     }
 
     public MySqlHelper(DataSource dataSource) {
@@ -593,5 +591,6 @@ public class MySqlHelper {
 //        }
 //        return result;
 //    }
+
 
 }

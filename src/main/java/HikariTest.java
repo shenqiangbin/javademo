@@ -1,7 +1,9 @@
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import common.P;
+import org.apache.commons.lang3.StringUtils;
 
+import javax.sound.midi.SysexMessage;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -22,6 +24,8 @@ public class HikariTest {
         Set<String> list2 = new HashSet<>();
         list2.add("abc");
         list2.add("abc");
+        list2.add("1");
+        System.out.println(StringUtils.join(list2,","));
 
 
         String sql = "select * from resourceitem";
