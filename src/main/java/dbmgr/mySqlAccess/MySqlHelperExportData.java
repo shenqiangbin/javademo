@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class MySqlHelperExportData {
-    static MySqlHelper mySqlHelper = new MySqlHelper(getConfig());
+    static MySqlHelper mySqlHelper = new MySqlHelper(getConfig().getDataSource());
 
     public static void main(String[] args) throws Exception {
         HikariDataSource dataSource = new HikariDataSource(getConfig());
@@ -69,7 +69,7 @@ public class MySqlHelperExportData {
      */
     private static String convertClassCode(String classCode) throws Exception {
         String sql = "select id,className from nv_class_standard where status = 1 and id in (" + classCode.replace("/", ",").substring(0, classCode.length() - 1) + ")";
-        List<ClassStandard> list = mySqlHelper.simpleQuery(sql, ClassStandard.class);
+        List<ClassStandard> list = mySqlHelper.simpleQuery(sql, null, ClassStandard.class);
 
         List<String> newList = new ArrayList<>();
         String[] arr = classCode.split("/");

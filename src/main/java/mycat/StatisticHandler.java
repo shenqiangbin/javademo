@@ -60,7 +60,7 @@ public class StatisticHandler {
 
 
     static void loopAndHandle() throws SQLException {
-        MySqlHelper mySqlHelper = new MySqlHelper(getConfig());
+        MySqlHelper mySqlHelper = new MySqlHelper(getConfig().getDataSource());
         for (int i = 1; i <= 30; i++) {
             String prefix = "statistic_42_";
             String table = "nv_excel_pickup";

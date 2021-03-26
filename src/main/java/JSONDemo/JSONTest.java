@@ -21,6 +21,15 @@ public class JSONTest {
 
         handle();
 
+        HashMap<String,String> hashMap = new HashMap();
+        Object asd = hashMap.put("a", "b");
+
+        String put = hashMap.put("", "");
+        System.out.println("put = " + put);
+        System.out.println(put);
+
+
+
         ObjectMapper mapper = new ObjectMapper();
         List<String> list = new ArrayList<String>();
         list.add("学校");

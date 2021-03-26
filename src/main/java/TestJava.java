@@ -14,6 +14,11 @@ public class TestJava {
 
     public static void main(String[] args) throws Exception {
 
+        String sql = String.format("'%s','%s'",1,2,3);
+        String sql2 = String.format("'%s','%s','%s'",1,2,3);
+        System.out.println(sql);
+        System.out.println(sql2);
+
         String[] arr = new String[5];
 
         System.out.println(containHanZi("AZ1234142"));
