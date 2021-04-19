@@ -24,6 +24,28 @@ public class ColUtil {
                 "图书_ISBN              \n" +
                 "图书_版次                \n" +
                 "一手分类                 ";
+
+        content = "出版单位\n" +
+                "文章类型\n" +
+                "卷期号\n" +
+                "版本号\n" +
+                "页数\n" +
+                "DOI\n" +
+                "报纸_字数\n" +
+                "报纸_版权\n" +
+                "报纸_作品集\n" +
+                "报纸_文件号\n" +
+                "期刊_字数\n" +
+                "期刊_版权\n" +
+                "期刊_作品集\n" +
+                "图书_字数\n" +
+                "图书_版权\n" +
+                "图书_编辑\n" +
+                "图书_系列\n" +
+                "文章_字数\n" +
+                "文章_版权\n" +
+                "文章_重印";
+
         System.out.println(toSplitWith(content));
         System.out.println(toKbasePara(content));
 

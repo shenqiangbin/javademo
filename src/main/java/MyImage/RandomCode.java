@@ -10,6 +10,13 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 public class RandomCode {
     public static void main(String[] args) {
+        Random randomer = new Random();
+        for(int i =0; i< 19; i++){
+
+            int minute = randomer.nextInt(15);
+            System.out.println(minute);
+        }
+
         String code = getCode(4);
         P.print(code);
 
@@ -36,8 +43,8 @@ public class RandomCode {
         P.print("thecode:");
         P.print(md5);
 
-        Random randomer = new Random();
-        randomer.nextInt(10000 + 1);
+//        Random randomer = new Random();
+//        randomer.nextInt(10000 + 1);
     }
 
     /**

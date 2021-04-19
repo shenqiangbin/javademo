@@ -19,7 +19,7 @@ import java.util.logging.SimpleFormatter;
  * */
 public class KBaseToMySql {
     public static void main(String[] args) throws SQLException, IOException {
-
+        testAdd();
         //Sync1();
         ///SyncZhiBiao();
         //SyncZhiBiaoLike();
@@ -29,6 +29,17 @@ public class KBaseToMySql {
         //SyncToSql();
         System.out.println("----hello world----");
         System.out.println("----end----");
+    }
+
+    public static void testAdd() throws SQLException {
+        String jdbc = "jdbc:kbase://10.120.130.89";
+        KBaseHelper kBaseHelper = new KBaseHelper(jdbc, "DBOWN", "");
+        //String sql = "SELECT 指标类别,精炼标题,指标 FROM NAVIFREQ_TOP50_CLASSIFY_ALL where 基本指标=1";
+        String sql = "SELECT 标题 FROM FIRSTHAND_METADATA";
+
+        kBaseHelper.execute("insert into FIRSTHAND_METADATA(标题) values('abc')");
+        kBaseHelper.execute("insert into FIRSTHAND_METADATA(标题) values([1])", Arrays.asList(new String[]{"1"}));
+        System.out.println("abc");
     }
 
     public static void SyncZhiBiao() throws SQLException {
@@ -70,7 +81,7 @@ public class KBaseToMySql {
         while (null != (strLine = bufferedReader.readLine())) {
             String zhibiao = strLine.split(",")[1].replace("\"", "");
             String sql = "INSERT INTO nv_normal_value(`CreateUser`, `CreateTime`, `UpdateUser`, `UpdateTime`, `NormalName`, `NormalCode`, `NormalNameCn`, `NormalDescribe`, `NormalDescribeCn`, `StandardID`, `StandardName`, `LableName`, `OrganizationID`) VALUES ('jsc', '2020-06-08 14:24:39', NULL, NULL, '国有企业车船税收入', '', '', '', '', '129', '农科院', '指标标准表', '73');\r\n";
-            if(!list.contains(zhibiao)) {
+            if (!list.contains(zhibiao)) {
                 list.add(zhibiao);
                 builder.append(sql.replace("国有企业车船税收入", zhibiao));
             }
@@ -87,7 +98,7 @@ public class KBaseToMySql {
 
         while (null != (strLine = bufferedReader.readLine())) {
             String zhibiao = strLine.split(",")[1].replace("\"", "");
-            if(zhibiao.equalsIgnoreCase(thezhibiao))
+            if (zhibiao.equalsIgnoreCase(thezhibiao))
                 return true;
             lineCount++;
         }
@@ -96,32 +107,32 @@ public class KBaseToMySql {
     }
 
     public static void getMoHuFromTxt() throws IOException {
-        String content =FileUtils.readFileToString(new File("d:/INDEXSYNONYMOUS200.txt"),"GBK");
+        String content = FileUtils.readFileToString(new File("d:/INDEXSYNONYMOUS200.txt"), "GBK");
         //System.out.println(content);
         String[] arr = content.split("<REC>");
         StringBuilder builder = new StringBuilder();
 
-        for (String item : arr){
+        for (String item : arr) {
             //System.out.println(item);
-            if(StringUtils.isNotEmpty(item)){
+            if (StringUtils.isNotEmpty(item)) {
                 String zhibiao = "";
                 String xiangSi = "";
                 String[] itemArr = item.split("\r\n");
-                for (String itemArrItem : itemArr){
-                    if(itemArrItem.startsWith("<指标正式名>")){
+                for (String itemArrItem : itemArr) {
+                    if (itemArrItem.startsWith("<指标正式名>")) {
                         zhibiao = itemArrItem.substring(8);
                     }
-                    if(itemArrItem.startsWith("<指标同义词>")){
+                    if (itemArrItem.startsWith("<指标同义词>")) {
                         xiangSi = itemArrItem.substring(8);
                         break;
                     }
                 }
                 //System.out.println(zhibiao);
                 //System.out.println(xiangSi);
-                if(StringUtils.isNotEmpty(xiangSi) && findExists(zhibiao)){
+                if (StringUtils.isNotEmpty(xiangSi) && findExists(zhibiao)) {
                     String finalZhibiao = zhibiao;
-                    Arrays.stream(xiangSi.split("@")).forEach(m->{
-                        if(StringUtils.isNotEmpty(m)){
+                    Arrays.stream(xiangSi.split("@")).forEach(m -> {
+                        if (StringUtils.isNotEmpty(m)) {
                             builder.append("\"").append(m).append("\"").append(",").append("\"").append(finalZhibiao).append("\"").append("\r\n");
                         }
                     });
@@ -166,16 +177,16 @@ public class KBaseToMySql {
                 while (resultSet.next()) {
                     count++;
 
-                    if(count>30000)
+                    if (count > 30000)
                         break;
 
                     String searchZhiBiao = resultSet.getString("检索指标");
-                    if(!searchZhiBiao.equalsIgnoreCase(tmp)){
+                    if (!searchZhiBiao.equalsIgnoreCase(tmp)) {
                         System.out.println(searchZhiBiao);
                         tmp = searchZhiBiao;
                         Arrays.stream(searchZhiBiao.split("；")).forEach(m ->
                                 {
-                                    if (!m.equalsIgnoreCase(zhibiao) && !m.contains("?")){
+                                    if (!m.equalsIgnoreCase(zhibiao) && !m.contains("?")) {
                                         System.out.println(m.trim());
                                         hs.add(m.trim());
                                     }
@@ -190,8 +201,8 @@ public class KBaseToMySql {
                     builder.append("\"").append(val).append("\"").append(",").append("\"").append(zhibiao).append("\"").append("\r\n");
                 }
 
-                if(StringUtils.isNotEmpty(builder.toString())){
-                    FileOutputStream fos= FileUtils.openOutputStream(new File("d:/11.csv"),true);
+                if (StringUtils.isNotEmpty(builder.toString())) {
+                    FileOutputStream fos = FileUtils.openOutputStream(new File("d:/11.csv"), true);
                     fos.write(builder.toString().getBytes());
                     fos.close();
                 }

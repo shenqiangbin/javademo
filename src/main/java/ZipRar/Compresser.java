@@ -10,17 +10,55 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public class Compresser {
 
     public static void main(String[] args) throws IOException, ArchiveException {
-        decompressor();
+
+
+        String targetDir = "E:\\老子项目\\一手数据模板\\2";
+        String zipFile = "E:\\老子项目\\一手数据模板\\shuju.zip";
+        //doUnArchiver(new File(zipFile), targetDir);
+        decompressor(zipFile, targetDir);
     }
 
-    public static void decompressor() throws IOException, ArchiveException {
+    // 不行
+    public static void doUnArchiver(File srcfile, String destpath) throws IOException {
+        byte[] buf = new byte[1024];
+        FileInputStream fis = new FileInputStream(srcfile);
+        BufferedInputStream bis = new BufferedInputStream(fis);
+        ZipInputStream zis = new ZipInputStream(bis);
+        ZipEntry zn = null;
+        while ((zn = zis.getNextEntry()) != null) {
+            File f = new File(destpath + "/" + zn.getName());
+            if (zn.isDirectory()) {
+                f.mkdirs();
+            } else {
+                /*
+                 * 父目录不存在则创建
+                 */
+                File parent = f.getParentFile();
+                if (!parent.exists()) {
+                    parent.mkdirs();
+                }
+                FileOutputStream fos = new FileOutputStream(f);
+                BufferedOutputStream bos = new BufferedOutputStream(fos);
+                int len;
+                while ((len = zis.read(buf)) != -1) {
+                    bos.write(buf, 0, len);
+                }
+                bos.flush();
+                bos.close();
+            }
+            zis.closeEntry();
+        }
+        zis.close();
+    }
 
-        String targetDir = "H:\\1";
-        String zipFile = "H:\\博客.zip";
+    // 可以
+    public static void decompressor(String zipFile, String targetDir) throws IOException, ArchiveException {
 
         File archiveFile = new File(zipFile);
         // 文件不存在，跳过
@@ -34,7 +72,7 @@ public class Compresser {
                 // log something?
                 continue;
             }
-            String name = fileName(targetDir, entry);
+            String name = Paths.get(targetDir,entry.getName()).toString();
             File f = new File(name);
             if (entry.isDirectory()) {
                 if (!f.isDirectory() && !f.mkdirs()) {
@@ -54,7 +92,4 @@ public class Compresser {
 
     }
 
-    public static String fileName(String targetDir,ArchiveEntry entry){
-        return Paths.get(targetDir,entry.getName()).toString();
-    }
 }

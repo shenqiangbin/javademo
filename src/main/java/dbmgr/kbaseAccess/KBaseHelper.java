@@ -47,6 +47,42 @@ public class KBaseHelper {
         return connection;
     }
 
+    public String execute(String sql, List<Object> params) throws SQLException {
+        Connection connection = null;
+        try {
+            connection = getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql);
+
+            if (params != null) {
+                for (int i = 0; i < params.size(); i++) {
+                    statement.setString(i + 1, params.get(i).toString());
+                }
+            }
+
+            statement.execute();
+
+        } finally {
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
+        }
+        return null;
+    }
+
+    public String execute(String sql) throws SQLException {
+        Connection connection = null;
+        try {
+            connection = getConnection();
+            Statement statement = connection.createStatement();
+            statement.execute(sql);
+        } finally {
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
+        }
+        return null;
+    }
+
     public <T> List<T> query(String sql, List<Object> params, Class<T> type, String[] dbfields) {
         Statement statement = null;
         ResultSet resultSet = null;
