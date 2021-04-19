@@ -19,7 +19,9 @@ public class Compresser {
 
     public static void main(String[] args) throws IOException, ArchiveException {
 
-
+        /**
+         * 测试文件下载地址：链接：https://pan.baidu.com/s/12ugoP2Vx8Ui7chKVGaq-1w 提取码：w6qq
+         */
         String targetDir = "E:\\老子项目\\一手数据模板\\2";
         String zipFile = "E:\\老子项目\\一手数据模板\\shuju.zip";
         //doUnArchiver(new File(zipFile), targetDir);
