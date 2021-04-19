@@ -1,5 +1,6 @@
 package ZipRar;
 
+import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
@@ -7,6 +8,7 @@ import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.utils.IOUtils;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,6 +24,7 @@ public class Compresser {
         String zipFile = "E:\\老子项目\\一手数据模板\\shuju.zip";
         //doUnArchiver(new File(zipFile), targetDir);
         decompressor(zipFile, targetDir);
+        decompressor2(zipFile, "E:\\老子项目\\一手数据模板\\22");
     }
 
     // 不行
@@ -57,7 +60,7 @@ public class Compresser {
         zis.close();
     }
 
-    // 可以
+    // 可以（推荐使用）
     public static void decompressor(String zipFile, String targetDir) throws IOException, ArchiveException {
 
         File archiveFile = new File(zipFile);
@@ -72,7 +75,7 @@ public class Compresser {
                 // log something?
                 continue;
             }
-            String name = Paths.get(targetDir,entry.getName()).toString();
+            String name = Paths.get(targetDir, entry.getName()).toString();
             File f = new File(name);
             if (entry.isDirectory()) {
                 if (!f.isDirectory() && !f.mkdirs()) {
@@ -92,4 +95,36 @@ public class Compresser {
 
     }
 
+    // 解压方式2（某些也会有问题）
+    public static void decompressor2(String targetFile, String targetDir) throws FileNotFoundException, ZipException {
+
+        net.lingala.zip4j.ZipFile zipFile = new net.lingala.zip4j.ZipFile(targetFile);
+        if (testEncoding(targetFile, Charset.forName("UTF-8")) == false) {
+            zipFile.setCharset(Charset.forName("GBK"));
+        }
+        zipFile.extractAll(targetDir);
+    }
+
+    static boolean testEncoding(String filepath, Charset charset) throws FileNotFoundException {
+        FileInputStream fis = new FileInputStream(new File(filepath));
+        BufferedInputStream bis = new BufferedInputStream(fis);
+        ZipInputStream zis = new ZipInputStream(bis, charset);
+        ZipEntry zn = null;
+        try {
+            while ((zn = zis.getNextEntry()) != null) {
+                // do nothing
+            }
+        } catch (Exception e) {
+            return false;
+        } finally {
+            try {
+                zis.close();
+                bis.close();
+                fis.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return true;
+    }
 }
