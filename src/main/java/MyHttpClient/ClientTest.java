@@ -23,8 +23,9 @@ import static org.apache.xmlbeans.impl.store.Public2.test;
 
 public class ClientTest {
     public static void main(String[] args) throws Exception {
-        testUpload();
+        //testUpload();
         //saveFileToLocal();
+        saveHtmlToLocal();
     }
 
     public static void testUpload() throws Exception {
@@ -60,6 +61,12 @@ public class ClientTest {
     public static void saveFileToLocal() throws IOException {
         String url = "http://oimagec6.ydstatic.com/image?id=7347104849285270631&product=dict-homepage&w=&h=&fill=0&cw=&ch=&sbc=0&cgra=CENTER&of=jpeg";
         HttpHelper.downloadFile(url, null, "e:/abc.png");
+    }
+
+
+    public static void saveHtmlToLocal() throws IOException {
+        String url = "http://blog.sqber.com/articles/mac-can-not-use-harddisk.html";
+        HttpHelper.downloadFile(url, null, "/Users/adminqian/shen/mac-can-not-use-harddisk.html");
     }
 
 }

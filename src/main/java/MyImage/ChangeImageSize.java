@@ -9,10 +9,14 @@ import java.net.URL;
 public class ChangeImageSize {
     public static void main(String[] args) {
         try {
+
+            OutputStream outputStream = new FileOutputStream("/Users/adminqian/Desktop/th-thumbnail.png");
+            ImgUtil.thumbnailImg(new URL("https://wx2.sinaimg.cn/large/8e2ef8f7gy1goyti1bzy2j218k0tmaei.jpg"),600,null,outputStream);
+
             //resizeImage(300);
-            OutputStream outputStream = new FileOutputStream("d:/th-thumbnail.png");
-            ImgUtil.thumbnailImg(new File("d:/th.jpg"),400,null,outputStream);
-            ImgUtil.thumbnailImg(new URL("http://bigdata.cnki.net/img/1.bed4469b.png"),100,null,outputStream);
+//            OutputStream outputStream = new FileOutputStream("d:/th-thumbnail.png");
+//            ImgUtil.thumbnailImg(new File("d:/th.jpg"),400,null,outputStream);
+//            ImgUtil.thumbnailImg(new URL("http://bigdata.cnki.net/img/1.bed4469b.png"),100,null,outputStream);
 
         } catch (IOException e) {
             e.printStackTrace();

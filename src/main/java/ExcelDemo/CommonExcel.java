@@ -1,11 +1,14 @@
 package ExcelDemo;
 
-import com.opencsv.CSVReader;
+import de.siegmar.fastcsv.reader.CsvReader;
+import de.siegmar.fastcsv.reader.CsvRow;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 
 import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -18,9 +21,15 @@ public class CommonExcel {
     private Workbook wb = null;
     private ICommonResultHandler resultHandler;
     private boolean debug = false;
+    private String charset = "GBK";
 
     public CommonExcel(String filePath, ICommonResultHandler handler) {
+        this(filePath, "GBK", handler);
+    }
+
+    public CommonExcel(String filePath, String charset, ICommonResultHandler handler) {
         this.filePath = filePath;
+        this.charset = charset;
         this.resultHandler = handler;
         isExcel2003 = filePath.matches("^.+\\.(?i)(xls)$");
         isCSV = filePath.matches("^.+\\.(?i)(csv)$");
@@ -34,73 +43,23 @@ public class CommonExcel {
         }
     }
 
-    public String[] getTitle() throws IOException, InvalidFormatException {
-        if (isCSV) {
-            return this.getCsvTitle();
-        } else {
-            return this.getExcelTitle();
-        }
-    }
-
-    private String[] getCsvTitle() throws IOException {
-        DataInputStream in = null;
-        String[] titles = null;
-        try {
-            in = new DataInputStream(new FileInputStream(filePath));
-            CSVReader reader = new CSVReader(new InputStreamReader(in, "gbk"));
-            titles = reader.readNext();
-        } finally {
-            if (in != null) {
-                in.close();
-            }
-        }
-        return titles;
-    }
-
-    private String[] getExcelTitle() throws IOException, InvalidFormatException {
-        InputStream stream = new FileInputStream(filePath);
-        wb = WorkbookFactory.create(stream);
-
-        Sheet sheet = wb.getSheetAt(0);
-        if (sheet == null || sheet.getLastRowNum() == 0) {
-            return null;
-        }
-
-        int r = 0;
-        List<String> cells = new ArrayList<>();
-        Row row = sheet.getRow(r);
-
-        short minColIx = row.getFirstCellNum();
-        short maxColIx = row.getLastCellNum();
-
-        for (short colIx = minColIx; colIx < maxColIx; colIx++) {
-            Cell cell = row.getCell(colIx);
-            String cellVal = getCellVal(cell);
-            cells.add(cellVal);
-        }
-
-        wb.close();
-        stream.close();
-
-        return cells.toArray(new String[cells.size()]);
-    }
-
     private void csvHandle() throws IOException {
-        DataInputStream in = new DataInputStream(new FileInputStream(filePath));
-        CSVReader reader = new CSVReader(new InputStreamReader(in, "gbk"));
-        String[] titles = null;
-        String[] strs;
+        CsvReader csv = CsvReader.builder().build(Paths.get(filePath), Charset.forName(charset));
+
+        List<String> titles = null;
         int i = 1;
-        while ((strs = reader.readNext()) != null) {
+
+        for (CsvRow item : csv) {
             if (i == 1) {
-                titles = Arrays.copyOfRange(strs, 0, strs.length);
+                if (resultHandler.validateTilte(item.getFields())) {
+                    break;
+                }
             } else {
-                resultHandler.store(strs, titles);
+                resultHandler.store(item.getFields(), titles);
             }
             i++;
         }
         resultHandler.done();
-        reader.close();
     }
 
     private void excelHandle() throws IOException, InvalidFormatException {
@@ -113,14 +72,14 @@ public class CommonExcel {
                 return;
             }
 
-            Row row = null;
+            Row row;
             int totalRow = sheet.getLastRowNum();
             if (this.debug) {
                 System.out.println("共有" + totalRow + "行");
             }
 
-            List<String> cells = new ArrayList<>();
-            String[] titles = null;
+            List<String> cells;
+            List<String> titles = null;
 
             short minColIx = 0;
             short maxColIx = 0;
@@ -143,10 +102,11 @@ public class CommonExcel {
                 }
 
                 if (r == 0) {
-                    titles = cells.toArray(new String[cells.size()]);
+                    titles = cells;
+                    resultHandler.validateTilte(titles);
                 } else {
                     if (!isRowEmpty(cells)) {
-                        resultHandler.store(cells.toArray(new String[cells.size()]), titles);
+                        resultHandler.store(cells, titles);
                     }
                 }
 
@@ -195,17 +155,28 @@ public class CommonExcel {
     }
 
     public static void main(String[] args) throws IOException, InvalidFormatException {
-        print("ok");
         String file = "F:\\daoru.xlsx";
         //file = "F:\\daoru.csv";
         file = "d:/data/1.xlsx";
-        CommonExcel commonExcel = new CommonExcel(file, new ICommonResultHandler() {
-            @Override
-            public String store(String[] cellVals, String[] titles) {
-                System.out.println(Arrays.deepToString(cellVals));
-                System.out.println(Arrays.deepToString(titles));
 
-                buildSql(cellVals, titles);
+        final String[] validateMsg = {""};
+        List<List<String>> abc = new ArrayList<>();
+        CommonExcel commonExcel = new CommonExcel(file, new ICommonResultHandler() {
+
+            @Override
+            public boolean validateTilte(List<String> titles) {
+                if(titles == null || titles.size() == 5){
+                    validateMsg[0] = "标题不对";
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            public String store(List<String> cellVals, List<String> titles) {
+                System.out.println(cellVals);
+                System.out.println(titles);
+                abc.add(cellVals);
                 return "ok";
             }
 
@@ -214,22 +185,14 @@ public class CommonExcel {
                 System.out.println("done");
             }
         });
-        String[] titles = commonExcel.getTitle();
-        // validateTitles 获取表头后，先验证表头，验证通过，再执行 commonExcel.handle() 方法
-        System.out.println("titles");
-        System.out.println(Arrays.deepToString(titles));
-
         commonExcel.handle();
-    }
 
-    private static void buildSql(String[] cellVals, String[] titles) {
-        for (int i = 0; i < titles.length; i++) {
-            String title = titles[i];
-            String val = cellVals[i];
+        if(validateMsg[0] != ""){
+            // 格式不对，直接提示给用户
         }
+
+        // 这里可以先对 abc 进行验证一下，然后再进行操作。
+
     }
 
-    private static void print(String msg) {
-        System.out.println(msg);
-    }
 }

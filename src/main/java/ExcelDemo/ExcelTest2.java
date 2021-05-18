@@ -1,21 +1,67 @@
 package ExcelDemo;
 
+import de.siegmar.fastcsv.reader.CsvReader;
+import de.siegmar.fastcsv.reader.CsvRow;
 import io.netty.util.internal.StringUtil;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
+import org.supercsv.cellprocessor.ift.CellProcessor;
+import org.supercsv.io.CsvMapReader;
+import org.supercsv.io.ICsvMapReader;
+import org.supercsv.prefs.CsvPreference;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class ExcelTest2 {
     public static void main(String[] args) throws IOException, InvalidFormatException {
 
-        hangye();
+        //hangye();
+        test();
+    }
+
+//    private static CellProcessor[] getProcessors() {
+//
+//        final String emailRegex = "[a-z0-9\\._]+@[a-z0-9\\.]+"; // just an example, not very robust!
+//        StrRegEx.registerMessage(emailRegex, "must be a valid email address");
+//
+//        final CellProcessor[] processors = new CellProcessor[] {
+//                new UniqueHashCode(), // customerNo (must be unique)
+//                new NotNull(), // firstName
+//                new NotNull(), // lastName
+//                new ParseDate("dd/MM/yyyy"), // birthDate
+//                new NotNull(), // mailingAddress
+//                new Optional(new ParseBool()), // married
+//                new Optional(new ParseInt()), // numberOfKids
+//                new NotNull(), // favouriteQuote
+//                new StrRegEx(emailRegex), // email
+//                new LMinMax(0L, LMinMax.MAX_LONG) // loyaltyPoints
+//        };
+//
+//        return processors;
+//    }
+
+
+    public static void test() throws IOException, InvalidFormatException {
+
+        String file = "/Users/adminqian/my/test.csv";
+
+        String charset = "utf-8";
+//        DataInputStream in = new DataInputStream(new FileInputStream(file));
+//        CSVReader reader = new CSVReader(new InputStreamReader(in, "utf-8"));
+//        List<String[]> list = reader.readAll();
+
+
+
+
+
     }
 
     public static void zhuti() throws IOException, InvalidFormatException {
@@ -56,14 +102,14 @@ public class ExcelTest2 {
                     if (colIx == 0) {
                         model = new Model(cellVal, "10" + (r + 1), "");
                         list.add(model);
-                    }else{
+                    } else {
                         second.add(new Model(cellVal, model.getCode() + "10" + (colIx + 1), model.getCode()));
                         model.setChildren(second);
                     }
-                } else if ( r >= 22) {
+                } else if (r >= 22) {
                     if (colIx == 0) {
-                        model = getModel(list,cellVal);
-                    }else{
+                        model = getModel(list, cellVal);
+                    } else {
                         third.add(new Model(cellVal, model.getCode() + "10" + (r + 1), model.getCode()));
                         model.setChildren(third);
                     }
@@ -111,24 +157,24 @@ public class ExcelTest2 {
                 String cellVal = getCellVal(cell);
                 cells.add(cellVal);
 
-                if(StringUtil.isNullOrEmpty(cellVal))
+                if (StringUtil.isNullOrEmpty(cellVal))
                     continue;
 
                 if (r <= 19) {
                     if (colIx == 0) {
                         model = new Model(cellVal, "10" + (r + 1), "");
                         list.add(model);
-                    }else{
+                    } else {
                         second.add(new Model(cellVal, model.getCode() + "10" + (colIx + 1), model.getCode()));
                         model.setChildren(second);
                     }
-                } else if ( r >= 22) {
+                } else if (r >= 22) {
                     if (colIx == 0) {
-                        model = getModel(list,cellVal);
-                        if(model==null){
+                        model = getModel(list, cellVal);
+                        if (model == null) {
                             throw new IOException("没找到父类:" + cellVal);
                         }
-                    }else{
+                    } else {
                         third.add(new Model(cellVal, model.getCode() + "10" + (r + 1), model.getCode()));
                         model.setChildren(third);
                     }
@@ -142,25 +188,25 @@ public class ExcelTest2 {
         output(list);
     }
 
-    private static Model getModel(List<Model> list, String cellVal){
-        for (Model modelSet : list){
-           for(Model model :  modelSet.getChildren()){
-               if(model.getName().equals(cellVal)){
-                   return model;
-               }
-           }
+    private static Model getModel(List<Model> list, String cellVal) {
+        for (Model modelSet : list) {
+            for (Model model : modelSet.getChildren()) {
+                if (model.getName().equals(cellVal)) {
+                    return model;
+                }
+            }
         }
         return null;
     }
 
-    private static void output(List<Model> list){
+    private static void output(List<Model> list) {
         StringBuilder builder = new StringBuilder();
         for (Model model : list) {
             builder.append(model.getName()).append(",").append(model.getCode()).append(",").append(model.getParentCode()).append("\r\n");
-            for(Model childmodel : model.getChildren()){
+            for (Model childmodel : model.getChildren()) {
                 builder.append(childmodel.getName()).append(",").append(childmodel.getCode()).append(",").append(childmodel.getParentCode()).append("\r\n");
-                if(childmodel.getChildren()!=null){
-                    for(Model childmodel2 : childmodel.getChildren()){
+                if (childmodel.getChildren() != null) {
+                    for (Model childmodel2 : childmodel.getChildren()) {
                         builder.append(childmodel2.getName()).append(",").append(childmodel2.getCode()).append(",").append(childmodel2.getParentCode()).append("\r\n");
                     }
                 }
