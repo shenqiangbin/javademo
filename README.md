@@ -45,3 +45,6 @@ ImgUtil.thumbnailImg(new File("d:/th.jpg"),400,null,outputStream);
 * 支持 *.mdb文件类型 (2007版本的文件格式待测)
 ### 获取服务器目录结构 [BrowseHelper.java](https://github.com/shenqiangbin/javademo/blob/master/src/main/java/fileDemo/BrowseHelper.java)
 
+
+### CSV文件读取终极解决方案 [FastCSV](https://github.com/shenqiangbin/javademo/blob/master/src/main/java/ExcelDemo/CSVReader4.java)
+不推荐 OpenCSV，HuTool中的CSV，SuperCSV
