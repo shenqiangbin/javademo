@@ -141,6 +141,21 @@
             <version>1.18</version>
         </dependency>
 
+        <!-- 解压缩2 -->
+        <dependency>
+            <groupId>net.lingala.zip4j</groupId>
+            <artifactId>zip4j</artifactId>
+            <version>2.6.1</version>
+        </dependency>
+
+        <!-- 解压缩2 文件字符编码识别 -->
+        <!-- https://mvnrepository.com/artifact/com.googlecode.juniversalchardet/juniversalchardet -->
+        <dependency>
+            <groupId>com.googlecode.juniversalchardet</groupId>
+            <artifactId>juniversalchardet</artifactId>
+            <version>1.0.3</version>
+        </dependency>
+
         <dependency>
             <groupId>io.lettuce</groupId>
             <artifactId>lettuce-core</artifactId>

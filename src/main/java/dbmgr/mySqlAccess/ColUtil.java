@@ -24,6 +24,28 @@ public class ColUtil {
                 "图书_ISBN              \n" +
                 "图书_版次                \n" +
                 "一手分类                 ";
+
+        content = "出版单位\n" +
+                "文章类型\n" +
+                "卷期号\n" +
+                "版本号\n" +
+                "页数\n" +
+                "DOI\n" +
+                "报纸_字数\n" +
+                "报纸_版权\n" +
+                "报纸_作品集\n" +
+                "报纸_文件号\n" +
+                "期刊_字数\n" +
+                "期刊_版权\n" +
+                "期刊_作品集\n" +
+                "图书_字数\n" +
+                "图书_版权\n" +
+                "图书_编辑\n" +
+                "图书_系列\n" +
+                "文章_字数\n" +
+                "文章_版权\n" +
+                "文章_重印";
+
         System.out.println(toSplitWith(content));
         System.out.println(toKbasePara(content));
 
@@ -82,6 +104,51 @@ public class ColUtil {
 
         String r = concat(cols, colNames, "as");
         System.out.println(r);
+
+        String some = "keyWord\n" +
+                "关键词\n" +
+                "summary\n" +
+                "摘要\n" +
+                "fullText\n" +
+                "全文\n" +
+                "belongSubject\n" +
+                "所属专题\n" +
+                "publicTime\n" +
+                "发布时间/成果完成时间\n" +
+                "referTitle\n" +
+                "引证标题 (多个以 | 分割）\n" +
+                "referContent\n" +
+                "引证内容 (多个以 | 分割）\n" +
+                "language\n" +
+                "语言\n" +
+                "newspaper_name\n" +
+                "报纸名称\n" +
+                "newspaper_year\n" +
+                "报纸年\n" +
+                "newspaper_qihao\n" +
+                "报纸_期号\n" +
+                "newspaper_banhao\n" +
+                "报纸_版号\n" +
+                "periodical_name\n" +
+                "期刊_期刊名称\n" +
+                "periodical_org\n" +
+                "期刊_机构\n" +
+                "periodical_year\n" +
+                "期刊_年\n" +
+                "periodical_period\n" +
+                "期刊_期\n" +
+                "periodical_issn\n" +
+                "期刊_ISSN\n" +
+                "periodical_cn\n" +
+                "期刊_CN\n" +
+                "book_isbn\n" +
+                "图书_ISBN\n" +
+                "book_edition\n" +
+                "图书_版次\n" +
+                "category\n" +
+                "一手分类";
+        String result = concatOneAndTwo(some);
+        System.out.println(result);
     }
 
     /**
@@ -152,5 +219,15 @@ public class ColUtil {
 
         return String.join(",", list);
 
+    }
+    public static String concatOneAndTwo(String content){
+        String val = toSplitWith(content);
+        String[] colsArr = val.split(",");
+
+        List<String> list = new ArrayList<>();
+        for (int i = 0; i < colsArr.length; i=i+2) {
+            list.add("|title\t|String| 标题".replace("title",colsArr[i]).replace("标题",colsArr[i+1]));
+        }
+        return String.join("\n", list);
     }
 }

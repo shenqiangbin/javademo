@@ -6,6 +6,8 @@ import sun.misc.BASE64Encoder;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.List;
 
 // 类似 commons-io 下的 FileUtils
 public class FileHelper {
@@ -16,7 +18,7 @@ public class FileHelper {
             int len = path.length();
             int num2 = len;
 
-            while(true) {
+            while (true) {
                 --num2;
                 if (num2 < 0) {
                     break;
@@ -50,7 +52,7 @@ public class FileHelper {
             int len = path.length();
             int num2 = len;
 
-            while(true) {
+            while (true) {
                 --num2;
                 if (num2 < 0) {
                     break;
@@ -67,6 +69,33 @@ public class FileHelper {
     }
 
     /**
+     * 在指定目录按文件名字查找文件（包括子目录）
+     * @param dir
+     * @param name
+     * @return 返回找到得对象集合
+     * @throws FileNotFoundException
+     */
+    public static List<File> findFile(String dir, String name) throws FileNotFoundException {
+        List<File> list = new ArrayList<>();
+        File file = new File(dir);
+        if (!file.exists()) {
+            throw new FileNotFoundException("目录不存在");
+        }
+        if (file.isFile()) {
+            if(file.getName().equalsIgnoreCase(name)){
+                list.add(file);
+            }
+        } else {
+            File[] files = file.listFiles();
+            for (int i = 0; i < files.length; i++) {
+                String root = files[i].getAbsolutePath();
+                list.addAll(FileHelper.findFile(root, name));
+            }
+        }
+        return list;
+    }
+
+    /**
      * 创建文件
      *
      * @param filePath
@@ -75,7 +104,7 @@ public class FileHelper {
     public static boolean createFile(String filePath) throws Exception {
 
         boolean flag = false;
-        File fileName=new File(filePath);
+        File fileName = new File(filePath);
         try {
             if (!fileName.exists()) {
                 fileName.createNewFile();
@@ -98,7 +127,7 @@ public class FileHelper {
         FileReader fileReader = null;
         BufferedReader bufferedReader = null;
         try {
-            File fileName=new File(filePath);
+            File fileName = new File(filePath);
             fileReader = new FileReader(fileName);
             bufferedReader = new BufferedReader(fileReader);
             try {
@@ -123,21 +152,19 @@ public class FileHelper {
         return result;
     }
 
-    public static boolean writeTxtFile(String content, String filePath,boolean isUnicode, boolean append) throws Exception {
+    public static boolean writeTxtFile(String content, String filePath, boolean isUnicode, boolean append) throws Exception {
         RandomAccessFile mm = null;
         boolean flag = false;
         FileOutputStream o = null;
         try {
-            File fileName=new File(filePath);
-            if(!fileName.exists())
-            {
+            File fileName = new File(filePath);
+            if (!fileName.exists()) {
                 fileName.createNewFile();
             }
             o = new FileOutputStream(fileName, append);
-            if(isUnicode)
-            {
+            if (isUnicode) {
                 o.write(content.getBytes("GBK"));
-            }else {
+            } else {
                 o.write(content.getBytes("UTF-8"));
             }
             o.close();
@@ -154,7 +181,7 @@ public class FileHelper {
     }
 
     public static boolean deleteTxtFile(String filePath) throws Exception {
-        File fileName=new File(filePath);
+        File fileName = new File(filePath);
         try {
             if (!fileName.exists()) {
                 return false;
@@ -168,6 +195,7 @@ public class FileHelper {
 
     /**
      * 将本地文件转换成字节形式的字符串，并通过 base64 加密
+     *
      * @param path
      * @return
      * @throws IOException
@@ -192,6 +220,7 @@ public class FileHelper {
 
     /**
      * 将本地文件转换成字节形式的字符串，并通过 base64 加密
+     *
      * @param path
      * @return
      * @throws IOException
@@ -199,7 +228,7 @@ public class FileHelper {
     public static String fileToByteConentWithCharater(String path) throws IOException {
         FileInputStream fileInputStream = null;
         ByteArrayOutputStream arrayOutputStream = null;
-        try{
+        try {
             fileInputStream = new FileInputStream(path);
             //ByteArrayInputStream inputStream = new ByteArrayInputStream(fileInputStream);
 
@@ -209,8 +238,8 @@ public class FileHelper {
             while ((ch = fileInputStream.read()) != -1) {
                 arrayOutputStream.write(ch);
             }
-        }finally {
-            if(fileInputStream != null){
+        } finally {
+            if (fileInputStream != null) {
                 fileInputStream.close();
             }
         }
@@ -257,6 +286,7 @@ public class FileHelper {
 
     /**
      * 将 base64 加密后的字节字符串转换成本地文件
+     *
      * @param path
      * @param content
      * @throws IOException
