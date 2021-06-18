@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -117,6 +118,47 @@ public class MySqlHelper {
             }
         }
         return list;
+    }
+
+    public <T> List<T> simpleQueryBatch(String sql, List<List<Object>> paramsList, Class<T> type) throws Exception {
+
+        List<String> sqlBuilder = new ArrayList<>();
+        List<Object> paraList = new ArrayList<>();
+
+        for (int i = 0; i < paramsList.size(); i++) {
+            sqlBuilder.add(sql);
+            paraList.addAll(paramsList.get(i));
+        }
+
+        String theSql = String.join(" union ", sqlBuilder);
+        return this.simpleQuery(theSql, paraList.toArray(), type);
+    }
+
+    public <T> List<T> simpleQueryBatch(String sql, List<List<Object>> paramsList, Class<T> type, int batchNumber) throws Exception {
+
+        List<T> result = new ArrayList<>();
+        List<String> sqlBuilder = new ArrayList<>();
+        List<Object> paraList = new ArrayList<>();
+
+        for (int i = 0; i < paramsList.size(); i++) {
+            sqlBuilder.add(sql);
+            paraList.addAll(paramsList.get(i));
+
+            if ((i + 1) % batchNumber == 0) {
+                String theSql = String.join(" union ", sqlBuilder);
+                result.addAll(this.simpleQuery(theSql, paraList.toArray(), type));
+
+                sqlBuilder.clear();
+                paraList.clear();
+            }
+        }
+
+        if (sqlBuilder.size() > 0 && paraList.size() > 0) {
+            String theSql = String.join(" union ", sqlBuilder);
+            result.addAll(this.simpleQuery(theSql, paraList.toArray(), type));
+        }
+
+        return result;
     }
 
     public List<LinkedHashMap<String, Object>> simpleQuery(Connection connection, String sql, Object[] params) throws Exception {

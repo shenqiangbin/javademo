@@ -1,5 +1,7 @@
 import common.P;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.FastDateFormat;
 
 
 import java.text.SimpleDateFormat;
@@ -8,14 +10,36 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.Locale;
+import java.util.TimeZone;
 
 
 public class TestJava {
 
     public static void main(String[] args) throws Exception {
 
-        String sql = String.format("'%s','%s'",1,2,3);
-        String sql2 = String.format("'%s','%s','%s'",1,2,3);
+        Date now = new Date();
+        String val = DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.format(now);
+        String val2 = FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ssZZ", TimeZone.getTimeZone("Asia/Shanghai")).format(now);
+        // UTC 时间
+        String val3 = FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ssZZ", TimeZone.getTimeZone("GMT")).format(now);
+        System.out.println(val);
+        System.out.println(val2);
+        System.out.println(val3);
+
+        String str = "2021-06-03T17:50:23+08:00";
+        str = val;
+        Date d = DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.parse(str);
+        //DateFormatUtils.SMTP_DATETIME_FORMAT
+        String s = DateFormatUtils.format(d, "yyyy-MM-dd HH:mm:ss");
+        System.out.println(s);
+
+        String text = "2017-09-28 21:27:27.7042867";
+        Date d2 = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:sss", TimeZone.getTimeZone("Asia/Shanghai")).parse(text);
+
+
+        String sql = String.format("'%s','%s'", 1, 2, 3);
+        String sql2 = String.format("'%s','%s','%s'", 1, 2, 3);
         System.out.println(sql);
         System.out.println(sql2);
 

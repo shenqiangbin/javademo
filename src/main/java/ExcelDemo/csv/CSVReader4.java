@@ -15,6 +15,7 @@ public class CSVReader4 {
     public static void main(String[] args) throws IOException {
 
         String file = "/Users/adminqian/my/test.csv";
+        file = "/Users/adminqian/my/国统局合作_宏观经济指标体系.xlsx";
         String charset = "utf-8";
 
         CsvReader csv = CsvReader.builder().build(Paths.get(file), Charset.forName(charset));

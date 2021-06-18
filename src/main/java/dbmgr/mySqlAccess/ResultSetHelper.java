@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -35,12 +36,16 @@ public class ResultSetHelper {
                         if (field.getName().equalsIgnoreCase(colName)) {
                             field.setAccessible(true);
 
-                            if(field.getType() == Double.class){
-                                if(val==null)
-                                    field.set(instance,null);
+                            if (field.getType() == Double.class) {
+                                if (val == null)
+                                    field.set(instance, null);
                                 else
                                     field.set(instance, Double.parseDouble(val.toString()));
-                            }else{
+                            } else if (field.getType() == String.class) {
+                                field.set(instance, resultSet.getString(i));
+                            } else if (field.getType() == Date.class) {
+                                field.set(instance, resultSet.getDate(i));
+                            } else {
                                 field.set(instance, val);
                             }
                         }

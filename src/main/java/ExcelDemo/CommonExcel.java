@@ -9,9 +9,8 @@ import org.apache.poi.ss.usermodel.*;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class CommonExcel {
 
@@ -158,9 +157,12 @@ public class CommonExcel {
         String file = "F:\\daoru.xlsx";
         //file = "F:\\daoru.csv";
         file = "d:/data/1.xlsx";
+        file = "/Users/adminqian/my/国统局合作_宏观经济指标体系.xlsx";
 
         final String[] validateMsg = {""};
         List<List<String>> abc = new ArrayList<>();
+        List<String> zhibiao = new ArrayList<>();
+        Set<String> sets = new HashSet<>();
         CommonExcel commonExcel = new CommonExcel(file, new ICommonResultHandler() {
 
             @Override
@@ -174,9 +176,15 @@ public class CommonExcel {
 
             @Override
             public String store(List<String> cellVals, List<String> titles) {
-                System.out.println(cellVals);
-                System.out.println(titles);
+                //System.out.println(cellVals);
+                //System.out.println(titles);
                 abc.add(cellVals);
+                zhibiao.add(cellVals.get(0).trim());
+                if(sets.contains(cellVals.get(0).trim())){
+                    System.out.println(cellVals.get(0));
+                }
+
+                sets.add(cellVals.get(0).trim());
                 return "ok";
             }
 
@@ -186,6 +194,8 @@ public class CommonExcel {
             }
         });
         commonExcel.handle();
+
+        List<String> s = zhibiao.stream().filter( m -> !sets.contains(m)).collect(Collectors.toList());
 
         if(validateMsg[0] != ""){
             // 格式不对，直接提示给用户
