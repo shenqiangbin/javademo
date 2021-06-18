@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -120,29 +121,31 @@ public class MySqlHelper {
         return list;
     }
 
-    public <T> List<T> simpleQueryBatch(String sql, List<List<Object>> paramsList, Class<T> type) throws Exception {
+    public <T> List<T> simpleQueryBatch(String sql, Collection<List<Object>> paramsList, Class<T> type) throws Exception {
 
         List<String> sqlBuilder = new ArrayList<>();
         List<Object> paraList = new ArrayList<>();
 
-        for (int i = 0; i < paramsList.size(); i++) {
+        for (List<Object> item : paramsList) {
             sqlBuilder.add(sql);
-            paraList.addAll(paramsList.get(i));
+            paraList.addAll(item);
         }
 
         String theSql = String.join(" union ", sqlBuilder);
         return this.simpleQuery(theSql, paraList.toArray(), type);
     }
 
-    public <T> List<T> simpleQueryBatch(String sql, List<List<Object>> paramsList, Class<T> type, int batchNumber) throws Exception {
+    // 修改成 Collection 的目的是为了可以传递 HashSet（去除重复的参数列表）
+    public <T> List<T> simpleQueryBatch(String sql, Collection<List<Object>> paramsList, Class<T> type, int batchNumber) throws Exception {
 
         List<T> result = new ArrayList<>();
         List<String> sqlBuilder = new ArrayList<>();
         List<Object> paraList = new ArrayList<>();
 
-        for (int i = 0; i < paramsList.size(); i++) {
+        int i = 0;
+        for (List<Object> item : paramsList) {
             sqlBuilder.add(sql);
-            paraList.addAll(paramsList.get(i));
+            paraList.addAll(item);
 
             if ((i + 1) % batchNumber == 0) {
                 String theSql = String.join(" union ", sqlBuilder);
@@ -151,6 +154,8 @@ public class MySqlHelper {
                 sqlBuilder.clear();
                 paraList.clear();
             }
+
+            i++;
         }
 
         if (sqlBuilder.size() > 0 && paraList.size() > 0) {
