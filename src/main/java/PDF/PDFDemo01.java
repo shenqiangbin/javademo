@@ -4,8 +4,17 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
+import org.apache.commons.io.FilenameUtils;
 
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class PDFDemo01 {
 
@@ -20,8 +29,13 @@ public class PDFDemo01 {
         //createAPdf();
         //setBgAndProperty();
         //setPwd();
-        splitPdf();
+        //splitPdf();
+        //splitPdf("/Users/adminqian/git/javademo/splitPDF.pdf", 1);
+        //splitPdf("/Users/adminqian/git/javademo/splitPDF.pdf", 2);
+        //splitPdf("/Users/adminqian/git/javademo/splitPDF.pdf", 3);
+        splitPdf("/Users/adminqian/git/javademo/扫描件.pdf", 3);
 
+        System.out.println("over");
     }
 
     static void createAPdf() throws Exception {
@@ -156,5 +170,73 @@ public class PDFDemo01 {
 
     }
 
+    /**
+     * 按每n页拆分pdf文件
+     *
+     * @param pdf
+     * @param pageCountPerPdf
+     * @throws IOException
+     * @throws DocumentException
+     */
+    static void splitPdf(String pdf, int pageCountPerPdf) throws IOException, DocumentException {
+        PdfReader reader = new PdfReader(pdf);
+        // 获取总页数
+        int totalNumber = reader.getNumberOfPages();
 
+        // 要输出几个 pdf 文件
+        int loop = totalNumber % pageCountPerPdf == 0 ? totalNumber / pageCountPerPdf : (totalNumber / pageCountPerPdf) + 1;
+
+        int pageNumber = 1;
+
+        List<Integer> pageNumbers = new ArrayList<>();
+        for (int i = 1; i <= loop; i++) {
+            pageNumbers = new ArrayList<>();
+            while (pageNumber <= pageCountPerPdf * i && pageNumber <= totalNumber) {
+                pageNumbers.add(pageNumber);
+                pageNumber++;
+            }
+            writeOnePdf(pdf, i, reader, pageNumbers);
+        }
+
+    }
+
+    /**
+     * @param origiFile   原始文件路径
+     * @param pdfIndex    要生成的第几个pdf
+     * @param reader      原始pdf的reader
+     * @param pageNumbers 原始pdf的页码集合
+     * @throws FileNotFoundException
+     * @throws DocumentException
+     */
+    static void writeOnePdf(String origiFile, int pdfIndex, PdfReader reader, List<Integer> pageNumbers) throws FileNotFoundException, DocumentException {
+
+        String newFile = getNewFileName(origiFile, pdfIndex);
+
+        Document doc = new Document();
+
+        PdfWriter writer = PdfWriter.getInstance(doc, new FileOutputStream(newFile));
+        doc.open();
+
+        PdfContentByte cb = writer.getDirectContent();
+
+        for (int pageNumber : pageNumbers) {
+            doc.newPage();
+            cb.addTemplate(writer.getImportedPage(reader, pageNumber), 0, 0);
+        }
+
+        doc.close();
+    }
+
+    static String getNewFileName(String origiFile, int pdfIndex) {
+        String path = FilenameUtils.getFullPath(origiFile);
+        String filenameWithoutExt = FilenameUtils.getBaseName(origiFile);
+        String extension = FilenameUtils.getExtension(origiFile);
+        String newFileName = filenameWithoutExt + "_" + pdfIndex + "." + extension;
+
+        return FilenameUtils.concat(path, newFileName);
+    }
+
+
+    // pdf 旋转
+    // pdf 压缩
 }
