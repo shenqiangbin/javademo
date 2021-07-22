@@ -1,9 +1,7 @@
 package PDF;
 
 import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.*;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.FileNotFoundException;
@@ -20,6 +18,12 @@ public class PDFDemo01 {
 
     /**
      * 参考：https://www.cnblogs.com/liaojie970/p/7132475.html
+     * <p>
+     * 相关库还有 Flying sauser
+     * <p>
+     * pdf 旋转
+     * pdf 切割 + 旋转 同时进行
+     * pdf 切割 + 旋转 + 输出到压缩包 同时进行 ？？ pdfReader 也可以直接读取流
      *
      * @param args
      * @throws Exception
@@ -34,7 +38,11 @@ public class PDFDemo01 {
         //splitPdf("/Users/adminqian/git/javademo/splitPDF.pdf", 2);
         //splitPdf("/Users/adminqian/git/javademo/splitPDF.pdf", 3);
         //splitPdf("/Users/adminqian/git/javademo/扫描件.pdf", 3);
-        splitPdf("/Users/adminqian/git/javademo/扫描件.pdf", "1,2-9");
+        List<RotateConfig> list = new ArrayList<>();
+        list.add(new RotateConfig(1, 90));
+        list.add(new RotateConfig(3, 90));
+        splitPdf("/Users/adminqian/git/javademo/扫描件.pdf", "1,2-9", list);
+        //rotate("/Users/adminqian/git/javademo/扫描件.pdf", list);
 
         System.out.println("over");
     }
@@ -177,10 +185,12 @@ public class PDFDemo01 {
      * @param pdf
      * @param customRule 1-2,5,6-9 支持中文的逗号
      */
-    static void splitPdf(String pdf, String customRule) throws IOException, DocumentException {
+    static void splitPdf(String pdf, String customRule, List<RotateConfig> rotateConfigs) throws IOException, DocumentException {
         PdfReader reader = new PdfReader(pdf);
         // 获取总页数
         int totalNumber = reader.getNumberOfPages();
+
+        rotate(reader, rotateConfigs);
 
         customRule = customRule.replace("，", ",");
 
@@ -219,10 +229,12 @@ public class PDFDemo01 {
      * @throws IOException
      * @throws DocumentException
      */
-    static void splitPdf(String pdf, int pageCountPerPdf) throws IOException, DocumentException {
+    static void splitPdf(String pdf, int pageCountPerPdf, List<RotateConfig> rotateConfigs) throws IOException, DocumentException {
         PdfReader reader = new PdfReader(pdf);
         // 获取总页数
         int totalNumber = reader.getNumberOfPages();
+
+        rotate(reader, rotateConfigs);
 
         // 要输出几个 pdf 文件
         int loop = totalNumber % pageCountPerPdf == 0 ? totalNumber / pageCountPerPdf : (totalNumber / pageCountPerPdf) + 1;
@@ -249,34 +261,68 @@ public class PDFDemo01 {
      * @throws FileNotFoundException
      * @throws DocumentException
      */
-    static void writeOnePdf(String origiFile, int pdfIndex, PdfReader reader, List<Integer> pageNumbers) throws FileNotFoundException, DocumentException {
+    static void writeOnePdf(String origiFile, int pdfIndex, PdfReader reader, List<Integer> pageNumbers) throws IOException, DocumentException {
 
-        String newFile = getNewFileName(origiFile, pdfIndex);
+        String newFile = getNewFileName(origiFile, String.valueOf(pdfIndex));
 
         Document doc = new Document();
 
-        PdfWriter writer = PdfWriter.getInstance(doc, new FileOutputStream(newFile));
+        //PdfWriter writer = PdfWriter.getInstance(doc, new FileOutputStream(newFile));
+        PdfCopy p = new PdfSmartCopy(doc, new FileOutputStream(newFile)); // 生成的目标PDF文件
+
         doc.open();
 
-        PdfContentByte cb = writer.getDirectContent();
+        //PdfContentByte cb = writer.getDirectContent();
 
         for (int pageNumber : pageNumbers) {
-            doc.newPage();
-            cb.addTemplate(writer.getImportedPage(reader, pageNumber), 0, 0);
+            //doc.newPage();
+            //PdfImportedPage pdfImportedPage = writer.getImportedPage(reader, pageNumber);
+            //cb.addTemplate(pdfImportedPage, 0, 0);
+            p.addPage(p.getImportedPage(reader, pageNumber));
+
         }
 
         doc.close();
     }
 
-    static String getNewFileName(String origiFile, int pdfIndex) {
+    static String getNewFileName(String origiFile, String other) {
         String path = FilenameUtils.getFullPath(origiFile);
         String filenameWithoutExt = FilenameUtils.getBaseName(origiFile);
         String extension = FilenameUtils.getExtension(origiFile);
-        String newFileName = filenameWithoutExt + "_" + pdfIndex + "." + extension;
+        String newFileName = filenameWithoutExt + "_" + other + "." + extension;
 
         return FilenameUtils.concat(path, newFileName);
     }
 
+
+    static void rotate(PdfReader reader, List<RotateConfig> rotateConfigs) {
+        if (rotateConfigs == null || rotateConfigs.size() == 0)
+            return;
+
+        for (RotateConfig config : rotateConfigs) {
+            PdfDictionary dictionary = reader.getPageN(config.getPage());
+            dictionary.put(PdfName.ROTATE, new PdfNumber(config.getRotate()));
+        }
+    }
+
+    static void rotate(String pdf, List<RotateConfig> rotateConfigs) throws IOException, DocumentException {
+        PdfReader reader = new PdfReader(pdf);
+        // 获取总页数
+        int totalNumber = reader.getNumberOfPages();
+        rotate(reader, rotateConfigs);
+
+        Document doc = new Document();
+        String newFile = getNewFileName(pdf, "旋转");
+        PdfCopy p = new PdfSmartCopy(doc, new FileOutputStream(newFile)); // 生成的目标PDF文件
+        doc.open();
+
+        for (int i = 1; i <= totalNumber; i++) {
+            p.addPage(p.getImportedPage(reader, i));
+        }
+
+        doc.close();
+
+    }
 
     // pdf 旋转
     // pdf 压缩
