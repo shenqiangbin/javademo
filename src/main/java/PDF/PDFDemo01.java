@@ -33,7 +33,8 @@ public class PDFDemo01 {
         //splitPdf("/Users/adminqian/git/javademo/splitPDF.pdf", 1);
         //splitPdf("/Users/adminqian/git/javademo/splitPDF.pdf", 2);
         //splitPdf("/Users/adminqian/git/javademo/splitPDF.pdf", 3);
-        splitPdf("/Users/adminqian/git/javademo/扫描件.pdf", 3);
+        //splitPdf("/Users/adminqian/git/javademo/扫描件.pdf", 3);
+        splitPdf("/Users/adminqian/git/javademo/扫描件.pdf", "1,2-9");
 
         System.out.println("over");
     }
@@ -171,6 +172,46 @@ public class PDFDemo01 {
     }
 
     /**
+     * 按自定义规则拆分 pdf
+     *
+     * @param pdf
+     * @param customRule 1-2,5,6-9 支持中文的逗号
+     */
+    static void splitPdf(String pdf, String customRule) throws IOException, DocumentException {
+        PdfReader reader = new PdfReader(pdf);
+        // 获取总页数
+        int totalNumber = reader.getNumberOfPages();
+
+        customRule = customRule.replace("，", ",");
+
+        String[] pageRanges = customRule.split(",");
+        for (int i = 1; i <= pageRanges.length; i++) {
+            List<Integer> pageNumbers = getPageNumbers(pageRanges[i - 1], totalNumber);
+            writeOnePdf(pdf, i, reader, pageNumbers);
+        }
+    }
+
+    private static List<Integer> getPageNumbers(String pageRange, int totalNumber) {
+        List<Integer> pageNumbers = new ArrayList<>();
+
+        String[] pageRangeArr = pageRange.split("-");
+        if (pageRangeArr.length == 2) {
+            int min = Integer.parseInt(pageRangeArr[0]);
+            int max = Integer.parseInt(pageRangeArr[1]);
+            for (int i = min; i <= max; i++) {
+                if (i <= totalNumber)
+                    pageNumbers.add(i);
+            }
+        } else {
+            int pageNum = Integer.parseInt(pageRange);
+            if (pageNum <= totalNumber)
+                pageNumbers.add(pageNum);
+        }
+
+        return pageNumbers;
+    }
+
+    /**
      * 按每n页拆分pdf文件
      *
      * @param pdf
@@ -188,7 +229,7 @@ public class PDFDemo01 {
 
         int pageNumber = 1;
 
-        List<Integer> pageNumbers = new ArrayList<>();
+        List<Integer> pageNumbers;
         for (int i = 1; i <= loop; i++) {
             pageNumbers = new ArrayList<>();
             while (pageNumber <= pageCountPerPdf * i && pageNumber <= totalNumber) {
