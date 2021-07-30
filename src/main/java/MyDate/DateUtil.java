@@ -9,7 +9,7 @@ import java.util.List;
 
 public class DateUtil {
 
-    private enum Type {
+    public enum Type {
         MILLISECONDS,
         SECOND,
         MINUTE,

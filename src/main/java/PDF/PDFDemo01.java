@@ -1,28 +1,53 @@
 package PDF;
 
+import MyDate.DateUtil;
+import MyImage.ImgUtil;
 import com.itextpdf.text.*;
+import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.*;
+import com.itextpdf.text.pdf.parser.ImageRenderInfo;
+import com.itextpdf.text.pdf.parser.PdfImageObject;
+import net.coobird.thumbnailator.Thumbnails;
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.lucene.analysis.CharArrayMap;
+import org.apache.pdfbox.cos.COSName;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageTree;
+import org.apache.pdfbox.pdmodel.PDResources;
+import org.apache.pdfbox.pdmodel.graphics.PDXObject;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.MemoryCacheImageOutputStream;
+import java.awt.*;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class PDFDemo01 {
 
     /**
      * 参考：https://www.cnblogs.com/liaojie970/p/7132475.html
      * <p>
-     * 相关库还有 Flying sauser
+     * 相关库还有 Flying sauser， Free Spire.PDF https://www.cnblogs.com/Yesi/p/11206330.html
      * <p>
      * pdf 旋转
      * pdf 切割 + 旋转 同时进行
+     * pdf 切割 + 旋转 + 压缩(图片压缩) 同时进行
      * pdf 切割 + 旋转 + 输出到压缩包 同时进行 ？？ pdfReader 也可以直接读取流
      *
      * @param args
@@ -39,10 +64,24 @@ public class PDFDemo01 {
         //splitPdf("/Users/adminqian/git/javademo/splitPDF.pdf", 3);
         //splitPdf("/Users/adminqian/git/javademo/扫描件.pdf", 3);
         List<RotateConfig> list = new ArrayList<>();
-        list.add(new RotateConfig(1, 90));
-        list.add(new RotateConfig(3, 90));
-        splitPdf("/Users/adminqian/git/javademo/扫描件.pdf", "1,2-9", list);
+        list.add(new RotateConfig(1, -90));
+        list.add(new RotateConfig(2, -90));
+        //splitPdf("/Users/adminqian/git/javademo/扫描件.pdf", "1,2-9", list);
         //rotate("/Users/adminqian/git/javademo/扫描件.pdf", list);
+
+
+        String file = "/Users/adminqian/my/工作居住证/工作居住证/申强宾户口页&本页.pdf";
+        // 这个文件反而变大了
+        file = "/Users/adminqian/Desktop/tmp/Hive编程指南.pdf";
+
+        Date from = new Date();
+        //compress(file);
+        System.out.println(DateUtil.diff(from, new Date(), DateUtil.Type.SECOND));
+
+        from = new Date();
+        //compress2(file);
+        test(file);
+        System.out.println(DateUtil.diff(from, new Date(), DateUtil.Type.SECOND));
 
         System.out.println("over");
     }
@@ -283,6 +322,37 @@ public class PDFDemo01 {
         }
 
         doc.close();
+
+//        Collection<File> filesToArchive = ...
+//        try (ArchiveOutputStream o = ... create the stream for your format ...) {
+//            for (File f : filesToArchive) {
+//                // maybe skip directories for formats like AR that don't store directories
+//                ArchiveEntry entry = o.createArchiveEntry(f, entryName(f));
+//                // potentially add more flags to entry
+//                o.putArchiveEntry(entry);
+//                if (f.isFile()) {
+//                    try (InputStream i = Files.newInputStream(f.toPath())) {
+//                        IOUtils.copy(i, o);
+//                    }
+//                }
+//                o.closeArchiveEntry();
+//            }
+//            out.finish();
+//        }
+
+//        ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(FILE_DIR + "zipPDF.zip"));
+//        for (int i = 1; i <= 3; i++) {
+//            ZipEntry entry = new ZipEntry("hello_" + i + ".pdf");
+//            zip.putNextEntry(entry);
+//            Document document = new Document();
+//            PdfWriter writer = PdfWriter.getInstance(document, zip);
+//            writer.setCloseStream(false);
+//            document.open();
+//            document.add(new Paragraph("Hello " + i));
+//            document.close();
+//            zip.closeEntry();
+//        }
+//        zip.close();
     }
 
     static String getNewFileName(String origiFile, String other) {
@@ -294,6 +364,8 @@ public class PDFDemo01 {
         return FilenameUtils.concat(path, newFileName);
     }
 
+
+    // pdf 旋转
 
     static void rotate(PdfReader reader, List<RotateConfig> rotateConfigs) {
         if (rotateConfigs == null || rotateConfigs.size() == 0)
@@ -307,23 +379,263 @@ public class PDFDemo01 {
 
     static void rotate(String pdf, List<RotateConfig> rotateConfigs) throws IOException, DocumentException {
         PdfReader reader = new PdfReader(pdf);
-        // 获取总页数
-        int totalNumber = reader.getNumberOfPages();
+
         rotate(reader, rotateConfigs);
 
-        Document doc = new Document();
-        String newFile = getNewFileName(pdf, "旋转");
-        PdfCopy p = new PdfSmartCopy(doc, new FileOutputStream(newFile)); // 生成的目标PDF文件
-        doc.open();
+        String newFile = getNewFileName(pdf, "旋转12");
+        PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(newFile));
+        stamper.close();
 
-        for (int i = 1; i <= totalNumber; i++) {
-            p.addPage(p.getImportedPage(reader, i));
-        }
 
-        doc.close();
+        // 获取总页数
+//        int totalNumber = reader.getNumberOfPages();
+//        //rotate(reader, rotateConfigs);
+//
+//        Document doc = new Document();
+//        String newFile = getNewFileName(pdf, "旋转");
+//        PdfCopy p = new PdfSmartCopy(doc, new FileOutputStream(newFile)); // 生成的目标PDF文件
+//        doc.open();
+//
+//        for (int i = 1; i <= totalNumber; i++) {
+//            p.addPage(p.getImportedPage(reader, i));
+//        }
+//
+//        doc.close();
 
     }
 
-    // pdf 旋转
+
     // pdf 压缩
+
+    static void compress(String pdf) throws IOException, DocumentException {
+        PdfReader reader = new PdfReader(pdf);
+
+        compress(reader);
+
+        String newFile = getNewFileName(pdf, "压缩");
+        PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(newFile));
+        stamper.close();
+
+    }
+
+    static void compress(PdfReader reader) throws IOException {
+
+        int n = reader.getXrefSize();
+        for (int i = 0; i < n; i++) {
+
+            PdfObject object = reader.getPdfObject(i);
+
+            if (object == null || !object.isStream())
+                continue;
+
+            PRStream stream = (PRStream) object;
+
+//            Set<PdfName> pdfNameSet = stream.getKeys();
+//            for (PdfName pdfName : pdfNameSet) {
+//                System.out.printf(pdfName.toString());
+//                PdfObject obj = stream.get(pdfName);
+//            }
+
+            try {
+                PdfImageObject image = new PdfImageObject(stream);
+
+                BufferedImage bi = image.getBufferedImage();
+                byte[] bytes = image.getImageAsBytes();
+                //ImageIO.write(image.getBufferedImage(), "png", new FileOutputStream(i + "my.png"));
+
+                try {
+
+                    double scale = 0.25f;
+                    double quality = 1f;
+
+//                BufferedImage thumbnail = Thumbnails.of(bi)
+//                        .imageType(bi.getType())
+//                        .scale(scale)
+//                        .outputQuality(quality)
+//                        // .outputFormat(imageFormat)
+//                        .useOriginalFormat()
+//                        .asBufferedImage();
+                    BufferedImage thumbnail = bi;
+
+                    //BufferedImage resultImage = compressor.compress(bi, pdfImageObject.getFileType(), quality, scale);
+
+                    replaceImage(stream, thumbnail, bytes);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    break;
+                }
+
+            } catch (Exception e) {
+                // 报错，则不是图片
+            }
+
+        }
+
+        //stamper.close();
+        //reader.close();
+    }
+
+    static void replaceImage(PRStream stream, BufferedImage resultImage, byte[] bytes) throws IOException {
+
+        ByteArrayOutputStream imgBytes = new ByteArrayOutputStream();
+        //ImageIO.write(resultImage, "JPEG", imgBytes);
+        //writeImage(resultImage, imgBytes);
+        //Thumbnails.of(resultImage).toOutputStream(imgBytes);
+
+        imgBytes = getStream(resultImage);
+
+        PdfObject typeObj = stream.get(PdfName.TYPE);
+        PdfObject subTypeObj = stream.get(PdfName.SUBTYPE);
+        PdfObject filterObj = stream.get(PdfName.FILTER);
+        PdfObject bitObj = stream.get(PdfName.BITSPERCOMPONENT);
+        PdfObject decodeObj = stream.get(PdfName.DECODEPARMS);
+        PdfObject colorObj = stream.get(PdfName.COLORSPACE);
+
+        stream.clear();
+
+        stream.setData(imgBytes.toByteArray(), false, PRStream.NO_COMPRESSION);
+        //stream.setData(bytes, false, PRStream.NO_COMPRESSION);
+        stream.put(PdfName.TYPE, typeObj);
+        stream.put(PdfName.SUBTYPE, subTypeObj);
+        stream.put(PdfName.FILTER, filterObj);
+        stream.put(PdfName.WIDTH, new PdfNumber(resultImage.getWidth()));
+        stream.put(PdfName.HEIGHT, new PdfNumber(resultImage.getHeight()));
+        stream.put(PdfName.BITSPERCOMPONENT, bitObj);
+        stream.put(PdfName.DECODEPARMS, decodeObj);
+        stream.put(PdfName.COLORSPACE, colorObj);
+    }
+
+    static ByteArrayOutputStream getStream(BufferedImage resultImage) throws IOException {
+        ByteArrayOutputStream imgBytes = new ByteArrayOutputStream();
+        //ImageIO.write(resultImage, "JPEG", imgBytes);
+        MemoryCacheImageOutputStream memoryCacheImageOutputStream = new MemoryCacheImageOutputStream(imgBytes);
+        //writeImage(resultImage, memoryCacheImageOutputStream);
+        Thumbnails.of(resultImage).scale(1).outputQuality(0.2f).outputFormat("JPEG").toOutputStream(imgBytes);
+        imgBytes.flush();
+        System.out.println("here");
+        return imgBytes;
+    }
+
+    static void writeImage(BufferedImage fileBufferd, MemoryCacheImageOutputStream stream) throws IOException {
+        //这么写是为了防止使用ImageIO.write后失真
+        Iterator<ImageWriter> iter = ImageIO.getImageWritersByFormatName("jpg");
+        if (iter.hasNext()) {
+            ImageWriter writer = iter.next();
+            ImageWriteParam param = writer.getDefaultWriteParam();
+
+            param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+            //param.setCompressionQuality(0.92f);
+            param.setCompressionQuality(0.2f);
+            writer.setOutput(stream);
+            // writer.write(bi);
+            writer.write(null, new IIOImage(fileBufferd, null, null), param);
+            stream.close();
+            writer.dispose();
+        }
+    }
+
+    static void compress2(String file) throws IOException {
+
+        PDDocument document = PDDocument.load(new File(file));
+
+        PDPageTree pages = document.getDocumentCatalog().getPages();
+        Iterator<PDPage> iter = pages.iterator();
+        int count = 0;
+        while (iter.hasNext()) {
+            PDPage page = iter.next();
+            PDResources resources = page.getResources();
+            for (COSName c : resources.getXObjectNames()) {
+                PDXObject o = resources.getXObject(c);
+                // https://github.com/mkl-public/testarea-itext5/blob/master/src/test/java/mkl/testarea/itext5/extract/ImageExtraction.java
+                if (o instanceof PDImageXObject) {
+                    PDImageXObject image = (PDImageXObject) o;
+                    //File file = new File(imageDir, pageIndex + "-" + System.nanoTime() + "." + img.getSuffix());
+                    ImageIO.write(((PDImageXObject) o).getImage(), image.getSuffix(), new FileOutputStream("1"));
+
+                    //BufferedImage thumbnail = compressImg(image.getImage());
+                    BufferedImage thumbnail = image.getImage();
+
+                    //BufferedImage resultImage = compressor.compress(bi, pdfImageObject.getFileType(), quality, scale);
+                    ByteArrayOutputStream imgBytes = new ByteArrayOutputStream();
+                    ImageIO.write(thumbnail, "JPG", imgBytes);
+                    //image.getN
+                    PDImageXObject newObj = PDImageXObject.createFromByteArray(document, imgBytes.toByteArray(), "1");
+                    resources.put(c, newObj);
+                }
+            }
+        }
+
+        String newFile = getNewFileName(file, "压缩2");
+        document.save(new FileOutputStream(newFile));
+    }
+
+    static BufferedImage compressImg(BufferedImage bi) throws IOException {
+        //ImageIO.write(image.getBufferedImage(), "png", new FileOutputStream(i + "my.png"));
+
+        double scale = 0.25f;
+        double quality = 1f;
+
+        BufferedImage thumbnail = Thumbnails.of(bi)
+                .imageType(bi.getType())
+                .scale(scale)
+                .outputQuality(quality)
+                // .outputFormat(imageFormat)
+                .useOriginalFormat()
+                .asBufferedImage();
+        return thumbnail;
+    }
+
+
+    static void test(String file) throws IOException {
+
+        PDDocument document = PDDocument.load(new File(file));
+
+        PDPageTree pages = document.getDocumentCatalog().getPages();
+        Iterator<PDPage> iter = pages.iterator();
+        int count = 0;
+        while (iter.hasNext()) {
+            PDPage page = iter.next();
+            PDResources resources = page.getResources();
+            for (COSName c : resources.getXObjectNames()) {
+                PDXObject o = resources.getXObject(c);
+                // https://github.com/mkl-public/testarea-itext5/blob/master/src/test/java/mkl/testarea/itext5/extract/ImageExtraction.java
+                if (o instanceof PDImageXObject) {
+                    PDImageXObject image = (PDImageXObject) o;
+                    //File file = new File(imageDir, pageIndex + "-" + System.nanoTime() + "." + img.getSuffix());
+                    FileOutputStream stream = new FileOutputStream(count++ + "." + image.getSuffix());
+                    //ImageIO.write(((PDImageXObject) o).getImage(), image.getSuffix(), stream);
+                    //ImageIO.write(((PDImageXObject) o).getImage(), "tif", stream);
+                    //Thumbnails.of(image.getImage()).scale(1).outputQuality(1f).outputFormat(image.getSuffix()).toOutputStream(stream);
+
+                    toImg(image.getSuffix(), stream, image.getImage());
+
+
+                    //stream.flush();
+                    //stream.close();
+
+                }
+            }
+            System.out.println("ok");
+        }
+
+    }
+
+    static void toImg(String format, OutputStream stream, RenderedImage fileBufferd) throws IOException {
+        //这么写是为了防止使用ImageIO.write后失真
+        Iterator<ImageWriter> iter = ImageIO.getImageWritersByFormatName(format);
+        if (iter.hasNext()) {
+            ImageWriter writer = iter.next();
+            ImageWriteParam param = writer.getDefaultWriteParam();
+
+            param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+            //param.setCompressionQuality(0.92f);
+            param.setCompressionQuality(0.2f);
+            writer.setOutput(stream);
+            // writer.write(bi);
+            writer.write(null, new IIOImage(fileBufferd, null, null), param);
+            stream.close();
+            writer.dispose();
+        }
+    }
+
 }
