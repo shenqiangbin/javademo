@@ -5,8 +5,11 @@ import MyImage.ImgUtil;
 import com.itextpdf.text.*;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.*;
+import com.itextpdf.text.pdf.codec.TIFFDirectory;
+import com.itextpdf.text.pdf.codec.TIFFField;
 import com.itextpdf.text.pdf.parser.ImageRenderInfo;
 import com.itextpdf.text.pdf.parser.PdfImageObject;
+import com.twelvemonkeys.imageio.plugins.tiff.TIFFImageMetadata;
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
@@ -20,10 +23,9 @@ import org.apache.pdfbox.pdmodel.PDResources;
 import org.apache.pdfbox.pdmodel.graphics.PDXObject;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
+import javax.imageio.*;
+import javax.imageio.stream.FileImageOutputStream;
+import javax.imageio.stream.ImageOutputStreamImpl;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
 import java.awt.*;
 import java.awt.Image;
@@ -55,6 +57,8 @@ public class PDFDemo01 {
      */
     public static void main(String[] args) throws Exception {
 
+        String[] arr = ImageIO.getWriterFileSuffixes();
+
         //createAPdf();
         //setBgAndProperty();
         //setPwd();
@@ -73,14 +77,15 @@ public class PDFDemo01 {
         String file = "/Users/adminqian/my/工作居住证/工作居住证/申强宾户口页&本页.pdf";
         // 这个文件反而变大了
         file = "/Users/adminqian/Desktop/tmp/Hive编程指南.pdf";
+        //file = "/Users/adminqian/Desktop/tmp/Hive编程指南_compressed.pdf";
 
         Date from = new Date();
-        //compress(file);
+        compress(file);
         System.out.println(DateUtil.diff(from, new Date(), DateUtil.Type.SECOND));
 
         from = new Date();
         //compress2(file);
-        test(file);
+        //test(file);
         System.out.println(DateUtil.diff(from, new Date(), DateUtil.Type.SECOND));
 
         System.out.println("over");
@@ -412,7 +417,7 @@ public class PDFDemo01 {
 
         compress(reader);
 
-        String newFile = getNewFileName(pdf, "压缩");
+        String newFile = getNewFileName(pdf, "压缩5");
         PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(newFile));
         stamper.close();
 
@@ -439,6 +444,15 @@ public class PDFDemo01 {
             try {
                 PdfImageObject image = new PdfImageObject(stream);
 
+                String str = "图片类型：" + image.getFileType();
+                String widthstr = "宽：" + image.getBufferedImage().getWidth();
+                String heightstr = "高：" + image.getBufferedImage().getHeight();
+                for (PdfName key : image.getDictionary().getKeys()) {
+                    PdfObject pdfObject = image.getDictionary().get(key);
+                    String s = pdfObject.toString();
+                    System.out.println(key + ": " + s);
+                }
+
                 BufferedImage bi = image.getBufferedImage();
                 byte[] bytes = image.getImageAsBytes();
                 //ImageIO.write(image.getBufferedImage(), "png", new FileOutputStream(i + "my.png"));
@@ -460,6 +474,7 @@ public class PDFDemo01 {
                     //BufferedImage resultImage = compressor.compress(bi, pdfImageObject.getFileType(), quality, scale);
 
                     replaceImage(stream, thumbnail, bytes);
+
                 } catch (Exception e) {
                     e.printStackTrace();
                     break;
@@ -491,15 +506,18 @@ public class PDFDemo01 {
         PdfObject decodeObj = stream.get(PdfName.DECODEPARMS);
         PdfObject colorObj = stream.get(PdfName.COLORSPACE);
 
+
         stream.clear();
 
         stream.setData(imgBytes.toByteArray(), false, PRStream.NO_COMPRESSION);
+        //stream.setData(imgBytes, false, PRStream.NO_COMPRESSION);
+
         //stream.setData(bytes, false, PRStream.NO_COMPRESSION);
         stream.put(PdfName.TYPE, typeObj);
         stream.put(PdfName.SUBTYPE, subTypeObj);
         stream.put(PdfName.FILTER, filterObj);
-        stream.put(PdfName.WIDTH, new PdfNumber(resultImage.getWidth()));
-        stream.put(PdfName.HEIGHT, new PdfNumber(resultImage.getHeight()));
+        stream.put(PdfName.WIDTH, new PdfNumber(resultImage.getWidth() / 4));
+        stream.put(PdfName.HEIGHT, new PdfNumber(resultImage.getHeight() / 4));
         stream.put(PdfName.BITSPERCOMPONENT, bitObj);
         stream.put(PdfName.DECODEPARMS, decodeObj);
         stream.put(PdfName.COLORSPACE, colorObj);
@@ -510,7 +528,11 @@ public class PDFDemo01 {
         //ImageIO.write(resultImage, "JPEG", imgBytes);
         MemoryCacheImageOutputStream memoryCacheImageOutputStream = new MemoryCacheImageOutputStream(imgBytes);
         //writeImage(resultImage, memoryCacheImageOutputStream);
-        Thumbnails.of(resultImage).scale(1).outputQuality(0.2f).outputFormat("JPEG").toOutputStream(imgBytes);
+//        Thumbnails.of(resultImage).outputQuality(1f)
+//                .width(resultImage.getWidth() / 4)
+//                .height(resultImage.getHeight() / 4)
+//                .outputFormat("tiff").toOutputStream(imgBytes);
+        //TiffOutput.TiffOutput(resultImage, imgBytes, 300);
         imgBytes.flush();
         System.out.println("here");
         return imgBytes;
@@ -550,14 +572,18 @@ public class PDFDemo01 {
                 if (o instanceof PDImageXObject) {
                     PDImageXObject image = (PDImageXObject) o;
                     //File file = new File(imageDir, pageIndex + "-" + System.nanoTime() + "." + img.getSuffix());
-                    ImageIO.write(((PDImageXObject) o).getImage(), image.getSuffix(), new FileOutputStream("1"));
+                    //ImageIO.write(((PDImageXObject) o).getImage(), image.getSuffix(), new FileOutputStream(count++ + ".tiff"));
 
                     //BufferedImage thumbnail = compressImg(image.getImage());
-                    BufferedImage thumbnail = image.getImage();
+                    //BufferedImage thumbnail = image.getImage();
 
                     //BufferedImage resultImage = compressor.compress(bi, pdfImageObject.getFileType(), quality, scale);
                     ByteArrayOutputStream imgBytes = new ByteArrayOutputStream();
-                    ImageIO.write(thumbnail, "JPG", imgBytes);
+                    //ImageIO.write(thumbnail, "JPG", imgBytes);
+
+                    //TiffOutput.TiffOutput(image.getImage(), imgBytes, 300);
+                    TiffOutput.TiffOutput(image.getImage(), imgBytes, 300);
+
                     //image.getN
                     PDImageXObject newObj = PDImageXObject.createFromByteArray(document, imgBytes.toByteArray(), "1");
                     resources.put(c, newObj);
@@ -601,14 +627,16 @@ public class PDFDemo01 {
                 // https://github.com/mkl-public/testarea-itext5/blob/master/src/test/java/mkl/testarea/itext5/extract/ImageExtraction.java
                 if (o instanceof PDImageXObject) {
                     PDImageXObject image = (PDImageXObject) o;
+
                     //File file = new File(imageDir, pageIndex + "-" + System.nanoTime() + "." + img.getSuffix());
-                    FileOutputStream stream = new FileOutputStream(count++ + "." + image.getSuffix());
+                    FileOutputStream stream = new FileOutputStream(new File("/Users/adminqian/Desktop/tmp/compress2/" + count++ + "-min2." + image.getSuffix()));
                     //ImageIO.write(((PDImageXObject) o).getImage(), image.getSuffix(), stream);
                     //ImageIO.write(((PDImageXObject) o).getImage(), "tif", stream);
                     //Thumbnails.of(image.getImage()).scale(1).outputQuality(1f).outputFormat(image.getSuffix()).toOutputStream(stream);
 
-                    toImg(image.getSuffix(), stream, image.getImage());
-
+                    FileImageOutputStream stream2 = new FileImageOutputStream(new File("/Users/adminqian/Desktop/tmp/compress/" + count++ + "-min2." + image.getSuffix()));
+                    //toImg(image.getSuffix(), stream2, image.getImage());
+                    TiffOutput.TiffOutput(image.getImage(), stream, 300);
 
                     //stream.flush();
                     //stream.close();
@@ -620,16 +648,28 @@ public class PDFDemo01 {
 
     }
 
-    static void toImg(String format, OutputStream stream, RenderedImage fileBufferd) throws IOException {
+    // 这个可以将 tif 的图片保存到本地，并可以打开正常查看。
+    static void toImg(String format, ImageOutputStreamImpl stream, RenderedImage fileBufferd) throws IOException {
         //这么写是为了防止使用ImageIO.write后失真
+
+
         Iterator<ImageWriter> iter = ImageIO.getImageWritersByFormatName(format);
         if (iter.hasNext()) {
             ImageWriter writer = iter.next();
             ImageWriteParam param = writer.getDefaultWriteParam();
 
-            param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-            //param.setCompressionQuality(0.92f);
-            param.setCompressionQuality(0.2f);
+            //param.setTilingMode();
+            //param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+            //param.setCompressionType("CCITT T.6");
+            //param.setCompressionType("JPEGJPEG");
+            //param.setCompressionType("LZW");
+
+            //ImageTypeSpecifier imageType = ImageTypeSpecifier.createFromRenderedImage(fileBufferd);
+            //TIFFImageMetadata imageMetadata = (TIFFImageMetadata) writer.getDefaultImageMetadata(imageType, param);
+            //imageMetadata = createImageMetadata(imageMetadata, fileBufferd.getHeight(), fileBufferd.getWidth(), dpi, compression, fileBufferd.getType());
+
+            //param.setCompressionQuality(0.2f);
+//            param.setCompressionQuality(1f);
             writer.setOutput(stream);
             // writer.write(bi);
             writer.write(null, new IIOImage(fileBufferd, null, null), param);
@@ -637,5 +677,6 @@ public class PDFDemo01 {
             writer.dispose();
         }
     }
+
 
 }

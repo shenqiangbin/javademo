@@ -50,9 +50,9 @@
 
         <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
         <!--<dependency>-->
-            <!--<groupId>mysql</groupId>-->
-            <!--<artifactId>mysql-connector-java</artifactId>-->
-            <!--<version>5.1.39</version>-->
+        <!--<groupId>mysql</groupId>-->
+        <!--<artifactId>mysql-connector-java</artifactId>-->
+        <!--<version>5.1.39</version>-->
         <!--</dependency>-->
 
         <dependency>
@@ -95,16 +95,16 @@
         </dependency>
 
         <!--<dependency>-->
-            <!--<groupId>org.mongodb</groupId>-->
-            <!--<artifactId>mongodb-driver-sync</artifactId>-->
-            <!--<version>3.10.1</version>-->
+        <!--<groupId>org.mongodb</groupId>-->
+        <!--<artifactId>mongodb-driver-sync</artifactId>-->
+        <!--<version>3.10.1</version>-->
         <!--</dependency>-->
 
         <!-- https://mvnrepository.com/artifact/org.mongodb/mongodb-driver -->
         <!--<dependency>-->
-            <!--<groupId>org.mongodb</groupId>-->
-            <!--<artifactId>mongodb-driver</artifactId>-->
-            <!--<version>3.10.1</version>-->
+        <!--<groupId>org.mongodb</groupId>-->
+        <!--<artifactId>mongodb-driver</artifactId>-->
+        <!--<version>3.10.1</version>-->
         <!--</dependency>-->
 
         <dependency>
@@ -150,11 +150,11 @@
 
         <!-- 解压缩2 文件字符编码识别 -->
         <!-- https://mvnrepository.com/artifact/com.googlecode.juniversalchardet/juniversalchardet -->
-        <dependency>
+        <Tdependency>
             <groupId>com.googlecode.juniversalchardet</groupId>
             <artifactId>juniversalchardet</artifactId>
             <version>1.0.3</version>
-        </dependency>
+        </Tdependency>
 
         <dependency>
             <groupId>io.lettuce</groupId>
@@ -370,13 +370,87 @@
             <version>2.0.15</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.twelvemonkeys.imageio</groupId>
+            <artifactId>imageio-tiff</artifactId>
+            <version>3.3.2</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/javax.media/jai-core -->
+        <dependency>
+            <groupId>javax.media</groupId>
+            <artifactId>jai-core</artifactId>
+            <version>1.1.3</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/javax.media/jai_codec -->
+        <dependency>
+            <groupId>javax.media</groupId>
+            <artifactId>jai_codec</artifactId>
+            <version>1.1.3</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/pdf/jai_codec-1.1.3.jar</systemPath>
+        </dependency>
+
+
+        <!-- https://mvnrepository.com/artifact/javax.media/jai_imageio -->
+        <dependency>
+            <groupId>javax.media</groupId>
+            <artifactId>jai_imageio</artifactId>
+            <version>1.1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/pdf/jai_imageio-1.1.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.media</groupId>
+            <artifactId>clibwrapper_jiio</artifactId>
+            <version>1.2</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/pdf/clibwrapper_jiio-1.2-pre-dr-b04.jar</systemPath>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.dameng</groupId>
+            <artifactId>Dm8JdbcDriver18</artifactId>
+            <version>1.0.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/DmJdbcDriver18.jar</systemPath>
+        </dependency>
+
+
     </dependencies>
 
     <!--<repositories>-->
-        <!--<repository>-->
-            <!--<id>central</id>-->
-            <!--<url>https://jitpack.io</url>-->
-        <!--</repository>-->
+    <!--<repository>-->
+    <!--<id>central</id>-->
+    <!--<url>https://jitpack.io</url>-->
+    <!--</repository>-->
     <!--</repositories>-->
+
+    <repositories>
+        <!--<repository>-->
+        <!--<id>alimaven</id>-->
+        <!--<name>aliyun maven</name>-->
+        <!--<url>http://maven.aliyun.com/nexus/content/groups/public/</url>-->
+        <!--</repository>-->
+
+
+        <repository>
+            <id>geotoolkit</id>
+            <name>geotoolkit</name>
+            <url>https://mvnrepository.com/repos/geotoolkit</url>
+        </repository>
+
+        <repository>
+            <id>maven</id>
+            <name>maven</name>
+            <url>https://repo1.maven.org/maven2/</url>
+        </repository>
+
+
+
+    </repositories>
 
 </project>
