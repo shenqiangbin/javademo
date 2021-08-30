@@ -13,6 +13,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class MySqlHelperTest {
@@ -30,8 +31,11 @@ public class MySqlHelperTest {
         String text3 = text2.replace("\\n", "\n");
         System.out.println(text3);
 
-        HikariDataSource dataSource = new HikariDataSource(getConfig());
+        HikariDataSource dataSource = new HikariDataSource(getConfigDm());
         MySqlHelper mySqlHelper = new MySqlHelper(dataSource);
+
+        List<LinkedHashMap<String, Object>> result = mySqlHelper.simpleQuery("select banner from v$version", null);
+        System.out.println(result);
 
         String sql = "select * from file where name like ?";
         List<Object> paraList = new ArrayList<>();
@@ -210,4 +214,23 @@ public class MySqlHelperTest {
 
         return config;
     }
+
+    public static HikariConfig getConfigDm() {
+
+        HikariConfig config = new HikariConfig();
+
+        //config.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/test?useUnicode=true&characterEncoding=utf8&useSSL=false");
+
+        // config.setJdbcUrl("jdbc:mysql://192.168.100.92:3306/bd?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC");
+        config.setJdbcUrl("jdbc:dm://10.120.68.43:5236/BD");
+        config.setDriverClassName("dm.jdbc.driver.DmDriver");
+        config.setUsername("BD");
+        config.setPassword("bd123456789");
+        config.addDataSourceProperty("cachePrepStmts", "true");
+        config.addDataSourceProperty("prepStmtCacheSize", "250");
+        config.addDataSourceProperty("prepStmptCacheSqlLimit", "2048");
+
+        return config;
+    }
+
 }
