@@ -1,14 +1,14 @@
 package dbmgr.mySqlAccess;
 
+import dbmgr.mySqlAccess.model.PagedResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.text.MessageFormat;
+import java.util.*;
 
 public class MySqlHelper {
 
@@ -463,181 +463,360 @@ public class MySqlHelper {
         }
 
     }
-//
-//    public PagedResponse<LinkedHashMap<String, Object>> queryPage(String sql, String sumSql, int pageIndex, int pageSize) throws SQLException {
-//        PagedResponse<LinkedHashMap<String, Object>> result = new PagedResponse<>();
-//        result.setPageSize(pageSize);
-//        result.setCurrentPage(pageIndex);
-//        Connection conn = null;
-//        ResultSet rs = null;
-//        Statement pst = null;
-//        try {
-//
-//            conn = dataSource.getConnection();
-//            pst = conn.createStatement();
-//
-//            int startIndex = (pageIndex - 1) * pageSize;
-//            String querySql = String.format("%s limit %s,%s", sql, startIndex, pageSize);
-//
-//            rs = pst.executeQuery(querySql);
-//            if (rs == null) {
-//                return null;
-//            }
-//
-//            // 或正则，将select 和 from 中间的字符串替换成 count(0);
-//            String countSql = MessageFormat.format("select count(0) from ({0})t ", sql);
-//            if (!StringUtils.isEmpty(sumSql)) {
-//                countSql = sumSql;
-//            }
-//            String countStr = executeScalar(countSql, null);
-//            int rows = 0;
-//            if (!StringUtils.isEmpty(countStr)) {
-//                rows = Integer.parseInt(countStr);
-//            }
-//
-//            result.setTotalCount(rows);
-//
-//            int totalPage = rows / pageSize + (rows % pageSize == 0 ? 0 : 1);
-//            result.setTotalPage(totalPage);
-//
-//            List<LinkedHashMap<String, Object>> list = ResultSetHelper.toLinkedList(rs);
-//            result.setList(list);
-//
-//        } finally {
-//            try {
-//                if (rs != null && !rs.isClosed()) {
-//                    rs.close();
-//                }
-//                if (pst != null && !pst.isClosed()) {
-//                    pst.close();
-//                }
-//                if (conn != null && !conn.isClosed()) {
-//                    conn.close();
-//                }
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        return result;
-//    }
-//
-//    public PagedResponse<LinkedHashMap<String, Object>> queryPage(Connection connection,int dsType, String sql, String sumSql, int pageIndex, int pageSize) throws SQLException, ClassNotFoundException {
-//        PagedResponse<LinkedHashMap<String, Object>> result = new PagedResponse<>();
-//        result.setPageSize(pageSize);
-//        result.setCurrentPage(pageIndex);
-//        ResultSet rs = null;
-//        Statement pst = null;
-//        try {
-//            pst = connection.createStatement();
-//
-//            int startIndex = (pageIndex - 1) * pageSize;
-//            String querySql = "";
-//            if(dsType == 1){ // mysql
-//                querySql = String.format("%s limit %s,%s", sql, startIndex, pageSize);
-//            }else if(dsType == 2){ // postgresql
-//                querySql = String.format("%s limit %s offset %s", sql, pageSize, startIndex);
-//            }
-//
-//            rs = pst.executeQuery(querySql);
-//            if (rs == null) {
-//                return null;
-//            }
-//
-//            List<LinkedHashMap<String, Object>> list = ResultSetHelper.toLinkedList(rs);
-//            result.setList(list);
-//
-//            // 或正则，将select 和 from 中间的字符串替换成 count(0);
-//            String countSql = MessageFormat.format("select count(0) from ({0})t ", sql);
-//            if (!StringUtils.isEmpty(sumSql)) {
-//                countSql = sumSql;
-//            }
-//            String countStr = executeScalar(connection, countSql, null);
-//            int rows = 0;
-//            if (!StringUtils.isEmpty(countStr)) {
-//                rows = Integer.parseInt(countStr);
-//            }
-//
-//            result.setTotalCount(rows);
-//
-//            int totalPage = rows / pageSize + (rows % pageSize == 0 ? 0 : 1);
-//            result.setTotalPage(totalPage);
-//
-//
-//
-//        } finally {
-//            try {
-//                if (rs != null && !rs.isClosed()) {
-//                    rs.close();
-//                }
-//                if (pst != null && !pst.isClosed()) {
-//                    pst.close();
-//                }
-//                if (connection != null && !connection.isClosed()) {
-//                    connection.close();
-//                }
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        return result;
-//    }
-//
-//    public <T> PagedResponse<T> queryPage(String sql, String sumSql, int pageIndex, int pageSize, Class<T> type) throws SQLException, IllegalAccessException, NoSuchFieldException, InstantiationException {
-//        PagedResponse<T> result = new PagedResponse<>();
-//        result.setPageSize(pageSize);
-//        result.setCurrentPage(pageIndex);
-//        Connection conn = null;
-//        ResultSet rs = null;
-//        Statement pst = null;
-//        try {
-//
-//            conn = dataSource.getConnection();
-//            pst = conn.createStatement();
-//
-//            int startIndex = (pageIndex - 1) * pageSize;
-//            String querySql = String.format("%s limit %s,%s", sql, startIndex, pageSize);
-//
-//            rs = pst.executeQuery(querySql);
-//            if (rs == null) {
-//                return null;
-//            }
-//
-//            // 或正则，将select 和 from 中间的字符串替换成 count(0);
-//            String countSql = MessageFormat.format("select count(0) from ({0})t ", sql);
-//            if (!StringUtils.isEmpty(sumSql)) {
-//                countSql = sumSql;
-//            }
-//            String countStr = executeScalar(countSql, null);
-//            int rows = 0;
-//            if (!StringUtils.isEmpty(countStr)) {
-//                rows = Integer.parseInt(countStr);
-//            }
-//
-//            result.setTotalCount(rows);
-//
-//            int totalPage = rows / pageSize + (rows % pageSize == 0 ? 0 : 1);
-//            result.setTotalPage(totalPage);
-//
-//            List<T> list = ResultSetHelper.toList(rs, type);
-//            result.setList(list);
-//
-//        } finally {
-//            try {
-//                if (rs != null && !rs.isClosed()) {
-//                    rs.close();
-//                }
-//                if (pst != null && !pst.isClosed()) {
-//                    pst.close();
-//                }
-//                if (conn != null && !conn.isClosed()) {
-//                    conn.close();
-//                }
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        return result;
-//    }
 
+    public PagedResponse<LinkedHashMap<String, Object>> queryPage(String sql, String sumSql, int pageIndex, int pageSize) throws SQLException {
+        PagedResponse<LinkedHashMap<String, Object>> result = new PagedResponse<>();
+        result.setPageSize(pageSize);
+        result.setCurrentPage(pageIndex);
+        Connection conn = null;
+        ResultSet rs = null;
+        Statement pst = null;
+        try {
+            conn = dataSource.getConnection();
+            pst = conn.createStatement();
+
+            int startIndex = (pageIndex - 1) * pageSize;
+            String querySql = String.format("%s limit %s,%s", sql, startIndex, pageSize);
+
+            rs = pst.executeQuery(querySql);
+            if (rs == null) {
+                return null;
+            }
+
+            // 或正则，将select 和 from 中间的字符串替换成 count(0);
+            String countSql = MessageFormat.format("select count(0) from ({0})t ", sql);
+            if (!StringUtils.isEmpty(sumSql)) {
+                countSql = sumSql;
+            }
+            String countStr = executeScalar(countSql, null);
+            int rows = 0;
+            if (!StringUtils.isEmpty(countStr)) {
+                rows = Integer.parseInt(countStr);
+            }
+
+            result.setTotalCount(rows);
+
+            int totalPage = rows / pageSize + (rows % pageSize == 0 ? 0 : 1);
+            result.setTotalPage(totalPage);
+
+            List<LinkedHashMap<String, Object>> list = ResultSetHelper.toLinkedList(rs);
+            result.setList(list);
+
+        } finally {
+            try {
+                if (rs != null && !rs.isClosed()) {
+                    rs.close();
+                }
+                if (pst != null && !pst.isClosed()) {
+                    pst.close();
+                }
+                if (conn != null && !conn.isClosed()) {
+                    conn.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
+    public PagedResponse<LinkedHashMap<String, Object>> queryPage(String sql, Object[] params, String sumSql, int pageIndex, int pageSize) throws SQLException {
+        PagedResponse<LinkedHashMap<String, Object>> result = new PagedResponse<>();
+        result.setPageSize(pageSize);
+        result.setCurrentPage(pageIndex);
+        Connection conn = null;
+        ResultSet rs = null;
+        PreparedStatement pst = null;
+        try {
+
+            conn = dataSource.getConnection();
+            pst = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            if (params != null) {
+                for (int i = 0; i < params.length; i++) {
+                    pst.setObject(i + 1, params[i] == null ? "" : params[i]);
+                }
+            }
+
+            int startIndex = (pageIndex - 1) * pageSize;
+            String querySql = String.format("%s limit %s,%s", sql, startIndex, pageSize);
+
+            rs = pst.executeQuery(querySql);
+            if (rs == null) {
+                return null;
+            }
+
+            // 或正则，将select 和 from 中间的字符串替换成 count(0);
+            String countSql = MessageFormat.format("select count(0) from ({0})t ", sql);
+            if (!StringUtils.isEmpty(sumSql)) {
+                countSql = sumSql;
+            }
+            String countStr = executeScalar(countSql, Arrays.asList(params));
+            int rows = 0;
+            if (!StringUtils.isEmpty(countStr)) {
+                rows = Integer.parseInt(countStr);
+            }
+
+            result.setTotalCount(rows);
+
+            int totalPage = rows / pageSize + (rows % pageSize == 0 ? 0 : 1);
+            result.setTotalPage(totalPage);
+
+            List<LinkedHashMap<String, Object>> list = ResultSetHelper.toLinkedList(rs);
+            result.setList(list);
+
+        } finally {
+            try {
+                if (rs != null && !rs.isClosed()) {
+                    rs.close();
+                }
+                if (pst != null && !pst.isClosed()) {
+                    pst.close();
+                }
+                if (conn != null && !conn.isClosed()) {
+                    conn.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
+    public PagedResponse<LinkedHashMap<String, Object>> queryPage(Connection connection, int dsType, String sql, String sumSql, int pageIndex, int pageSize) throws SQLException, ClassNotFoundException {
+        PagedResponse<LinkedHashMap<String, Object>> result = new PagedResponse<>();
+        result.setPageSize(pageSize);
+        result.setCurrentPage(pageIndex);
+        ResultSet rs = null;
+        Statement pst = null;
+        try {
+            pst = connection.createStatement();
+
+            int startIndex = (pageIndex - 1) * pageSize;
+            String querySql = "";
+            if (dsType == 1) { // mysql
+                querySql = String.format("%s limit %s,%s", sql, startIndex, pageSize);
+            } else if (dsType == 2) { // postgresql
+                querySql = String.format("%s limit %s offset %s", sql, pageSize, startIndex);
+            }
+
+            rs = pst.executeQuery(querySql);
+            if (rs == null) {
+                return null;
+            }
+
+            List<LinkedHashMap<String, Object>> list = ResultSetHelper.toLinkedList(rs);
+            result.setList(list);
+
+            // 或正则，将select 和 from 中间的字符串替换成 count(0);
+            String countSql = MessageFormat.format("select count(0) from ({0})t ", sql);
+            if (!StringUtils.isEmpty(sumSql)) {
+                countSql = sumSql;
+            }
+            String countStr = executeScalar(connection, countSql, null);
+            int rows = 0;
+            if (!StringUtils.isEmpty(countStr)) {
+                rows = Integer.parseInt(countStr);
+            }
+
+            result.setTotalCount(rows);
+
+            int totalPage = rows / pageSize + (rows % pageSize == 0 ? 0 : 1);
+            result.setTotalPage(totalPage);
+
+
+        } finally {
+            try {
+                if (rs != null && !rs.isClosed()) {
+                    rs.close();
+                }
+                if (pst != null && !pst.isClosed()) {
+                    pst.close();
+                }
+                if (connection != null && !connection.isClosed()) {
+                    connection.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
+    public <T> PagedResponse<T> queryPage(String sql, String sumSql, int pageIndex, int pageSize, Class<T> type) throws SQLException, IllegalAccessException, NoSuchFieldException, InstantiationException {
+        PagedResponse<T> result = new PagedResponse<>();
+        result.setPageSize(pageSize);
+        result.setCurrentPage(pageIndex);
+        Connection conn = null;
+        ResultSet rs = null;
+        Statement pst = null;
+        try {
+
+            conn = dataSource.getConnection();
+            pst = conn.createStatement();
+
+            int startIndex = (pageIndex - 1) * pageSize;
+            String querySql = String.format("%s limit %s,%s", sql, startIndex, pageSize);
+
+            rs = pst.executeQuery(querySql);
+            if (rs == null) {
+                return null;
+            }
+
+            // 或正则，将select 和 from 中间的字符串替换成 count(0);
+            String countSql = MessageFormat.format("select count(0) from ({0})t ", sql);
+            if (!StringUtils.isEmpty(sumSql)) {
+                countSql = sumSql;
+            }
+            String countStr = executeScalar(countSql, null);
+            int rows = 0;
+            if (!StringUtils.isEmpty(countStr)) {
+                rows = Integer.parseInt(countStr);
+            }
+
+            result.setTotalCount(rows);
+
+            int totalPage = rows / pageSize + (rows % pageSize == 0 ? 0 : 1);
+            result.setTotalPage(totalPage);
+
+            List<T> list = ResultSetHelper.toList(rs, type);
+            result.setList(list);
+
+        } finally {
+            try {
+                if (rs != null && !rs.isClosed()) {
+                    rs.close();
+                }
+                if (pst != null && !pst.isClosed()) {
+                    pst.close();
+                }
+                if (conn != null && !conn.isClosed()) {
+                    conn.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
+    public <T> PagedResponse<T> queryPage(String sql, String sumSql, Object[] params, int pageIndex, int pageSize, Class<T> type) throws SQLException, IllegalAccessException, NoSuchFieldException, InstantiationException {
+        PagedResponse<T> result = new PagedResponse<>();
+        result.setPageSize(pageSize);
+        result.setCurrentPage(pageIndex);
+        Connection conn = null;
+        ResultSet rs = null;
+        PreparedStatement pst = null;
+        try {
+            conn = dataSource.getConnection();
+            pst = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            if (params != null) {
+                for (int i = 0; i < params.length; i++) {
+                    pst.setObject(i + 1, params[i] == null ? "" : params[i]);
+                }
+            }
+
+            int startIndex = (pageIndex - 1) * pageSize;
+            String querySql = String.format("%s limit %s,%s", sql, startIndex, pageSize);
+
+            rs = pst.executeQuery(querySql);
+            if (rs == null) {
+                return null;
+            }
+
+            // 或正则，将select 和 from 中间的字符串替换成 count(0);
+            String countSql = MessageFormat.format("select count(0) from ({0})t ", sql);
+            if (!StringUtils.isEmpty(sumSql)) {
+                countSql = sumSql;
+            }
+            String countStr = executeScalar(countSql, Arrays.asList(params));
+            int rows = 0;
+            if (!StringUtils.isEmpty(countStr)) {
+                rows = Integer.parseInt(countStr);
+            }
+
+            result.setTotalCount(rows);
+
+            int totalPage = rows / pageSize + (rows % pageSize == 0 ? 0 : 1);
+            result.setTotalPage(totalPage);
+
+            List<T> list = ResultSetHelper.toList(rs, type);
+            result.setList(list);
+
+        } finally {
+            try {
+                if (rs != null && !rs.isClosed()) {
+                    rs.close();
+                }
+                if (pst != null && !pst.isClosed()) {
+                    pst.close();
+                }
+                if (conn != null && !conn.isClosed()) {
+                    conn.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
+    public <T> PagedResponse<T> queryPage(Connection connection, String sql, String sumSql, Object[] params, int pageIndex, int pageSize, Class<T> type) throws SQLException, IllegalAccessException, NoSuchFieldException, InstantiationException {
+        PagedResponse<T> result = new PagedResponse<>();
+        result.setPageSize(pageSize);
+        result.setCurrentPage(pageIndex);
+        ResultSet rs = null;
+        PreparedStatement pst = null;
+        try {
+            pst = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            if (params != null) {
+                for (int i = 0; i < params.length; i++) {
+                    pst.setObject(i + 1, params[i] == null ? "" : params[i]);
+                }
+            }
+
+            int startIndex = (pageIndex - 1) * pageSize;
+            String querySql = String.format("%s limit %s,%s", sql, startIndex, pageSize);
+
+            rs = pst.executeQuery(querySql);
+            if (rs == null) {
+                return null;
+            }
+
+            // 或正则，将select 和 from 中间的字符串替换成 count(0);
+            String countSql = MessageFormat.format("select count(0) from ({0})t ", sql);
+            if (!StringUtils.isEmpty(sumSql)) {
+                countSql = sumSql;
+            }
+            String countStr = executeScalar(countSql, Arrays.asList(params));
+            int rows = 0;
+            if (!StringUtils.isEmpty(countStr)) {
+                rows = Integer.parseInt(countStr);
+            }
+
+            result.setTotalCount(rows);
+
+            int totalPage = rows / pageSize + (rows % pageSize == 0 ? 0 : 1);
+            result.setTotalPage(totalPage);
+
+            List<T> list = ResultSetHelper.toList(rs, type);
+            result.setList(list);
+
+        } finally {
+            try {
+                if (rs != null && !rs.isClosed()) {
+                    rs.close();
+                }
+                if (pst != null && !pst.isClosed()) {
+                    pst.close();
+                }
+                if (connection != null && !connection.isClosed()) {
+                    connection.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
 
 }
