@@ -1,5 +1,8 @@
 package ExcelDemo;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import dbmgr.mySqlAccess.MySqlHelper;
 import de.siegmar.fastcsv.reader.CsvReader;
 import de.siegmar.fastcsv.reader.CsvRow;
 import io.netty.util.internal.StringUtil;
@@ -15,16 +18,16 @@ import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.UserPrincipalNotFoundException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ExcelTest2 {
-    public static void main(String[] args) throws IOException, InvalidFormatException {
+    public static void main(String[] args) throws Exception {
 
         //hangye();
-        test();
+        //test();
+        sonbin();
     }
 
 //    private static CellProcessor[] getProcessors() {
@@ -57,9 +60,6 @@ public class ExcelTest2 {
 //        DataInputStream in = new DataInputStream(new FileInputStream(file));
 //        CSVReader reader = new CSVReader(new InputStreamReader(in, "utf-8"));
 //        List<String[]> list = reader.readAll();
-
-
-
 
 
     }
@@ -122,6 +122,137 @@ public class ExcelTest2 {
 
         output(list);
     }
+
+    public static void sonbin() throws Exception {
+
+        String filePath = "d:/编码表.xlsx";
+        InputStream stream = new FileInputStream(filePath);
+        Workbook wb = WorkbookFactory.create(stream);
+
+        Sheet sheet = wb.getSheetAt(0);
+
+        Row row = null;
+        int totalRow = sheet.getLastRowNum();
+
+        List<String> cells = new ArrayList<>();
+        String[] titles = null;
+
+        short minColIx = 0;
+        short maxColIx = 0;
+        List<Model> list = new ArrayList<>();
+
+        for (int r = 1; r <= sheet.getLastRowNum(); r++) {
+
+            cells = new ArrayList<>();
+            row = sheet.getRow(r);
+
+            minColIx = row.getFirstCellNum();
+            maxColIx = row.getLastCellNum();
+
+            Model model = null;
+            List<Model> second = new ArrayList<>();
+            List<Model> third = new ArrayList<>();
+
+            Cell cell = row.getCell(1);
+            String cellVal = getCellVal(cell);
+
+            model = new Model(getCellVal(row.getCell(1)),
+                    getCellVal(row.getCell(2)),
+                    getCellVal(row.getCell(3)),
+                    getCellVal(row.getCell(4)),
+                    getCellVal(row.getCell(5)),
+                    getCellVal(row.getCell(6)));
+
+            System.out.println(model);
+            list.add(model);
+            //System.out.println(r);
+            //System.out.println(Arrays.deepToString(cells.toArray()));
+        }
+
+        HikariDataSource dataSource = new HikariDataSource(getConfig());
+        MySqlHelper mySqlHelper = new MySqlHelper(dataSource);
+        handleModels(list, mySqlHelper);
+    }
+
+    private static void handleModels(List<Model> list, MySqlHelper mySqlHelper) throws Exception {
+        List<Model> orgList = list.stream().filter(m -> m.getCategory().equalsIgnoreCase("单位")).collect(Collectors.toList());
+        List<Model> deptList = list.stream().filter(m -> m.getCategory().equalsIgnoreCase("部门")).collect(Collectors.toList());
+        List<Model> sysList = list.stream().filter(m -> m.getCategory().equalsIgnoreCase("业务系统")).collect(Collectors.toList());
+
+//        for (Model item : orgList) {
+//            List<LinkedHashMap<String, Object>> countList = mySqlHelper.simpleQuery("select * from org where OrgFullName = ?", new Object[]{item.getCategoryName()});
+//            if (countList.size() > 0) {
+//                System.out.printf("已存在:" + item.getCategoryName() + " - " + countList.size());
+//            } else {
+//                int id = mySqlHelper.add("INSERT INTO `org` (`OrgName`, `OrgFullName`, `Status`, `CreateUser`, `CreateTime`, `ModifyUser`, `ModifyTime`) VALUES (?, ?, '1', 'sa', '2021-03-11 00:00:00', 'sa', '2021-05-25 17:56:37');"
+//                        , new Object[]{item.getCategoryName(), item.getCategoryName()});
+//            }
+//        }
+
+        //addDept(mySqlHelper, deptList);
+        addSys(mySqlHelper, sysList);
+
+        System.out.println("ok");
+    }
+
+    private static void addDept(MySqlHelper mySqlHelper, List<Model> deptList) throws Exception {
+        List<LinkedHashMap<String, Object>> orgList = mySqlHelper.simpleQuery("select * from org", new Object[]{});
+        for (LinkedHashMap<String, Object> orgItem : orgList) {
+            String orgId = orgItem.get("OrgID").toString();
+            for (Model item : deptList) {
+                List<LinkedHashMap<String, Object>> countList = mySqlHelper.simpleQuery("select * from department where DepartmentName = ? and orgId = ?", new Object[]{item.getCategoryName(), orgId});
+                if (countList.size() > 0) {
+                    System.out.printf("已存在:" + item.getCategoryName() + "-" + orgId + " - " + countList.size());
+                } else {
+                    int id = mySqlHelper.add("INSERT INTO `department` (`OrgID`, `DepartmentName`, `Status`, `CreateUser`, `CreateTime`, `ModifyUser`, `ModifyTime`) VALUES (?, ?, '1', 'sa', '2021-03-11 00:00:00', 'sa', '2021-05-25 17:56:37');"
+                            , new Object[]{orgId, item.getCategoryName()});
+                }
+            }
+        }
+    }
+
+    private static void addSys(MySqlHelper mySqlHelper, List<Model> sysList) throws Exception {
+        List<LinkedHashMap<String, Object>> orgList = mySqlHelper.simpleQuery("select * from department order by DepartmentID desc", new Object[]{});
+        List<List<Object>> paramsList = new ArrayList<>();
+
+        int i = 0;
+        for (LinkedHashMap<String, Object> orgItem : orgList) {
+            String orgId = orgItem.get("OrgID").toString();
+            String deptId = orgItem.get("DepartmentID").toString();
+            System.out.println("current:" + (i++));
+            for (Model item : sysList) {
+
+                paramsList.add(Arrays.asList(new Object[]{item.getCategoryName(), orgId, deptId, item.getCategoryName(), orgId, deptId}));
+
+                List<LinkedHashMap<String, Object>> countList = mySqlHelper.simpleQuery("select * from systeminfo where SystemName = ? and orgId = ? and DepartmentId = ?", new Object[]{item.getCategoryName(), orgId, deptId});
+                if (countList.size() > 0) {
+                    System.out.println("已存在:" + item.getCategoryName() + "-" + orgId + "-" + deptId + " - " + countList.size());
+                } else {
+
+                    int id = mySqlHelper.add("INSERT INTO `systeminfo` (`SystemName`, `SystemShortName`, `OrgID`, `DepartmentId`, `Status`, `CreateUser`, `CreateTime`, `ModifyUser`, `ModifyTime`) VALUES (?,?,?, ?, '1', 'sa', '2021-03-11 00:00:00', 'sa', '2021-05-25 17:56:37');"
+                            , new Object[]{item.getCategoryName(), item.getCategoryName(), orgId, deptId});
+                }
+            }
+        }
+
+//        List<Model2> list = mySqlHelper.simpleQueryBatch("select ? as col1,? as col2,? as col3 from systeminfo where SystemName = ? and orgId = ? and DepartmentId = ?", paramsList, Model2.class);
+//
+//        List<List<Object>> result = new ArrayList<>();
+//        for (List<Object> item : paramsList) {
+//
+//            long count = list.stream().filter(m -> m.getCol1().equalsIgnoreCase(item.get(0).toString())
+//                    && m.getCol2().equalsIgnoreCase(item.get(1).toString())
+//                    && m.getCol3().equalsIgnoreCase(item.get(1).toString()))
+//                    .count();
+//            if (count == 0) {
+//                result.add(item);
+//            }
+//        }
+//
+//        mySqlHelper.executeSqlBatch("INSERT INTO `systeminfo` (`SystemName`, `SystemShortName`, `OrgID`, `DepartmentId`, `Status`, `CreateUser`, `CreateTime`, `ModifyUser`, `ModifyTime`) VALUES (?,?,?, ?, '1', 'sa', '2021-03-11 00:00:00', 'sa', '2021-05-25 17:56:37');",
+//                result);
+    }
+
 
     public static void hangye() throws IOException, InvalidFormatException {
         List<Model> list = new ArrayList<>();
@@ -239,5 +370,24 @@ public class ExcelTest2 {
             cellVal = cell.getStringCellValue();
         }
         return cellVal;
+    }
+
+
+    public static HikariConfig getConfig() {
+
+        HikariConfig config = new HikariConfig();
+
+        //config.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/test?useUnicode=true&characterEncoding=utf8&useSSL=false");
+
+        // config.setJdbcUrl("jdbc:mysql://192.168.100.92:3306/bd?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC");
+        config.setJdbcUrl("jdbc:mysql://192.168.52.64:3306/bd_fj?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC");
+        config.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        config.setUsername("root");
+        config.setPassword("123456");
+        config.addDataSourceProperty("cachePrepStmts", "true");
+        config.addDataSourceProperty("prepStmtCacheSize", "250");
+        config.addDataSourceProperty("prepStmptCacheSqlLimit", "2048");
+
+        return config;
     }
 }

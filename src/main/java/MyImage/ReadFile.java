@@ -21,6 +21,17 @@ public class ReadFile {
         //readFile("d:/test/ttest/dic.txt");
         //readFile("d:/更新/107XT02_intermed_results.txt");
 
+        BASE64Encoder encoder = new BASE64Encoder();
+        BASE64Decoder decoder = new BASE64Decoder();
+        String val = new String(decoder.decodeBuffer("pbmR1"),"UTF-8");
+        String val2 = byteContentToString("55Sf5Lqn5oC75YC8");
+        String val22 = byteContentToString("MjgyLjg1");
+        String val222 = byteContentToString("5Lq/5YWD");
+
+
+        String s2 = "\\>规模以上工业企业利润比上年增长";
+
+        String str = encoder.encode(s2.getBytes());
 
         String s = "";
         Charset.forName("UTF-8");
@@ -30,7 +41,7 @@ public class ReadFile {
         String path = "D:\\datafortablebigdata\\extraExcel\\52\\统计公报\\2014年闽侯县国民经济和社会发展统计公报.txt"; // GB18030
         //path = "D:/code/TPI/大数据产品/表格大数据项目/功能/解析 html/file/html2.txt";
         path = "D:\\datafortablebigdata\\extraExcel\\52\\统计公报\\平潭综合实验区2019年国民经济和社会发展统计公报.txt";
-        String encode = detector(path);
+        //String encode = detector(path);
         // UTF-8
 
 
@@ -83,11 +94,18 @@ public class ReadFile {
 
         parseModel.getIndicators().forEach(m -> {
             System.out.println(m.getName() + " " + m.getUnit() + " " + m.getValue());
+            try {
+                System.out.println(byteContentToString(m.getName()) + " " + byteContentToString(m.getUnit()) + " " + byteContentToString(m.getValue()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         });
 
         parseModel.getExcels().forEach(m -> {
             try {
                 byteContentToFile(String.format("e:/abc/%s.xlsx", m.getTitle()), m.getContent());
+                byteContentToFile(String.format("e:/abc/%s.xlsx", byteContentToString(m.getTitle())), m.getContent());
             } catch (IOException e) {
                 e.printStackTrace();
             }
