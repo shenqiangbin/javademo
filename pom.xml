@@ -150,11 +150,11 @@
 
         <!-- 解压缩2 文件字符编码识别 -->
         <!-- https://mvnrepository.com/artifact/com.googlecode.juniversalchardet/juniversalchardet -->
-        <Tdependency>
+        <dependency>
             <groupId>com.googlecode.juniversalchardet</groupId>
             <artifactId>juniversalchardet</artifactId>
             <version>1.0.3</version>
-        </Tdependency>
+        </dependency>
 
         <dependency>
             <groupId>io.lettuce</groupId>
@@ -440,7 +440,8 @@
         <repository>
             <id>geotoolkit</id>
             <name>geotoolkit</name>
-            <url>https://mvnrepository.com/repos/geotoolkit</url>
+<!--            <url>https://mvnrepository.com/repos/geotoolkit</url>-->
+            <url>http://maven.geotoolkit.org/</url>
         </repository>
 
         <repository>

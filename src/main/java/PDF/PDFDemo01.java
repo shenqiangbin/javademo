@@ -76,8 +76,8 @@ public class PDFDemo01 {
 
         String file = "/Users/adminqian/my/工作居住证/工作居住证/申强宾户口页&本页.pdf";
         // 这个文件反而变大了
-        file = "/Users/adminqian/Desktop/tmp/Hive编程指南.pdf";
-        //file = "/Users/adminqian/Desktop/tmp/Hive编程指南_compressed.pdf";
+        String folderPath = PathUtil.getPath("file");
+        file = Paths.get(folderPath, "Hive编程指南.pdf").toString();
 
         Date from = new Date();
         compress(file);
