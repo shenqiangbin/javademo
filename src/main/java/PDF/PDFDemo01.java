@@ -80,11 +80,11 @@ public class PDFDemo01 {
         file = Paths.get(folderPath, "Hive编程指南.pdf").toString();
 
         Date from = new Date();
-        compress(file);
+        //compress(file);
         System.out.println(DateUtil.diff(from, new Date(), DateUtil.Type.SECOND));
 
         from = new Date();
-        //compress2(file);
+        compress2(file);
         //test(file);
         System.out.println(DateUtil.diff(from, new Date(), DateUtil.Type.SECOND));
 
@@ -307,7 +307,7 @@ public class PDFDemo01 {
      */
     static void writeOnePdf(String origiFile, int pdfIndex, PdfReader reader, List<Integer> pageNumbers) throws IOException, DocumentException {
 
-        String newFile = getNewFileName(origiFile, String.valueOf(pdfIndex));
+        String newFile = PathUtil.getNewFileName(origiFile, String.valueOf(pdfIndex));
 
         Document doc = new Document();
 
@@ -360,15 +360,6 @@ public class PDFDemo01 {
 //        zip.close();
     }
 
-    static String getNewFileName(String origiFile, String other) {
-        String path = FilenameUtils.getFullPath(origiFile);
-        String filenameWithoutExt = FilenameUtils.getBaseName(origiFile);
-        String extension = FilenameUtils.getExtension(origiFile);
-        String newFileName = filenameWithoutExt + "_" + other + "." + extension;
-
-        return FilenameUtils.concat(path, newFileName);
-    }
-
 
     // pdf 旋转
 
@@ -387,7 +378,7 @@ public class PDFDemo01 {
 
         rotate(reader, rotateConfigs);
 
-        String newFile = getNewFileName(pdf, "旋转12");
+        String newFile = PathUtil.getNewFileName(pdf, "旋转12");
         PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(newFile));
         stamper.close();
 
@@ -417,7 +408,7 @@ public class PDFDemo01 {
 
         compress(reader);
 
-        String newFile = getNewFileName(pdf, "压缩5");
+        String newFile = PathUtil.getNewFileName(pdf, "压缩5");
         PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(newFile));
         stamper.close();
 
@@ -591,7 +582,7 @@ public class PDFDemo01 {
             }
         }
 
-        String newFile = getNewFileName(file, "压缩2");
+        String newFile = PathUtil.getNewFileName(file, "压缩2");
         document.save(new FileOutputStream(newFile));
     }
 
