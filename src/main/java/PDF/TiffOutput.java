@@ -82,10 +82,12 @@ public class TiffOutput {
         param.setReverseFillOrder(true);
         //param.setCompression(TIFFEncodeParam.COMPRESSION_PACKBITS);
         param.setCompression(TIFFEncodeParam.COMPRESSION_GROUP4);
-        TIFFImageEncoder encoder = new TIFFImageEncoder(output, param);
+        //TIFFImageEncoder encoder = new TIFFImageEncoder(output, param);
 
 
         FileSeekableStream stream = new FileSeekableStream(path + "gmarbles.tif");
+        //stream = new FileSeekableStream(path + "gmarbles-apache.tif");
+        stream = new FileSeekableStream(path + "gmarbles-12-monkey-2(3).tif");
         //stream = new FileSeekableStream(path + "gmarbles 2.tif");
         TIFFDecodeParam decodeParam = new TIFFDecodeParam();
         TIFFImageDecoder decoder = new TIFFImageDecoder(stream, decodeParam);
@@ -97,6 +99,18 @@ public class TiffOutput {
 
         ColorModel colorModel = renderedImage.getColorModel();
         int pixelSize = colorModel.getPixelSize();
+
+        FileSeekableStream stream2 = new FileSeekableStream(path + "gmarbles.tif");
+        stream2 = new FileSeekableStream(path + "gmarbles 2.tif");
+
+        TIFFDecodeParam decodeParam2 = new TIFFDecodeParam();
+        TIFFImageDecoder decoder2 = new TIFFImageDecoder(stream2, decodeParam2);
+        //int pageNum = decoder.getNumPages();
+        //RenderedImage renderedImage = decoder.decodeAsRenderedImage(0);
+
+        RenderedImage renderedImage2 = decoder2.decodeAsRenderedImage();
+        TIFFImage tiffImage2 = (TIFFImage) renderedImage2;
+
 
         RenderedImage biLevelImage = RGBToBilevel(renderedImage, true);
 
@@ -123,7 +137,7 @@ public class TiffOutput {
         System.arraycopy(data, 0, rasterData, 0, data.length); // A LOT faster than 'setData()'
 
         //encoder.encode(renderedImage);
-        encoder.encode(biLevelImage);
+        //encoder.encode(biLevelImage);
 
 
 
