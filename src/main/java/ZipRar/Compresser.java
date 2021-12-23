@@ -5,6 +5,8 @@ import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
 
 import java.io.*;
@@ -22,11 +24,13 @@ public class Compresser {
         /**
          * 测试文件下载地址：链接：https://pan.baidu.com/s/12ugoP2Vx8Ui7chKVGaq-1w 提取码：w6qq
          */
-        String targetDir = "E:\\老子项目\\一手数据模板\\2";
-        String zipFile = "E:\\老子项目\\一手数据模板\\shuju.zip";
-        //doUnArchiver(new File(zipFile), targetDir);
-        decompressor(zipFile, targetDir);
-        decompressor2(zipFile, "E:\\老子项目\\一手数据模板\\22");
+//        String targetDir = "E:\\老子项目\\一手数据模板\\2";
+//        String zipFile = "E:\\老子项目\\一手数据模板\\shuju.zip";
+//        //doUnArchiver(new File(zipFile), targetDir);
+//        decompressor(zipFile, targetDir);
+//        decompressor2(zipFile, "E:\\老子项目\\一手数据模板\\22");
+
+        archive("/Users/adminqian/shenqb/book/Dubbo.zip", "/Users/adminqian/shenqb/book/Dubbo.pdf");
     }
 
     // 不行
@@ -129,4 +133,33 @@ public class Compresser {
         }
         return true;
     }
+
+    /**
+     * 压缩文件
+     *
+     * @param zipPath 生成的 zip 文件
+     * @param file    要压缩的文件
+     * @throws IOException
+     */
+    static void archive(String zipPath, String file) throws IOException {
+        File archive = new File(zipPath);
+        try (ZipArchiveOutputStream outputStream = new ZipArchiveOutputStream(archive)) {
+            // 可以设置压缩等级
+            outputStream.setLevel(5);
+            // 可以设置压缩算法，当前支持ZipEntry.DEFLATED和ZipEntry.STORED两种
+            outputStream.setMethod(ZipEntry.DEFLATED);
+
+            // 压缩包内不创建文件夹
+            ZipArchiveEntry entry = new ZipArchiveEntry(Paths.get(file).getFileName().toString());
+            // 在zip中创建一个文件
+            outputStream.putArchiveEntry(entry);
+            // 并写入内容
+            byte[] bytes = Files.readAllBytes(new File(file).toPath());
+            outputStream.write(bytes);
+            // 完成一个文件的写入
+            outputStream.closeArchiveEntry();
+        }
+    }
+
+
 }
