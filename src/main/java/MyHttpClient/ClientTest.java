@@ -24,8 +24,8 @@ import static org.apache.xmlbeans.impl.store.Public2.test;
 public class ClientTest {
     public static void main(String[] args) throws Exception {
         //testUpload();
-        //saveFileToLocal();
-        saveHtmlToLocal();
+        saveFileToLocal();
+        //saveHtmlToLocal();
     }
 
     public static void testUpload() throws Exception {
@@ -60,6 +60,7 @@ public class ClientTest {
     //保存文件到本地
     public static void saveFileToLocal() throws IOException {
         String url = "http://oimagec6.ydstatic.com/image?id=7347104849285270631&product=dict-homepage&w=&h=&fill=0&cw=&ch=&sbc=0&cgra=CENTER&of=jpeg";
+        //url = "http://localhost:8080/";
         HttpHelper.downloadFile(url, null, "e:/abc.png");
     }
 

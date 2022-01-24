@@ -18,6 +18,11 @@ public class PathUtil {
         return path.toString();
     }
 
+    public static void main(String[] args) {
+        String val = System.getProperty("JM.LOG.PATH");
+        System.out.println(val);
+    }
+
     /**
      * 在文件所在路径生成一个新的文件，返回文件路径
      * @param origiFile 文件位置

@@ -1,13 +1,17 @@
 package ExcelDemo;
 
+import PDF.PathUtil;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import dbmgr.mySqlAccess.MySqlHelper;
 import de.siegmar.fastcsv.reader.CsvReader;
 import de.siegmar.fastcsv.reader.CsvRow;
 import io.netty.util.internal.StringUtil;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.supercsv.cellprocessor.ift.CellProcessor;
 import org.supercsv.io.CsvMapReader;
 import org.supercsv.io.ICsvMapReader;
@@ -27,7 +31,9 @@ public class ExcelTest2 {
 
         //hangye();
         //test();
-        sonbin();
+        //sonbin();
+        // 把 EXCEL 按 Sheet 页进行拆分
+        test3();
     }
 
 //    private static CellProcessor[] getProcessors() {
@@ -50,6 +56,42 @@ public class ExcelTest2 {
 //
 //        return processors;
 //    }
+
+    public static void test3() throws IOException, InvalidFormatException {
+        InputStream stream = new FileInputStream("K:\\新建文件夹\\2021年工程类项目工作量汇总 - 副本.xlsx");
+        Workbook wb = WorkbookFactory.create(stream);
+
+        for (int i = 0; i < wb.getNumberOfSheets(); i++) {
+            Sheet sheet = wb.getSheetAt(i);
+            //System.out.println(sheet.getSheetName());
+
+            String path = "K:\\新建文件夹\\1.xlsx".replace("1", sheet.getSheetName());
+            System.out.println(sheet.getSheetName() + "," + path);
+
+            FileUtils.copyFile(new File("K:\\新建文件夹\\2021年工程类项目工作量汇总 - 副本.xlsx"), new File(path));
+
+            handle(path, sheet.getSheetName());
+        }
+    }
+
+    public static void handle(String path, String sheetName) throws IOException, InvalidFormatException {
+        InputStream stream = new FileInputStream(path);
+        Workbook wb = WorkbookFactory.create(stream);
+
+        List<Integer> data = new ArrayList<>();
+        for (int i = 0; i < wb.getNumberOfSheets(); i++) {
+            Sheet sheet = wb.getSheetAt(i);
+            if (!sheet.getSheetName().equals(sheetName)) {
+                data.add(i);
+            }
+        }
+        for (int i = data.size()-1; i > -1; i--) {
+            wb.removeSheetAt(data.get(i));
+        }
+        new File(path).delete();
+
+        wb.write(new FileOutputStream(path));
+    }
 
 
     public static void test() throws IOException, InvalidFormatException {

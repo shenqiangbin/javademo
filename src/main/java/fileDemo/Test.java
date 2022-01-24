@@ -1,6 +1,9 @@
 package fileDemo;
 
 import MyHttpClient.HttpHelper;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.openxml4j.opc.internal.FileHelper;
 
 import java.io.File;
@@ -9,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Test {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
 
 
         String str =  fileDemo.FileHelper.fileToByteConent("e:/1.jpg");

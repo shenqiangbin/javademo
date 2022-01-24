@@ -7,10 +7,10 @@ import java.sql.SQLException;
 
 public class StatisticHandler {
     public static void main(String[] args) throws SQLException {
-        //loop();
+        loop();
         //loopAndHandle();
         //createDb();
-        loopAndBack();
+        //loopAndBack();
 
     }
 
@@ -24,16 +24,19 @@ public class StatisticHandler {
     }
 
     static void loop() {
-        for (int i = 1; i <= 10; i++) {
-            String prefix = "statistic1";
-            String table = "nv_excel_pickup";
+        for (int i = 1; i <= 30; i++) {
+            String prefix = "statistic_19_";
+//            prefix = "statistic_41_";
+            prefix = "statistic_22_";
+//            prefix = "statistic_42_";
+            String table = "nv_excel_pickup_origi";
             String sql = countSql(prefix, i, table);
             System.out.println(sql);
         }
     }
 
     static String countSql(String prefix, int i, String table) {
-        return String.format("select count(0) from %s%s.`%s`;", prefix, i, table);
+        return String.format("select count(0) from %s%s.`%s` where metadatasysid = 154450;", prefix, i, table);
     }
 
     static void loopAndBack() {

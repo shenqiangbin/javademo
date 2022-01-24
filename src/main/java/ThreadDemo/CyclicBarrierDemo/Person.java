@@ -33,4 +33,8 @@ public class Person implements Runnable {
             e.printStackTrace();
         }
     }
+
+    public int getNum(){
+        return num;
+    }
 }
