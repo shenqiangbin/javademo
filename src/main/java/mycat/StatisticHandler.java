@@ -26,17 +26,25 @@ public class StatisticHandler {
     static void loop() {
         for (int i = 1; i <= 30; i++) {
             String prefix = "statistic_19_";
-//            prefix = "statistic_41_";
-            prefix = "statistic_22_";
-//            prefix = "statistic_42_";
-            String table = "nv_excel_pickup_origi";
+            //prefix = "statistic_41_";
+//            prefix = "statistic_22_";
+            prefix = "statistic_42_";
+            //String table = "nv_excel_pickup_origi";
+            String table = "nv_excel_pickup";
             String sql = countSql(prefix, i, table);
             System.out.println(sql);
         }
     }
 
     static String countSql(String prefix, int i, String table) {
-        return String.format("select count(0) from %s%s.`%s` where metadatasysid = 154450;", prefix, i, table);
+        //return String.format("select count(0) from %s%s.`%s` where metadatasysid = 154450;", prefix, i, table);
+        return String.format(" ALTER TABLE  %s%s.`nv_excel_pickup`\n" +
+                "        ADD COLUMN `RepeatMd5` varchar(255) NOT NULL DEFAULT '' COMMENT '(规范后去重)记录字符串集合的md5，用于判断是否已有相同记录存在' AFTER `EsTime`,\n" +
+                "        ADD COLUMN `RepeatRecord` varchar(255) NOT NULL DEFAULT 0 COMMENT '与此条记录重复的记录信息，由（表格 id+记录 id ）构成，即（MetadataSysID-ID)；没有重复，则值为 0' AFTER `RepeatMd5`,\n" +
+                "        ADD INDEX `RepeatMd5`(`RepeatMd5`) USING BTREE;",
+                prefix, i);
+
+
     }
 
     static void loopAndBack() {
