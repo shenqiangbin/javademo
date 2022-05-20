@@ -9,9 +9,22 @@ import java.util.List;
 public class KBaseHelperTest {
     public static void main(String[] args) throws SQLException {
         P.print("ok");
-        search();
+        //search();
+        search2();
         //testSearch();
         //testSort();
+    }
+
+
+    public static void search2() throws SQLException {
+
+        KBaseHelper kBaseHelper = new KBaseHelper("jdbc:kbase://10.120.130.25", "DBOWN", "");
+
+        String sql = "select SYS_FLD_SYSID from PERIOD_METADATA where MYSQLID = '14612'";
+        List<LinkedHashMap<String, Object>> list = kBaseHelper.query(sql, new String[]{"SYS_FLD_SYSID"});
+        for (LinkedHashMap<String, Object> item : list) {
+            P.print(item.get("SYS_FLD_SYSID"));
+        }
     }
 
     public static void search() throws SQLException {

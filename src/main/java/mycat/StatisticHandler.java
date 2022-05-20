@@ -26,12 +26,13 @@ public class StatisticHandler {
     static void loop() {
         for (int i = 1; i <= 30; i++) {
             String prefix = "statistic_19_";
-            //prefix = "statistic_41_";
+//            prefix = "statistic_41_";
 //            prefix = "statistic_22_";
             prefix = "statistic_42_";
             //String table = "nv_excel_pickup_origi";
             String table = "nv_excel_pickup";
-            String sql = countSql(prefix, i, table);
+            //String sql = countSql(prefix, i, table);
+            String sql = alertSql(prefix, i, table);
             System.out.println(sql);
         }
     }
@@ -45,6 +46,16 @@ public class StatisticHandler {
                 prefix, i);
 
 
+    }
+
+    static String alertSql(String prefix, int i, String table){
+        String format = "ALTER TABLE %s%s.`nv_excel_pickup_origi`\n" +
+                "        MODIFY COLUMN `ValueSource`  varchar(264) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '数值来源' AFTER `Flag`;\n" +
+                "        ALTER TABLE %s%s.`nv_excel_pickup`\n" +
+                "        MODIFY COLUMN `ValueSource`  varchar(264) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '数值来源' AFTER `Flag`,\n" +
+                "        MODIFY COLUMN `ValueSourceNormal`  varchar(264) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '数值来源(已规范)' AFTER `ValueSource`;";
+
+                return String.format(format, prefix,i,prefix,i);
     }
 
     static void loopAndBack() {
