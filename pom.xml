@@ -6,6 +6,7 @@
 
     <groupId>com.sqber</groupId>
     <artifactId>javademo</artifactId>
+    <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <build>
         <finalName>javademo</finalName>
@@ -418,6 +419,8 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/DmJdbcDriver18.jar</systemPath>
         </dependency>
+
+
 
 
     </dependencies>

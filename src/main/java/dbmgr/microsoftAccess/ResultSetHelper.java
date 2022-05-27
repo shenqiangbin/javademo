@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class ResultSetHelper {
@@ -78,5 +79,26 @@ public class ResultSetHelper {
         }
 
         return list;
+    }
+
+    public static List<LinkedHashMap<String, Object>> toKbaseLinkedList(ResultSet rs, String[] dbfields) throws SQLException {
+        List<LinkedHashMap<String, Object>> result = new ArrayList<LinkedHashMap<String, Object>>();
+        LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+
+        if (rs == null)
+            return null;
+
+        int columnCount = dbfields.length; // 返回此 ResultSet 对象中的列数
+
+        while (rs.next()) {
+            map = new LinkedHashMap<String, Object>(columnCount);
+            for (int i = 0; i < columnCount; i++) {
+                String cloumnName =  dbfields[i];
+                map.put(cloumnName, rs.getString(cloumnName));
+            }
+            result.add(map);
+        }
+
+        return result;
     }
 }

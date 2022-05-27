@@ -12,6 +12,7 @@ import dbmgr.mySqlAccess.MySqlHelper;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class KBaseHelper {
@@ -118,6 +119,38 @@ public class KBaseHelper {
 
         return null;
     }
+
+    public List<LinkedHashMap<String, Object>> query(String sql, String[] dbfields) throws SQLException {
+        Statement statement = null;
+        ResultSet resultSet = null;
+        try {
+
+            Connection connection = getConnection();
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery(sql);
+
+//            while (resultSet.next()) {
+//                String area = resultSet.getString(0);// 获取字段值
+//                P.print("area:" + area);
+//            }
+
+            List<LinkedHashMap<String, Object>> list = ResultSetHelper.toKbaseLinkedList(resultSet, dbfields);
+            return list;
+
+        } finally {
+            try {
+                if (resultSet != null)
+                    resultSet.close();
+                if (statement != null)
+                    statement.close();
+                if (connection != null)
+                    connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     public void query(String sql, IResultHandler resultHandler) throws SQLException {
 

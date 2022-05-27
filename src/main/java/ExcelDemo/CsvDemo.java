@@ -26,9 +26,9 @@ public class CsvDemo {
 
         //readCsv("F:\\云南大学\\爬取的数据\\世界银行\\压缩包2\\API_AG.CON.FERT.ZS_DS2_zh_csv_v2_2168080.csv");
 
-        List<File> list = FileHelper.findFile("E:\\老子项目","一手数据.xlsx");
+        //List<File> list = FileHelper.findFile("E:\\老子项目","一手数据.xlsx");
 
-        System.out.println(list);
+        //System.out.println(list);
 
 
         Collection<File> files = FileUtils.listFiles(new File("F:\\云南大学\\爬取的数据\\世界银行\\压缩包2"), new IOFileFilter() {

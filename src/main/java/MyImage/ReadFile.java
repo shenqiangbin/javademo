@@ -69,9 +69,9 @@ public class ReadFile {
 
     public static void test_jiaojianxin() throws IOException {
         String path = "D:\\datafortablebigdata\\extraExcel\\52\\统计公报\\2014年闽侯县国民经济和社会发展统计公报.txt";
-        //path = "D:/code/TPI/大数据产品/表格大数据项目/功能/解析 html/file/html2.txt";
-        path = "D:\\datafortablebigdata\\extraExcel\\52\\统计公报\\平潭综合实验区2019年国民经济和社会发展统计公报.txt";
-        path = "D:\\datafortablebigdata\\extraExcel\\52\\统计公报\\平潭综合实验区2019年国民经济和社会发展统计公报utf8.txt";
+        path = "D:/code/TPI/大数据产品/表格大数据项目/功能/解析 html/file/html2.txt";
+        //path = "D:\\datafortablebigdata\\extraExcel\\52\\统计公报\\平潭综合实验区2019年国民经济和社会发展统计公报.txt";
+        //path = "D:\\datafortablebigdata\\extraExcel\\52\\统计公报\\平潭综合实验区2019年国民经济和社会发展统计公报utf8.txt";
         String content2 = fileToByteConent(path);
         JSONObject param = new JSONObject();
         param.put("html_str", content2);
