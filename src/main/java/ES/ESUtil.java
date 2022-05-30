@@ -5,6 +5,7 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
@@ -13,6 +14,7 @@ import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.core.CountRequest;
 import org.elasticsearch.client.core.CountResponse;
+import org.elasticsearch.common.xcontent.XContentHelper;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -81,46 +83,7 @@ public class ESUtil {
         return boolQueryBuilder;
     }
 
-    /**
-     * 获取分页后的结果集
-     *
-     * @param queryBuilder 查询对象
-     * @param index        索引名
-     * @param pageNo       页数
-     * @param pagesize     页大小
-     * @return
-     */
-    public List<Map<String, Object>> getPageResultList(QueryBuilder queryBuilder, String index, int pageNo, int pagesize) throws IOException {
-        SearchRequest searchRequest = new SearchRequest(index);
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-
-        if (pageNo >= 1) {
-            searchSourceBuilder.query(queryBuilder).from((pageNo - 1) * pagesize).size(pagesize);
-        } else {
-            searchSourceBuilder.query(queryBuilder).from(0).size(pagesize);
-        }
-        searchRequest.source(searchSourceBuilder);
-        SearchResponse searchResponse = null;
-
-        searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
-
-        // 从response中获得结果
-        List<Map<String, Object>> list = new LinkedList();
-        searchResponse.getHits();
-
-        SearchHits hits = searchResponse.getHits();
-
-        Iterator<SearchHit> iterator = hits.iterator();
-        while (iterator.hasNext()) {
-            SearchHit next = iterator.next();
-            Map<String, Object> sourceAsMap = next.getSourceAsMap();
-            sourceAsMap.put("_id", next.getId());
-            list.add(sourceAsMap);
-        }
-        return list;
-    }
-
-    public List<LinkedHashMap<String, Object>> getPageResultListLinked(QueryBuilder queryBuilder, String esIndex, int pageNo, int pagesize, List<SortBuilder> sortBuilder, String[] includes, String[] excludes) throws IOException {
+    public List<Map<String, Object>> getPageResultList(QueryBuilder queryBuilder, String esIndex, int pageNo, int pagesize, List<SortBuilder> sortBuilder, String[] includes, String[] excludes, boolean orderedMap) throws IOException {
         SearchRequest searchRequest = new SearchRequest(esIndex);
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
@@ -141,7 +104,7 @@ public class ESUtil {
         searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
 
         // 从response中获得结果
-        List<LinkedHashMap<String, Object>> list = new LinkedList();
+        List<Map<String, Object>> list = new LinkedList();
         searchResponse.getHits();
 
         SearchHits hits = searchResponse.getHits();
@@ -149,9 +112,22 @@ public class ESUtil {
         Iterator<SearchHit> iterator = hits.iterator();
         while (iterator.hasNext()) {
             SearchHit next = iterator.next();
-            list.add(getMapValueForLinkedHashMap(next.getSourceAsMap()));
+            Map<String, Object> map = orderedMap ? getOrderedMap(next) : getMap(next);
+            list.add(map);
         }
         return list;
+    }
+
+    private Map<String, Object> getMap(SearchHit searchHit) {
+        Map<String, Object> map = searchHit.getSourceAsMap();
+        map.put("_id", searchHit.getId());
+        return map;
+    }
+
+    private Map<String, Object> getOrderedMap(SearchHit searchHit) {
+        Map<String, Object> map = XContentHelper.convertToMap(searchHit.getSourceRef(), true, null).v2();
+        map.put("_id", searchHit.getId());
+        return map;
     }
 
     public static LinkedHashMap getMapValueForLinkedHashMap(Map dataMap) {
