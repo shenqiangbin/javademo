@@ -1,5 +1,6 @@
 package ES;
 
+import dbmgr.mySqlAccess.model.PagedResponse;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -81,6 +82,20 @@ public class ESUtil {
             boolQueryBuilder.must(QueryBuilders.wildcardQuery(string, "*" + filedsMap.get(string) + "*"));
         }
         return boolQueryBuilder;
+    }
+
+    public PagedResponse<Map<String, Object>> queryPage(QueryBuilder queryBuilder, String index, int pageNo, int pagesize) throws IOException {
+        List<Map<String, Object>> list = this.getPageResultList(queryBuilder, index, pageNo, pagesize, null, null, null, true);
+        Long count = this.getCount(queryBuilder, index);
+
+        PagedResponse<Map<String, Object>> result = new PagedResponse<>();
+        result.setList(list);
+        result.setTotalCount(count);
+
+        long totalPage = count / pagesize + (count % pagesize == 0 ? 0 : 1);
+        result.setTotalPage((int) totalPage);
+
+        return result;
     }
 
     public List<Map<String, Object>> getPageResultList(QueryBuilder queryBuilder, String esIndex, int pageNo, int pagesize, List<SortBuilder> sortBuilder, String[] includes, String[] excludes, boolean orderedMap) throws IOException {
