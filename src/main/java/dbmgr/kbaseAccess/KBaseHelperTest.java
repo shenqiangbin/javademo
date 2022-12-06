@@ -10,11 +10,36 @@ public class KBaseHelperTest {
     public static void main(String[] args) throws SQLException {
         P.print("ok");
         //search();
-        search2();
+        //search2();
         //testSearch();
         //testSort();
+        //testSort2();
+        guangmingAuthor();
     }
 
+    public static void guangmingAuthor() throws SQLException {
+
+        KBaseHelper kBaseHelper = new KBaseHelper("jdbc:kbase://10.120.150.189", "DBOWN", "kbase189");
+
+        String authors = "励建荣;谢晶;孔保华;江连洲;赵谋明;熊善柏;徐岩;王兴国;白卫东;杨贤庆;姜绍通;李琳;李杨;陈卫;陈复生;李来好;赵改名;吴燕燕;徐幸莲;张和平;孙宝国;李洪军;王锡昌;张灏;任发政;赵思明;李崎;金青哲;薛长湖;潘思轶";
+        authors = "谢晶;孔保华;江连洲;赵谋明;熊善柏;徐岩;王兴国;白卫东;杨贤庆;姜绍通;李琳;李杨;陈卫;陈复生;李来好;赵改名;吴燕燕;徐幸莲;张和平;孙宝国;李洪军;王锡昌;张灏;任发政;赵思明;李崎;金青哲;薛长湖;潘思轶";
+
+        String format = "select 专家姓名,学者,H指数,G指数,当前职称,学者职称,职称级别,研究方向,研究领域,第一作者篇数,第一学者篇数,是否专家数据 from newauthor1,newauthor2,newauthor3,newauthor4,newauthor5,newauthor6,newauthor7, newauthorl where 专家姓名 = '励建荣' limit 10";
+
+        for(String author : authors.split(";")){
+            String sql = format.replace("励建荣", author);
+
+            String[] args = new String[]{"专家姓名","学者","H指数","G指数","当前职称","学者职称","职称级别","研究方向","研究领域","第一作者篇数","第一学者篇数",
+                    "是否专家数据"};
+            args = new String[]{"专家姓名","学者","H指数","G指数","当前职称","学者职称","是否专家数据"};
+            List<LinkedHashMap<String, Object>> list = kBaseHelper.query(sql, args);
+            for (LinkedHashMap<String, Object> item : list) {
+                P.print(item.toString());
+            }
+        }
+
+
+    }
 
     public static void search2() throws SQLException {
 
@@ -70,6 +95,17 @@ public class KBaseHelperTest {
         }
     }
 
+    public static void testSort2() {
+        KBaseHelper kBaseHelper = new KBaseHelper("jdbc:kbase://10.120.130.89", "DBOWN", "");
+        try {
+            String sql = "SELECT * FROM MODEL_KBASE where modelname = '经济经济'";
+            List<LinkedHashMap<String, Object>> list = kBaseHelper.query(sql, new String[]{"modelname"});
+            for (LinkedHashMap<String, Object> item : list) {
+                P.print(item.get("modelname"));
+            }        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
 
 

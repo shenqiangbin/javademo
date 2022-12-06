@@ -148,7 +148,7 @@ public class FileHelper {
                 fileReader.close();
             }
         }
-        System.out.println("读取出来的文件内容是：" + "\r\n" + result);
+        //System.out.println("读取出来的文件内容是：" + "\r\n" + result);
         return result;
     }
 

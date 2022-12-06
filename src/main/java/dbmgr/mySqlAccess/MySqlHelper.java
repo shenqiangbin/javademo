@@ -208,7 +208,7 @@ public class MySqlHelper {
         return list;
     }
 
-    public List<LinkedHashMap<String, Object>> simpleQuery(String sql, Object[] params) throws Exception {
+        public List<LinkedHashMap<String, Object>> simpleQuery(String sql, Object[] params) throws Exception {
 
         Connection connection = null;
         List<LinkedHashMap<String, Object>> list = null;

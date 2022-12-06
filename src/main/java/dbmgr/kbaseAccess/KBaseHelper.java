@@ -48,6 +48,16 @@ public class KBaseHelper {
         return connection;
     }
 
+    public void dispose()  {
+        try {
+            if (this.connection != null && !this.connection.isClosed()) {
+                this.connection.close();
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
     public String execute(String sql, List<Object> params) throws SQLException {
         Connection connection = null;
         try {
@@ -138,16 +148,16 @@ public class KBaseHelper {
             return list;
 
         } finally {
-            try {
-                if (resultSet != null)
-                    resultSet.close();
-                if (statement != null)
-                    statement.close();
-                if (connection != null)
-                    connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                if (resultSet != null)
+//                    resultSet.close();
+//                if (statement != null)
+//                    statement.close();
+//                if (connection != null)
+//                    connection.close();
+//            } catch (SQLException e) {
+//                e.printStackTrace();
+//            }
         }
     }
 
