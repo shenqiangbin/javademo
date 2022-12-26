@@ -84,8 +84,8 @@ public class PDFDemo01 {
         System.out.println(DateUtil.diff(from, new Date(), DateUtil.Type.SECOND));
 
         from = new Date();
-        compress2(file);
-        //test(file);
+        //compress2(file);
+        test(file);
         System.out.println(DateUtil.diff(from, new Date(), DateUtil.Type.SECOND));
 
         System.out.println("over");
@@ -626,8 +626,8 @@ public class PDFDemo01 {
                     //Thumbnails.of(image.getImage()).scale(1).outputQuality(1f).outputFormat(image.getSuffix()).toOutputStream(stream);
 
                     FileImageOutputStream stream2 = new FileImageOutputStream(new File("/Users/adminqian/Desktop/tmp/compress/" + count++ + "-min2." + image.getSuffix()));
-                    //toImg(image.getSuffix(), stream2, image.getImage());
-                    TiffOutput.TiffOutput(image.getImage(), stream, 300);
+                    toImg(image.getSuffix(), stream2, image.getImage());
+                    //TiffOutput.TiffOutput(image.getImage(), stream, 300);
 
                     //stream.flush();
                     //stream.close();

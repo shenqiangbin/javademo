@@ -54,12 +54,12 @@ public class ESTest {
         //filedsMap.put("item","Roots, Other");
         //filedsMap.put("indicatorname","Quantity");
         BoolQueryBuilder queryBuilder = getQueryBuilder(filedsMap);
-        List<Map<String, Object>> list = getPageResultList(queryBuilder, "nv_normal_value", 2, 5);
+        List<Map<String, Object>> list = getPageResultList(queryBuilder, "article", 2, 5);
         System.out.println(list.size());
         for (Map<String, Object> s : list) {
-            System.out.println(s);
+            System.out.println(s.get("Title"));
         }
-        System.out.println("count:" + getResultCount(queryBuilder, "nv_normal_value"));
+        System.out.println("count:" + getResultCount(queryBuilder, "article"));
     }
 
     /**

@@ -14,8 +14,9 @@ import java.util.List;
 public class CSVReader4 {
     public static void main(String[] args) throws IOException {
 
-        String file = "/Users/adminqian/my/test.csv";
-        file = "/Users/adminqian/my/国统局合作_宏观经济指标体系.xlsx";
+        String path = System.getProperty("user.dir");
+        String file = Paths.get(path, "src/main/java/ExcelDemo/csv/test.csv").toString();
+        //file = "/Users/adminqian/my/国统局合作_宏观经济指标体系.xlsx";
         String charset = "utf-8";
 
         CsvReader csv = CsvReader.builder().build(Paths.get(file), Charset.forName(charset));
@@ -26,7 +27,7 @@ public class CSVReader4 {
             if (list.size() != 9) {
                 System.out.println("here");
             }
-            if(list.contains("用人单位招聘服务") || list.contains("Y12_GL05ZW01076")){
+            if (list.contains("用人单位招聘服务") || list.contains("Y12_GL05ZW01076")) {
                 System.out.println("here");
             }
 
