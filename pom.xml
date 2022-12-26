@@ -420,7 +420,11 @@
             <systemPath>${project.basedir}/lib/DmJdbcDriver18.jar</systemPath>
         </dependency>
 
-
+        <dependency>
+            <groupId>org.elasticsearch.plugin</groupId>
+            <artifactId>x-pack-sql-jdbc</artifactId>
+            <version>7.6.2</version>
+        </dependency>
 
 
     </dependencies>
@@ -439,6 +443,10 @@
         <!--<url>http://maven.aliyun.com/nexus/content/groups/public/</url>-->
         <!--</repository>-->
 
+        <repository>
+            <id>elastic.co</id>
+            <url>https://artifacts.elastic.co/maven</url>
+        </repository>
 
         <repository>
             <id>geotoolkit</id>

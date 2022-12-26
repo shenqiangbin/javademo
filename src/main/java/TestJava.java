@@ -4,7 +4,9 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -18,14 +20,19 @@ public class TestJava {
 
     public static void main(String[] args) throws Exception {
 
+        calTime();
+
         Date now = new Date();
+
         String val = DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.format(now);
         String val2 = FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ssZZ", TimeZone.getTimeZone("Asia/Shanghai")).format(now);
         // UTC 时间
         String val3 = FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ssZZ", TimeZone.getTimeZone("GMT")).format(now);
+        String val4 = FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", TimeZone.getTimeZone("GMT")).format(now);
         System.out.println(val);
         System.out.println(val2);
         System.out.println(val3);
+        System.out.println(val4);
 
         String str = "2021-06-03T17:50:23+08:00";
         str = val;
@@ -34,9 +41,13 @@ public class TestJava {
         String s = DateFormatUtils.format(d, "yyyy-MM-dd HH:mm:ss");
         System.out.println(s);
 
-        String text = "2017-09-28 21:27:27.7042867";
+        String text = "2017-08-28 21:27:27.7042867";
         Date d2 = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:sss", TimeZone.getTimeZone("Asia/Shanghai")).parse(text);
+        Long timeLong = d2.getTime();
 
+        String time = "2020-08-20T02:53:19.000Z";
+        time = val4;
+        Date d3 = FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", TimeZone.getTimeZone("GMT")).parse(time);
 
         String sql = String.format("'%s','%s'", 1, 2, 3);
         String sql2 = String.format("'%s','%s','%s'", 1, 2, 3);
@@ -68,6 +79,27 @@ public class TestJava {
         //P.print(builder.toString());
         testMethod();
         test2();
+    }
+
+    private static void calTime() throws ParseException {
+        Date t = new Date(1609430400000L);
+        String s = DateFormatUtils.format(t, "yyyy-MM-dd HH:mm:ss");
+        System.out.println(s);
+
+        t = new Date(1640880000000L);
+        s = DateFormatUtils.format(t, "yyyy-MM-dd HH:mm:ss");
+        System.out.println(s);
+
+        String text = "2021-01-01 00:00:00";
+        Date d2 = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:sss", TimeZone.getTimeZone("Asia/Shanghai")).parse(text);
+        Long timeLong = d2.getTime();
+        System.out.println(timeLong);
+
+        text = "2021-12-31 00:00:00";
+        d2 = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:sss", TimeZone.getTimeZone("Asia/Shanghai")).parse(text);
+        timeLong = d2.getTime();
+        System.out.println(timeLong);
+
     }
 
     private static String testMethod() {

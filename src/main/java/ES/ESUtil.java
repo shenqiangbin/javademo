@@ -23,6 +23,8 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
@@ -30,6 +32,8 @@ import java.util.*;
 public class ESUtil {
 
     RestHighLevelClient client;
+
+    private Logger log = LoggerFactory.getLogger(ESUtil.class);
 
     /**
      * 初始化
@@ -113,6 +117,7 @@ public class ESUtil {
                 searchSourceBuilder.sort(item);
             }
         }
+        log.debug(searchSourceBuilder.toString());
         searchRequest.source(searchSourceBuilder);
         SearchResponse searchResponse = null;
 
@@ -177,8 +182,11 @@ public class ESUtil {
     public Long getCount(QueryBuilder queryBuilder, String index) throws IOException {
         CountRequest countRequest = new CountRequest(index);
         countRequest.query(queryBuilder);
+        log.debug("es count:{}", queryBuilder.toString());
         CountResponse response = client.count(countRequest, RequestOptions.DEFAULT);
         long length = response.getCount();
+        log.debug("es count val:{}", length);
+
         return length;
     }
 }
