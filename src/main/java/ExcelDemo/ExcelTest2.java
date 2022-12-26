@@ -33,7 +33,127 @@ public class ExcelTest2 {
         //test();
         //sonbin();
         // 把 EXCEL 按 Sheet 页进行拆分
-        test3();
+        //test3();
+        test6();
+    }
+
+    public static void test6() throws IOException, InvalidFormatException {
+        //String file = "D:\\code\\TPI\\大数据产品\\光明国际\\农业食品词语.xlsx";
+        String file = "D:\\code\\TPI\\大数据产品\\光明国际\\热词.xlsx";
+        List<Object> zhibiao = new ArrayList<>();
+
+        CommonExcel commonExcel = new CommonExcel(file, new ICommonResultHandler() {
+
+            @Override
+            public boolean validateTilte(List<String> titles) {
+                return true;
+            }
+
+            @Override
+            public String store(List<String> cellVals, List<String> titles) {
+                //System.out.println(cellVals);
+                //System.out.println(titles);
+                for (int i = 0; i < 30; i++) {
+                    try {
+                        if (cellVals.get(i) == null)
+                            continue;
+                    } catch (IndexOutOfBoundsException e) {
+                        continue;
+                    }
+                    String val = cellVals.get(i).trim();
+                    if (!StringUtil.isNullOrEmpty(val)) {
+                        zhibiao.add(val);
+                    }
+                }
+                //zhibiao.addAll(cellVals);
+                return "ok";
+            }
+
+            @Override
+            public void done() {
+                System.out.println("done");
+            }
+        });
+        commonExcel.handle();
+
+        List<List<Object>> objects = new ArrayList<>();
+        for (Object item : zhibiao) {
+            List<Object> list = new ArrayList<>();
+            list.add(item);
+            objects.add(list);
+        }
+
+        Excel2007Utils.writeExcelData("E:\\", "abc", "Sheet1", objects);
+
+        System.out.println("ok");
+    }
+
+    public static void test5() throws IOException, InvalidFormatException {
+        String file = "D:\\code\\TPI\\大数据产品\\光明国际\\农业食品词语.xlsx";
+        List<String> zhibiao = new ArrayList<>();
+
+        CommonExcel commonExcel = new CommonExcel(file, new ICommonResultHandler() {
+
+            @Override
+            public boolean validateTilte(List<String> titles) {
+                return true;
+            }
+
+            @Override
+            public String store(List<String> cellVals, List<String> titles) {
+                //System.out.println(cellVals);
+                //System.out.println(titles);
+                String val = cellVals.get(0).trim();
+                val = cellVals.get(4).trim();
+                zhibiao.add(val);
+                if (val.equalsIgnoreCase("k")) {
+                    System.out.println("here");
+                }
+                return "ok";
+            }
+
+            @Override
+            public void done() {
+                System.out.println("done");
+            }
+        });
+        commonExcel.handle();
+
+        System.out.println("ok");
+    }
+
+    public static void test4() throws IOException, InvalidFormatException {
+        String file = "D:\\code\\TPI\\大数据产品\\光明国际\\农业食品词语.xlsx";
+        List<String> zhibiao = new ArrayList<>();
+
+        CommonExcel commonExcel = new CommonExcel(file, new ICommonResultHandler() {
+
+            @Override
+            public boolean validateTilte(List<String> titles) {
+                return true;
+            }
+
+            @Override
+            public String store(List<String> cellVals, List<String> titles) {
+                //System.out.println(cellVals);
+                //System.out.println(titles);
+                String val = cellVals.get(0).trim();
+                val = cellVals.get(4).trim();
+                zhibiao.add(val);
+                if (val.equalsIgnoreCase("k")) {
+                    System.out.println("here");
+                }
+                return "ok";
+            }
+
+            @Override
+            public void done() {
+                System.out.println("done");
+            }
+        });
+        commonExcel.handle();
+
+        System.out.println("ok");
     }
 
 //    private static CellProcessor[] getProcessors() {
@@ -85,7 +205,7 @@ public class ExcelTest2 {
                 data.add(i);
             }
         }
-        for (int i = data.size()-1; i > -1; i--) {
+        for (int i = data.size() - 1; i > -1; i--) {
             wb.removeSheetAt(data.get(i));
         }
         new File(path).delete();
@@ -432,4 +552,6 @@ public class ExcelTest2 {
 
         return config;
     }
+
+
 }
