@@ -1,6 +1,6 @@
 package ZipRar;
 
-import net.lingala.zip4j.exception.ZipException;
+//import net.lingala.zip4j.exception.brt ;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
@@ -102,13 +102,13 @@ public class Compresser {
     }
 
     // 解压方式2（某些也会有问题）
-    public static void decompressor2(String targetFile, String targetDir) throws FileNotFoundException, ZipException {
+    public static void decompressor2(String targetFile, String targetDir) throws FileNotFoundException {
 
-        net.lingala.zip4j.ZipFile zipFile = new net.lingala.zip4j.ZipFile(targetFile);
-        if (testEncoding(targetFile, Charset.forName("UTF-8")) == false) {
-            zipFile.setCharset(Charset.forName("GBK"));
-        }
-        zipFile.extractAll(targetDir);
+//        net.lingala.zip4j.ZipFile zipFile = new net.lingala.zip4j.ZipFile(targetFile);
+//        if (testEncoding(targetFile, Charset.forName("UTF-8")) == false) {
+//            zipFile.setCharset(Charset.forName("GBK"));
+//        }
+//        zipFile.extractAll(targetDir);
     }
 
     static boolean testEncoding(String filepath, Charset charset) throws FileNotFoundException {

@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class GuangMingFirstSecondDode {
+public class GuangMingFirstSecondNode {
     static Neo4jHelper neo4jHelper = initOnlineHelper();
     static HikariDataSource dataSource = new HikariDataSource(getConfig());
     static MySqlHelper mySqlHelper = new MySqlHelper(dataSource);
