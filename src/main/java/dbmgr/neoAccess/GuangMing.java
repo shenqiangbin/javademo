@@ -32,8 +32,8 @@ public class GuangMing {
     public static void main(String[] args) throws Exception {
         //getSecondWord();
 
-        handleShowWord();
-        //mergeDbFirstLevel();
+        //handleShowWord();
+        mergeDbFirstLevel();
         //readfile();
 
 //        String[] color = new String[]{"color1","color2","color3","color4"};

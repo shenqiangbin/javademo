@@ -1,55 +1,69 @@
-package dbmgr.mySqlAccess;
+package dbmgr.neoAccess;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import common.P;
+import dbmgr.mySqlAccess.MySqlHelper;
 import dbmgr.mySqlAccess.model.Item;
 import fileDemo.FileHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.jcodings.util.Hash;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.sql.*;
 import java.text.SimpleDateFormat;
-import java.util.*;
 import java.util.Date;
+import java.util.*;
 
-public class MySqlnongkeyuan {
+public class GuangMingAuthorOrg {
 
+    /**
+     * 导入机构、作者数据。
+     * @param args
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception {
-//        String filePath = "C:\\Users\\cnki52\\Desktop\\光明\\jsons\\farming.author.organization";
-//        guangming(filePath,"framing");
-//
-//        filePath = "C:\\Users\\cnki52\\Desktop\\光明\\jsons\\fishery.author.organization";
-//        guangming(filePath,"fishery");
-//
-//        filePath = "C:\\Users\\cnki52\\Desktop\\光明\\jsons\\food.author.organization";
-//        guangming(filePath,"food");
-//
-//        filePath = "C:\\Users\\cnki52\\Desktop\\光明\\jsons\\livestock.author.organization";
-//        guangming(filePath,"livestock");
+        String path = "D:\\code\\TPI\\大数据产品\\光明国际\\数据处理\\机构作者\\2023-01";
+        String time = "20230104";
 
-        String filePath = "C:\\Users\\cnki52\\Desktop\\光明\\jsons\\merge.author.organization";
-        guangming(filePath, "merge1123");
+        String filePath = path + "\\farming.author.organization";
+        guangming(filePath,"framing", time, path);
+
+        filePath = path + "\\fishery.author.organization";
+        guangming(filePath,"fishery", time, path);
+
+        filePath = path + "\\food.author.organization";
+        guangming(filePath,"food", time, path);
+
+        filePath = path + "\\livestock.author.organization";
+        guangming(filePath,"livestock", time, path);
+
+        filePath = path + "\\merge.author.organization";
+        guangming(filePath, "merge", time, path);
+
+        P.print("all over");
+
+        // 测试根据用户编号获取用户名
+//        String author = getAuthorName("000019282249");
+//        System.out.println(author);
     }
 
     static HikariDataSource dataSource = new HikariDataSource(getOnlineConfig());
+    static HikariDataSource midDataSource = new HikariDataSource(getMidDataConfig());
     static Connection connection;
+    static Connection midConnection;
 
     static {
         try {
             connection = dataSource.getConnection();
+            midConnection = midDataSource.getConnection();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -98,7 +112,7 @@ public class MySqlnongkeyuan {
         return false;
     }
 
-    public static void guangming(String filePath, String db) throws Exception {
+    public static void guangming(String filePath, String db, String time, String path) throws Exception {
 
 
 //        HikariDataSource dataSource = new HikariDataSource(getOnlineConfig());
@@ -107,8 +121,8 @@ public class MySqlnongkeyuan {
 
         StringBuilder builder = new StringBuilder();
 
-        String dbFlag = "merge1124";
-        String file = "d:/merge" + dbFlag + ".sql";
+        String dbFlag = db + time;
+        String file = path + dbFlag + ".sql";
 
         int i = 0;
         String result = null;
@@ -124,21 +138,7 @@ public class MySqlnongkeyuan {
                     //result = result + read + "\r\n";
                     System.out.println("current i:" + (i++));
                     JSONObject jsonObject = JSON.parseObject(read);
-                    Object[] arr = new Object[]{
-                            jsonObject.get("word").toString(),
-                            jsonObject.get("name").toString(),
-                            jsonObject.get("score").toString(),
-                            1,
-                            jsonObject.get("type").toString(),
-                            db
-                    };
 
-                    String sql = "INSERT INTO `dwd_expert_ins_rel` (`word`, `name`, `score`, `type`, `master`, `db`, `rel_id`, `createTime`, `moifyTime`) " +
-                            "VALUES ('" + jsonObject.get("word").toString() + "', '" + jsonObject.get("name").toString() + "', '" + jsonObject.get("score").toString() + "', " + jsonObject.get("type").toString() + "," +
-                            " 0, '" + dbFlag + "', NULL, '2022-11-23 10:03:00', '2022-11-23 10:03:00');";
-                    if (arr[1].toString().contains("'") || arr[0].toString().contains("'")) {
-                        continue;
-                    }
                     //β-阿朴-8'-胡萝卜素酸乙酯
                     if (jsonObject.get("name").toString().length() > 500) {
                         continue;
@@ -147,6 +147,30 @@ public class MySqlnongkeyuan {
                     if (wordExists(jsonObject.get("word").toString())) {
                         continue;
                     }
+
+                    String name = jsonObject.get("name").toString();
+                    String type = jsonObject.get("type").toString();
+
+                    if(type.equalsIgnoreCase("0")){
+                        name = getAuthorName(name);
+                    }
+
+                    Object[] arr = new Object[]{
+                            jsonObject.get("word").toString(),
+                            name,
+                            jsonObject.get("score").toString(),
+                            1,
+                            type,
+                            db
+                    };
+
+                    String sql = "INSERT INTO `dwd_expert_ins_rel` (`word`, `name`, `score`, `type`, `master`, `db`, `rel_id`, `createTime`, `moifyTime`) " +
+                            "VALUES ('" + jsonObject.get("word").toString() + "', '" + name + "', '" + jsonObject.get("score").toString() + "', " + jsonObject.get("type").toString() + "," +
+                            " 0, '" + dbFlag + "', NULL, '2022-11-23 10:03:00', '2022-11-23 10:03:00');";
+                    if (arr[1].toString().contains("'") || arr[0].toString().contains("'")) {
+                        continue;
+                    }
+
 
                     builder.append(sql + "\r\n");
 
@@ -183,6 +207,32 @@ public class MySqlnongkeyuan {
 
 
         P.print("over");
+    }
+
+    public static String getAuthorName(String authorCode) throws SQLException {
+        String sql = "select author,authorCode from gm_articles_has_author where authorCode like '%000019282249%' limit 10";
+        sql = sql.replace("000019282249", authorCode);
+
+
+        Statement statement = midConnection.createStatement();
+        ResultSet resultSet = statement.executeQuery(sql);
+        if (resultSet != null && resultSet.next()) {
+            String names = resultSet.getString(1);
+            String codes = resultSet.getString(2);
+
+            String[] codeArr = codes.split(";");
+            String[] nameArr = names.split(";");
+
+            for(int i = 0; i < codeArr.length; i++){
+                if(codeArr[i].equals(authorCode)){
+                    return nameArr[i];
+                }
+            }
+
+            throw new RuntimeException("not found:" + authorCode);
+        }
+
+        return "";
     }
 
     public static void test() throws Exception {
@@ -359,6 +409,22 @@ public class MySqlnongkeyuan {
         config.setUsername("root");
         config.setDriverClassName("com.mysql.cj.jdbc.Driver");
         config.setPassword("ABCDabcd1234@");
+        config.addDataSourceProperty("cachePrepStmts", "true");
+        config.addDataSourceProperty("prepStmtCacheSize", "250");
+        config.addDataSourceProperty("prepStmptCacheSqlLimit", "2048");
+
+        return config;
+    }
+
+
+    public static HikariConfig getMidDataConfig() {
+
+        HikariConfig config = new HikariConfig();
+
+        config.setJdbcUrl("jdbc:mysql://192.168.20.154:13306/gmgj_mid_data?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC");
+        config.setUsername("root");
+        config.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        config.setPassword("123456");
         config.addDataSourceProperty("cachePrepStmts", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "250");
         config.addDataSourceProperty("prepStmptCacheSqlLimit", "2048");
