@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 
 public class GuangMingFirstSecondNode {
     static Neo4jHelper neo4jHelper = initOnlineHelper();
-    static HikariDataSource dataSource = new HikariDataSource(getConfig());
-    static MySqlHelper mySqlHelper = new MySqlHelper(dataSource);
+    //    static HikariDataSource dataSource = new HikariDataSource(getConfig());
+    static MySqlHelper mySqlHelper = new MySqlHelper(null);
     static List<String> wordbuilder = new ArrayList<>();
 
     public static void main(String[] args) throws Exception {
@@ -25,20 +25,22 @@ public class GuangMingFirstSecondNode {
         batch = "pro2022game-20221213";
         mergeDbFirstLevel(batch);
 
+        System.out.println("================");
+
         batch = "merge-20221124";
         batch = "merge-20221213";
         mergeDbFirstLevel(batch);
 
-        System.out.println("word list:");
+        //System.out.println("word list:");
         String str = wordbuilder.stream().distinct().collect(Collectors.joining("\r\n"));
-        System.out.println(str);
+        //System.out.println(str);
 
         String file = "D:\\code\\TPI\\大数据产品\\光明国际\\数据处理\\机构作者\\word.txt";
-        FileHelper.writeTxtFile(str, file, false, true);
+        FileHelper.writeTxtFile(str, file, false, false);
 
     }
 
-    public static String getNeoSQl(String batch){
+    public static String getNeoSQl(String batch) {
 
         // CNKi 数据 （cnki这里）
         String sql = String.format("MATCH (a:`%s`) where  a.type = %s and a.check = 1 and a.usershow = 1 return a  order by a.score desc limit 1000",
@@ -65,7 +67,7 @@ public class GuangMingFirstSecondNode {
             String uuid = item.get("uuid").toString();
             String neoType = item.get("neoType").toString();
             String name = item.get("name").toString();
-            //System.out.println((i++) + ":" + name);
+            System.out.println("1:" + name);
             //sixiangxianHasVal(name);
             wordbuilder.add(name);
         }
@@ -76,16 +78,27 @@ public class GuangMingFirstSecondNode {
             String uuid = item.get("uuid").toString();
             String neoType = item.get("neoType").toString();
             String name = item.get("name").toString();
-            wordbuilder.add("--------------" + name);
+//            wordbuilder.add("--------------" + name);
             List<Map<String, Object>> secondItems = getNextLevelData(batch, uuid, name, true, firstLevelNodesIds);
 
             for (Map<String, Object> item2 : secondItems) {
                 String uuid2 = item2.get("uuid").toString();
                 String neoType2 = item2.get("neoType").toString();
                 String name2 = item2.get("name").toString();
-                if(name2.equals("遗传变异")) {
-                    List<Map<String, Object>> thirdItems = getNextLevelData(batch, uuid2, name2, true, firstLevelNodesIds);
-                    System.out.println("ok");
+
+                System.out.println("1:" + name + ":2:" + name2);
+
+                if (name2.equals("遗传变异")) {
+
+                }
+
+                List<Map<String, Object>> thirdItems = getNextLevelData(batch, uuid2, name2, true, firstLevelNodesIds);
+                for (Map<String, Object> item3 : thirdItems) {
+                    String uuid3 = item3.get("uuid").toString();
+                    String neoType3 = item3.get("neoType").toString();
+                    String name3 = item3.get("name").toString();
+
+                    System.out.println("1:" + name + ":2:" + name2 + ":3:" + name3);
                 }
             }
         }
@@ -100,8 +113,9 @@ public class GuangMingFirstSecondNode {
 
         expectNodeIds = expectNodeIds.stream().filter(m -> !m.trim().equalsIgnoreCase(nodeid)).collect(Collectors.toList());
 
+        // 获取下级 20 个词，正式图谱展示时，虽然只是展示10个，但因为会过滤所以有可能某些词包含不上，因此这里获取20个。
         String sql = String.format("MATCH p = (a:`%s`) <- [r] ->(b)  where id(a) = %s and a.check = 1 and none(x in nodes(p) where id(x) in [%s]) return * order by b.score desc  limit %s",
-                batch, nodeid, String.join(",", expectNodeIds), 10);
+                batch, nodeid, String.join(",", expectNodeIds), 20);
         List<Map<String, Object>> cnkiList = neo4jHelper.GetValue(sql);
 
         // node 节点去重，且不包含自己
@@ -121,7 +135,7 @@ public class GuangMingFirstSecondNode {
             String neoType = item.get("neoType").toString();
             if (neoType.equalsIgnoreCase("node")) {
                 String name = item.get("name").toString();
-                if(wordbuilder.contains(name)){
+                if (wordbuilder.contains(name)) {
                     continue;
                 }
                 wordbuilder.add(name);
