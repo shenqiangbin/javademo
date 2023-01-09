@@ -39,9 +39,9 @@ public class GuangMingShowUser {
     public static void handleShowWord() throws Exception {
         String batch = "pro2022game-20221213";
         //test1(batch,"farming", "C:\\Users\\cnki52\\Desktop\\光明\\user-show\\farming 20词.txt");
-        //test1(batch,"fishery", "C:\\Users\\cnki52\\Desktop\\光明\\user-show\\fishery 20词.txt");
+        test1(batch,"fishery", "C:\\Users\\cnki52\\Desktop\\光明\\user-show\\fishery 20词.txt");
         //test1(batch,"food", "C:\\Users\\cnki52\\Desktop\\光明\\user-show\\food 20词.txt");
-        test1(batch,"livestock", "C:\\Users\\cnki52\\Desktop\\光明\\user-show\\livestock.txt - 畜牧业");
+        //test1(batch,"livestock", "C:\\Users\\cnki52\\Desktop\\光明\\user-show\\livestock.txt - 畜牧业");
     }
 
     // 展示用户特定的数据。
@@ -65,7 +65,7 @@ public class GuangMingShowUser {
         List<Map<String, Object>> maps = neo4jHelper.GetValue(sql);
         if (maps != null && maps.size() > 0) {
             System.out.println("handle");
-            if(word.equals("全基因组关联分析(GWAS)")){
+            if(word.equalsIgnoreCase("侧扫声呐")){
                 System.out.println("here");
             }
             for (Map<String, Object> map : maps) {
