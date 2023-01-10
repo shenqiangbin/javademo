@@ -50,17 +50,17 @@ public class GuangMingAuthorOrg {
         String filePath = path + "\\farming.author.organization";
         //guangming(filePath,"framing", time, path);
 
-        filePath = path + "\\fishery.author.organization";
-        guangming(filePath,"fishery", time, path);
-
-        filePath = path + "\\food.author.organization";
-        guangming(filePath,"food", time, path);
-
-        filePath = path + "\\livestock.author.organization";
-        guangming(filePath,"livestock", time, path);
-
-        filePath = path + "\\merge.author.organization";
-        guangming(filePath, "merge", time, path);
+//        filePath = path + "\\fishery.author.organization";
+//        guangming(filePath,"fishery", time, path);
+//
+//        filePath = path + "\\food.author.organization";
+//        guangming(filePath,"food", time, path);
+//
+//        filePath = path + "\\livestock.author.organization";
+//        guangming(filePath,"livestock", time, path);
+//
+//        filePath = path + "\\merge.author.organization";
+//        guangming(filePath, "merge", time, path);
 
         filePath = path + "\\sp_co.author.organization";
         guangming(filePath, "sp_co", time, path);

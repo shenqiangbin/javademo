@@ -36,7 +36,7 @@ public class GuangMingFirstSecondNode {
         //System.out.println(str);
 
         String file = "D:\\code\\TPI\\大数据产品\\光明国际\\数据处理\\机构作者\\word.txt";
-        FileHelper.writeTxtFile(str, file, false, false);
+        //FileHelper.writeTxtFile(str, file, false, false);
 
     }
 
