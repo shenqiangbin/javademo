@@ -1,10 +1,16 @@
 import MyDate.DateUtil;
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.InflaterOutputStream;
 
 public class TestTY {
 
@@ -12,50 +18,71 @@ public class TestTY {
     static int MINUTE = 0;
     static int QUAN = 5;
 
+    // 研究文本压缩
     public static void main(String[] args) throws Exception {
 
-        connect();
+        //String content = fileDemo.FileHelper.readTxtFile("d:/1.txt");
+        String content = fileDemo.FileHelper.readTxtFile("d:/1017.txt");
 
-        //创建定时器对象
-        Timer timer = new Timer();
-//        Timer timer = new Timer(true);  //设为守护线程模式
+        String zipContent = DeflaterUtils.zipString(content);
+        String unzipContent =DeflaterUtils.unzipString(zipContent);
 
-
-        String middleBtn = "d:/adb/adb.exe shell input tap 405.5  211.8";
-        //click(middleBtn);
-
-        //指定定时任务
-        timer.schedule(new TimerTask() {
-            //编写一个匿名内部类，即定时任务
-            @Override
-            public void run() {
-                System.out.println("timer-" + DateUtil.format(new Date()));
-
-                int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-                int minute = Calendar.getInstance().get(Calendar.MINUTE);
-
-                //System.out.println(String.format("hour:%s, minute:%s", hour,minute));
-
-                if (hour == HOUR && minute == MINUTE) {
-                    timer.cancel();
-                    try {
-                        go();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
+        zipContent = fileDemo.FileHelper.readTxtFile("d:/1017-encode.txt");
+        unzipContent =DeflaterUtils.unzipString(zipContent);
 
 
+        if(content.startsWith("{")){
+            System.out.println("is json 1");
+        }
+        if(zipContent.startsWith("{")){
+            System.out.println("is json 2");
+        }
+        if(unzipContent.startsWith("{")){
+            System.out.println("is json 3");
+        }
+
+//        String zipContent = zipBase64(content);
+//        String unzipContent = unzipBase64(zipContent);
+
+        System.out.println("ok");
+
+    }
+
+
+    public static String zipBase64(String text) throws IOException {
+        ByteArrayOutputStream out = null;
+        DeflaterOutputStream deflaterOutputStream = null;
+        try {
+            out = new ByteArrayOutputStream();
+            deflaterOutputStream = new DeflaterOutputStream(out);
+            deflaterOutputStream.write(text.getBytes("UTF-8"));
+            BASE64Encoder encoder = new BASE64Encoder();
+            return encoder.encode(out.toByteArray());
+        } finally {
+            if (out != null) {
+                out.close();
             }
-        }, new Date(), 500);
+            if(deflaterOutputStream != null){
+                deflaterOutputStream.close();
+            }
+        }
+    }
 
+    /**
+     * 解压字符串,默认utf-8
+     *
+     * @param text
+     * @return
+     */
+    public static String unzipBase64(String text) throws IOException {
+        BASE64Decoder decoder = new BASE64Decoder();
 
-//        click(middleBtn);
-//        click(leftButton);
-
-
+        try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+            try (InflaterOutputStream outputStream = new InflaterOutputStream(os)) {
+                outputStream.write(decoder.decodeBuffer(text));
+            }
+            return new String(os.toByteArray(), "UTF-8");
+        }
     }
 
     public static void go() throws IOException, InterruptedException {
@@ -70,10 +97,10 @@ public class TestTY {
 
         String str =
                 QUAN == 1 ? q1 :
-                QUAN == 2 ? q2 :
-                QUAN == 3 ? q3 :
-                QUAN == 4 ? q4 :
-                QUAN == 5 ? q5 : "";
+                        QUAN == 2 ? q2 :
+                                QUAN == 3 ? q3 :
+                                        QUAN == 4 ? q4 :
+                                                QUAN == 5 ? q5 : "";
 
         System.out.println(str);
 

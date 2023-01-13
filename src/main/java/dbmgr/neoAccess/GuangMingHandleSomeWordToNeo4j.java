@@ -53,7 +53,9 @@ public class GuangMingHandleSomeWordToNeo4j {
 
     public static String[] getWords() {
         //return new String[]{"浮式风机"};
-        return new String[]{"能量回收装置"};
+        //return new String[]{"能量回收装置"};
+        //return new String[]{"反渗透海水淡化"};
+        return new String[]{"尾流振子模型","海流能","远洋渔业基地","波浪能转换装置","侧扫声呐","长江河口"};
     }
 
 
