@@ -123,7 +123,7 @@ public class FileHelper {
      * @return
      */
     public static String readTxtFile(String filePath) throws Exception {
-        String result = null;
+        String result = "";
         FileReader fileReader = null;
         BufferedReader bufferedReader = null;
         try {

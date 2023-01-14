@@ -24,7 +24,7 @@ public class seleniumDemo01 {
         https://chromedriver.storage.googleapis.com/index.html?path=73.0.3683.68/
         * */
 
-        System.setProperty("webdriver.chrome.driver", "c:/drive/chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", "c:/chromedriver_win32/chromedriver.exe");
 
         ChromeOptions chromeOptions = new ChromeOptions();
         //chromeOptions.addArguments("--headless");
@@ -32,8 +32,8 @@ public class seleniumDemo01 {
 
         WebDriver driver = new ChromeDriver(chromeOptions);
 
-        //driver.get("http://www.sqber.com");
-        driver.get("http://10.170.2.161:8161/models");
+        driver.get("http://www.sqber.com");
+        //driver.get("http://10.170.2.161:8161/models");
         //driver.get("http://www.baidu.com");
         driver.manage().window().maximize();
 
