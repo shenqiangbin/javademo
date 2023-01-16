@@ -24,10 +24,171 @@ public class Nongkeyuan {
 
     public static void main(String[] args) throws Exception {
         //sonbin();
-        sonbin2();
+        //sonbin2();
+
+        //handleTwo();
+        handleTwosonbin2();
 
         System.out.println("over");
     }
+
+    /**
+     * 在处理的基础上进行二次处理
+     * 获取【作者】是【英文】的文献集合
+     */
+    private static void handleTwo() throws Exception {
+        String filePath = "E:\\指标标引\\2022年维护总结\\问题数据项-700多条.xlsx";
+
+        InputStream stream = new FileInputStream(filePath);
+        Workbook wb = WorkbookFactory.create(stream);
+
+        Sheet sheet = wb.getSheetAt(0);
+
+        Row row = null;
+        int totalRow = sheet.getLastRowNum();
+
+        List<String> cells = new ArrayList<>();
+        String[] titles = null;
+
+        short minColIx = 0;
+        short maxColIx = 0;
+        List<Model> list = new ArrayList<>();
+
+        int needPdfCount = 0;
+        int notNeedPdfCount = 0;
+
+        System.out.println("全英文的作者有：");
+
+        for (int r = 1; r <= sheet.getLastRowNum(); r++) {
+
+            cells = new ArrayList<>();
+            row = sheet.getRow(r);
+
+            minColIx = row.getFirstCellNum();
+            maxColIx = row.getLastCellNum();
+
+            String title = getCellVal(row.getCell(1));
+            String author = getCellVal(row.getCell(4));
+            String teacher = getCellVal(row.getCell(5));
+            String abs = getCellVal(row.getCell(2));
+            String pdf = getCellVal(row.getCell(21));
+
+            if (!StrHelper.isContainChinese(author)) {
+                JSONObject object = new JSONObject();
+                object.put("title", title);
+                object.put("author", author);
+                object.put("teacher", teacher);
+                System.out.println(object.toString());
+            }
+        }
+
+    }
+
+    public static void handleTwosonbin2() throws Exception {
+
+        //driver = initChrome();
+
+        List<String> nameList = new ArrayList<>();
+
+        // 基于上一次处理结果，继续处理
+        String filePath = "E:\\指标标引\\2022年维护总结\\问题数据项-700多条-new.xlsx";
+        String newfilePath = "E:\\指标标引\\2022年维护总结\\问题数据项-700多条-new2.xlsx";
+
+        String resultfilePath = "E:\\指标标引\\2022年维护总结\\sta2023_01_16_10_50_12_english.txt";
+        String fileContent = FileHelper.readTxtFile(resultfilePath);
+
+        InputStream stream = new FileInputStream(filePath);
+        Workbook wb = WorkbookFactory.create(stream);
+
+        Sheet sheet = wb.getSheetAt(0);
+
+        Row row = null;
+        int totalRow = sheet.getLastRowNum();
+
+        List<String> cells = new ArrayList<>();
+        String[] titles = null;
+
+        short minColIx = 0;
+        short maxColIx = 0;
+        List<Model> list = new ArrayList<>();
+
+        int needPdfCount = 0;
+        int notNeedPdfCount = 0;
+
+        System.out.println("excel标题和匹配到的标题人工对比一下：");
+
+        for (int r = 1; r <= sheet.getLastRowNum(); r++) {
+
+            cells = new ArrayList<>();
+            row = sheet.getRow(r);
+
+            minColIx = row.getFirstCellNum();
+            maxColIx = row.getLastCellNum();
+
+            String title = getCellVal(row.getCell(1));
+            String author = getCellVal(row.getCell(4));
+            String teacher = getCellVal(row.getCell(5));
+            String abs = getCellVal(row.getCell(2));
+            String pdf = getCellVal(row.getCell(21));
+
+            JSONObject jsonObject = getBy(fileContent, title);
+
+            if (jsonObject == null) {
+                continue;
+            }
+
+            if (jsonObject.get("文献名字匹配").equals("1")) {
+                Cell cell = row.createCell(26);
+                cell.setCellValue("有数据_导师匹配");
+
+                boolean allSame = jsonObject.get("title").equals(jsonObject.get("title_db"));
+                //System.out.println(jsonObject.get("title") + ":" + jsonObject.get("title_db") + ":完成相同" + allSame);
+
+                CellStyle cellHeadStyle = createCellHeadStyle(wb);
+
+                if (StringUtils.isBlank(abs)) {
+                    row.getCell(2).setCellStyle(cellHeadStyle);
+                    row.getCell(2).setCellValue(jsonObject.getString("zval"));
+                }
+
+                if (StringUtils.isBlank(pdf)) {
+
+                    needPdfCount++;
+
+                    cell = row.createCell(21);
+                    cell.setCellStyle(cellHeadStyle);
+                    //cell.setCellValue(jsonObject.getString("zfile"));
+
+                    String name = findFileMostLike("E:\\指标标引\\2022年维护总结\\topdf-english", title, author);
+                    cell.setCellValue(name);
+
+                    if(nameList.contains(name)){
+                        System.out.println("包含了name:" + name);
+                    }else{
+                        nameList.add(name);
+                    }
+//
+                    //下载文献
+                   // System.out.println(title + ":" + author);
+                    //downloadFile(title);
+                } else {
+                    notNeedPdfCount++;
+                }
+
+            }
+
+            //System.out.println(r);
+            //System.out.println(Arrays.deepToString(cells.toArray()));
+        }
+        OutputStream ops = new FileOutputStream(newfilePath);
+        wb.write(ops);
+        ops.flush();
+        ops.close();
+        wb.close();
+
+        System.out.println("需要处理的pdf：" + needPdfCount + " 已经有的pdf：" + notNeedPdfCount);
+    }
+
 
     public static void sonbin2() throws Exception {
 
@@ -74,20 +235,20 @@ public class Nongkeyuan {
             String abs = getCellVal(row.getCell(2));
             String pdf = getCellVal(row.getCell(21));
 
-            JSONObject  jsonObject = getBy(fileContent, title);
+            JSONObject jsonObject = getBy(fileContent, title);
 
-            if(jsonObject.get("文献名字匹配").equals("1")){
+            if (jsonObject.get("文献名字匹配").equals("1")) {
                 Cell cell = row.createCell(26);
                 cell.setCellValue("有数据");
 
                 CellStyle cellHeadStyle = createCellHeadStyle(wb);
 
-                if(StringUtils.isBlank(abs)){
+                if (StringUtils.isBlank(abs)) {
                     row.getCell(2).setCellStyle(cellHeadStyle);
                     row.getCell(2).setCellValue(jsonObject.getString("zval"));
                 }
 
-                if(StringUtils.isBlank(pdf)){
+                if (StringUtils.isBlank(pdf)) {
 
                     needPdfCount++;
 
@@ -98,15 +259,15 @@ public class Nongkeyuan {
                     String name = findFileMostLike("E:\\指标标引\\2022年维护总结\\Downloads", title, author);
                     cell.setCellValue(name);
 
-                    if(nameList.contains(name)){
+                    if (nameList.contains(name)) {
                         System.out.println("包含了name:" + name);
-                    }else{
+                    } else {
                         nameList.add(name);
                     }
 
                     System.out.println(title + ":" + author + ":" + name);
                     //downloadFile(title);
-                }else{
+                } else {
 
                     notNeedPdfCount++;
 
@@ -139,44 +300,45 @@ public class Nongkeyuan {
         for (int i = 0; i < files.length; i++) {
 
             String filename = files[i].getName();
-            float socre = StrHelper.getSimilarityRatio(filename,name+"_"+author);
-            if(socre > topLike){
+            float socre = StrHelper.getSimilarityRatio(filename, name + "_" + author);
+            if (socre > topLike) {
                 topLike = socre;
                 topLikeFile = files[i];
             }
         }
 
-        if(!topLikeFile.getName().contains(author)){
-            throw new RuntimeException("不包含作者信息");
-        }
+//        if (!topLikeFile.getName().contains(author)) {
+//            throw new RuntimeException("不包含作者信息");
+//        }
 
         String newPath = "E:\\指标标引\\2022年维护总结\\toPdf\\" + topLikeFile.getName();
         FileHelper.copyFile(topLikeFile, new File(newPath));
 
-        return topLikeFile.getName().replace(".caj",".pdf");
+        return topLikeFile.getName().replace(".caj", ".pdf");
     }
 
-    public static JSONObject getBy(String content, String title){
-        for(String line : content.split("\r\n")){
-           JSONObject obj = JSON.parseObject(line);
-           if(obj.get("title").equals(title)){
-               return  obj;
-           }
+    public static JSONObject getBy(String content, String title) {
+        for (String line : content.split("\r\n")) {
+            JSONObject obj = JSON.parseObject(line);
+            if (obj.get("title").equals(title)) {
+                return obj;
+            }
         }
         return null;
     }
 
     static boolean okStart = false;
+
     static void downloadFile(String title) throws InterruptedException {
 
-        if(!okStart){
-
-            if(title.equals("城乡一体化下空间农业关键技术研究与应用探索")){
-                okStart = true;
-            }
-
-            return;
-        }
+//        if (!okStart) {
+//
+//            if (title.equals("城乡一体化下空间农业关键技术研究与应用探索")) {
+//                okStart = true;
+//            }
+//
+//            return;
+//        }
 
         String path = "https://kns.cnki.net/kns8/DefaultResult/Index?dbcode=CFLS&kw=123&korder=SU";
         path = path.replace("123", title);
@@ -192,7 +354,7 @@ public class Nongkeyuan {
         //$(".result-table-list tr td.operat a.downloadlink").attr('href')
     }
 
-    static WebDriver initChrome(){
+    static WebDriver initChrome() {
          /*
         https://chromedriver.storage.googleapis.com/index.html?path=73.0.3683.68/
         * */
@@ -224,7 +386,7 @@ public class Nongkeyuan {
 //        style.setAlignment(HorizontalAlignment.CENTER);
 //        style.setVerticalAlignment(VerticalAlignment.CENTER);
         // 生成字体
-       // Font font = workbook.createFont();
+        // Font font = workbook.createFont();
         // 表头样式
         style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         style.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
@@ -262,14 +424,13 @@ public class Nongkeyuan {
             maxColIx = row.getLastCellNum();
 
 
-
             String title = getCellVal(row.getCell(1));
             String author = getCellVal(row.getCell(4));
             String teacher = getCellVal(row.getCell(5));
 
 
             JSONObject object = new JSONObject();
-            object.put("title",title);
+            object.put("title", title);
             object.put("author", author);
             object.put("teacher", teacher);
             System.out.println(object.toString());
@@ -278,7 +439,6 @@ public class Nongkeyuan {
         }
 
     }
-
 
 
     private static String getCellVal(Cell cell) {

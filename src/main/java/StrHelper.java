@@ -1,18 +1,26 @@
 import java.text.NumberFormat;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class StrHelper {
 
     public static void main(String[] args) {
-        String a= "Steel";
-        String b = "Steel Pipe";
-        System.out.println("相似度："+getSimilarityRatio(a,b));
+//        String a= "Steel";
+//        String b = "Steel Pipe";
+//        System.out.println("相似度："+getSimilarityRatio(a,b));
+//
+//        String[] str1 = {"今天星期四","12345667890","Steel"};
+//        String[] str2 = {"今天是星期五","1234567890","Steel Pipe"};
+//        for(int i=0;i<str1.length;i++){
+//            levenshtein(str1[i],str2[i]);
+//        }
 
-        String[] str1 = {"今天星期四","12345667890","Steel"};
-        String[] str2 = {"今天是星期五","1234567890","Steel Pipe"};
-        for(int i=0;i<str1.length;i++){
-            levenshtein(str1[i],str2[i]);
-        }
+
+        System.out.println("over");
+
     }
+
+
 
     /**
      * 比较两个字符串的相识度
