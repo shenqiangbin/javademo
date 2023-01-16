@@ -13,12 +13,11 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static fileDemo.FileHelper.findFile;
 
 public class Nongkeyuan {
     static WebDriver driver;
@@ -34,10 +33,13 @@ public class Nongkeyuan {
 
         //driver = initChrome();
 
-        String filePath = "E:\\指标标引\\2022 年维护总结\\问题数据项-700多条.xlsx";
-        String newfilePath = "E:\\指标标引\\2022 年维护总结\\问题数据项-700多条-new.xlsx";
+        List<String> nameList = new ArrayList<>();
 
-        String resultfilePath = "E:\\指标标引\\2022 年维护总结\\sta2023_01_13_10_12_07.txt";
+        String filePath = "E:\\指标标引\\2022年维护总结\\问题数据项-700多条.xlsx";
+        String newfilePath = "E:\\指标标引\\2022年维护总结\\问题数据项-700多条-new.xlsx";
+
+        //String resultfilePath = "E:\\指标标引\\2022年维护总结\\sta2023_01_13_10_12_07.txt";
+        String resultfilePath = "E:\\指标标引\\2022年维护总结\\sta2023_01_13_16_32_22.txt";
         String fileContent = FileHelper.readTxtFile(resultfilePath);
 
         InputStream stream = new FileInputStream(filePath);
@@ -54,6 +56,9 @@ public class Nongkeyuan {
         short minColIx = 0;
         short maxColIx = 0;
         List<Model> list = new ArrayList<>();
+
+        int needPdfCount = 0;
+        int notNeedPdfCount = 0;
 
         for (int r = 1; r <= sheet.getLastRowNum(); r++) {
 
@@ -83,11 +88,28 @@ public class Nongkeyuan {
                 }
 
                 if(StringUtils.isBlank(pdf)){
+
+                    needPdfCount++;
+
                     cell = row.createCell(21);
                     cell.setCellStyle(cellHeadStyle);
-                    cell.setCellValue(jsonObject.getString("zfile"));
+                    //cell.setCellValue(jsonObject.getString("zfile"));
 
+                    String name = findFileMostLike("E:\\指标标引\\2022年维护总结\\Downloads", title, author);
+                    cell.setCellValue(name);
+
+                    if(nameList.contains(name)){
+                        System.out.println("包含了name:" + name);
+                    }else{
+                        nameList.add(name);
+                    }
+
+                    System.out.println(title + ":" + author + ":" + name);
                     //downloadFile(title);
+                }else{
+
+                    notNeedPdfCount++;
+
                 }
 
             }
@@ -100,6 +122,38 @@ public class Nongkeyuan {
         ops.flush();
         ops.close();
         wb.close();
+
+        System.out.println("需要处理的pdf：" + needPdfCount + " 已经有的pdf：" + notNeedPdfCount);
+    }
+
+    public static String findFileMostLike(String dir, String name, String author) throws IOException {
+        File file = new File(dir);
+        if (!file.exists()) {
+            throw new FileNotFoundException("目录不存在");
+        }
+        File[] files = file.listFiles();
+
+        float topLike = 0;
+        File topLikeFile = null;
+
+        for (int i = 0; i < files.length; i++) {
+
+            String filename = files[i].getName();
+            float socre = StrHelper.getSimilarityRatio(filename,name+"_"+author);
+            if(socre > topLike){
+                topLike = socre;
+                topLikeFile = files[i];
+            }
+        }
+
+        if(!topLikeFile.getName().contains(author)){
+            throw new RuntimeException("不包含作者信息");
+        }
+
+        String newPath = "E:\\指标标引\\2022年维护总结\\toPdf\\" + topLikeFile.getName();
+        FileHelper.copyFile(topLikeFile, new File(newPath));
+
+        return topLikeFile.getName().replace(".caj",".pdf");
     }
 
     public static JSONObject getBy(String content, String title){

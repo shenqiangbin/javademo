@@ -96,6 +96,33 @@ public class FileHelper {
     }
 
     /**
+     * 在指定目录按文件名字查找文件（包括子目录）
+     * @param dir
+     * @param name
+     * @return 返回找到得对象集合
+     * @throws FileNotFoundException
+     */
+    public static List<File> findFileMostLike(String dir, String name) throws FileNotFoundException {
+        List<File> list = new ArrayList<>();
+        File file = new File(dir);
+        if (!file.exists()) {
+            throw new FileNotFoundException("目录不存在");
+        }
+        if (file.isFile()) {
+            if(file.getName().equalsIgnoreCase(name)){
+                list.add(file);
+            }
+        } else {
+            File[] files = file.listFiles();
+            for (int i = 0; i < files.length; i++) {
+                String root = files[i].getAbsolutePath();
+                list.addAll(FileHelper.findFile(root, name));
+            }
+        }
+        return list;
+    }
+
+    /**
      * 创建文件
      *
      * @param filePath
