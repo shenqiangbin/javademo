@@ -59,6 +59,7 @@ SELECT COUNT(*) FROM gm_articles_has_author WHERE business = 'fishery' --28240
 
         for (int pageIndex = 1; pageIndex <= totalPage; pageIndex++) {
 
+            System.out.println(String.format("%s/%s",pageIndex,totalPage));
             int startIndex = (pageIndex - 1) * pageSize;
             sql = String.format("%s limit %s,%s", format, startIndex, pageSize);
             list = mySqlHelper.simpleQuery(sql,  new String[]{db});
@@ -66,8 +67,8 @@ SELECT COUNT(*) FROM gm_articles_has_author WHERE business = 'fishery' --28240
             builder = new StringBuilder();
             handleWordsResult(list, builder);
 
-            FileHelper.writeTxtFile(builder.toString(),"D:\\code\\TPI\\大数据产品\\光明国际\\数据处理\\数据去重后得MySQL导出到文件\\"+ db + ".txt", false, true);
-            FileHelper.writeTxtFile(builder.toString(),"D:\\code\\TPI\\大数据产品\\光明国际\\数据处理\\数据去重后得MySQL导出到文件\\merge.txt", false, true);
+            FileHelper.writeTxtFile(builder.toString(),"D:\\code\\TPI\\大数据产品\\光明国际\\数据处理\\数据去重后得MySQL导出到文件\\2023\\"+ db + ".txt", false, true);
+            FileHelper.writeTxtFile(builder.toString(),"D:\\code\\TPI\\大数据产品\\光明国际\\数据处理\\数据去重后得MySQL导出到文件\\2023\\merge.txt", false, true);
 
         }
 
@@ -115,7 +116,8 @@ SELECT COUNT(*) FROM gm_articles_has_author WHERE business = 'fishery' --28240
         HikariConfig config = new HikariConfig();
 
         //config.setJdbcUrl("jdbc:mysql://:3306/bd?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC");
-        config.setJdbcUrl("jdbc:mysql://192.168.52.63:13306/gmgj?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC");
+        //config.setJdbcUrl("jdbc:mysql://192.168.52.63:13306/gmgj?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC");
+        config.setJdbcUrl("jdbc:mysql://10.120.130.175:13306/gmgj_mid_data?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC");
         config.setUsername("root");
         config.setDriverClassName("com.mysql.cj.jdbc.Driver");
         config.setPassword("123456");
