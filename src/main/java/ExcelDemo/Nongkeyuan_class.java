@@ -94,6 +94,7 @@ public class Nongkeyuan_class {
             Object name = map.get((Object)item);
             result.add(name);
             result.add(getEnName(name));
+            result.add(getCodeName(name));
         }
 
         objects.add(result);
@@ -112,6 +113,19 @@ public class Nongkeyuan_class {
         return "-";
     }
 
+    private static String getCodeName(Object name) throws Exception {
+        String str = "select NormalCode from nv_normal_value where NormalName = ? limit 10";
+        List<LinkedHashMap<String, Object>> linkedHashMaps = mySqlHelper.simpleQuery(str, new Object[]{name});
+        if(linkedHashMaps == null || linkedHashMaps.size() ==0){
+            return "-";
+        }
+        for(LinkedHashMap<String,Object> item : linkedHashMaps) {
+            String enName = item.get("NormalCode").toString();
+            return enName;
+        }
+        return "-";
+    }
+
     private static void saveToExcel() throws IOException {
 
         String sheetName = "国家数据";
@@ -119,20 +133,28 @@ public class Nongkeyuan_class {
         List<String> columnNames = new LinkedList<>();
         columnNames.add("一级（中）");
         columnNames.add("一级（英）");
+        columnNames.add("一级（代码）");
         columnNames.add("二级（中）");
         columnNames.add("二级（英）");
+        columnNames.add("二级（代码）");
         columnNames.add("三级（中）");
         columnNames.add("三级（英）");
+        columnNames.add("三级（代码）");
         columnNames.add("四级（中）");
         columnNames.add("四级（英）");
+        columnNames.add("四级（代码）");
         columnNames.add("五级（中）");
         columnNames.add("五级（英）");
+        columnNames.add("五级（代码）");
         columnNames.add("六级（中）");
         columnNames.add("六级（英）");
+        columnNames.add("六级（代码）");
         columnNames.add("七级（中）");
         columnNames.add("七级（英）");
+        columnNames.add("七级（代码）");
         columnNames.add("八级（中）");
         columnNames.add("八级（英）");
+        columnNames.add("八级（代码）");
 
         Excel2007Utils.writeExcel("E:\\temp", "国家数据", sheetName, columnNames, sheetTitle, objects, false);
 

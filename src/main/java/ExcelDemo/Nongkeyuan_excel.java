@@ -35,6 +35,8 @@ public class Nongkeyuan_excel {
             break;
         }
 
+        maxColIx = 23;
+
         String origiVal = "";
         int startrow = 0;
         int endrow = 0;
@@ -52,7 +54,7 @@ public class Nongkeyuan_excel {
                 } else {
                     endrow = r - 1;
                     if (StringUtils.isNotEmpty(origiVal) && endrow > startrow) {
-                        sheet.addMergedRegion(new CellRangeAddress(startrow, endrow, col, col));
+                        //sheet.addMergedRegion(new CellRangeAddress(startrow, endrow, col, col));
                     }
                     if (StringUtils.isNotEmpty(cellVal)) {
                         origiVal = cellVal;
@@ -62,7 +64,7 @@ public class Nongkeyuan_excel {
                 if(r == sheet.getLastRowNum()){
                     endrow = r;
                     if (StringUtils.isNotEmpty(origiVal) && endrow > startrow) {
-                        sheet.addMergedRegion(new CellRangeAddress(startrow, endrow, col, col));
+                        //sheet.addMergedRegion(new CellRangeAddress(startrow, endrow, col, col));
                     }
                 }
             }
