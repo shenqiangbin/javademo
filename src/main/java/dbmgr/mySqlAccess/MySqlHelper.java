@@ -265,6 +265,19 @@ public class MySqlHelper {
         return result;
     }
 
+    public void updateLarge(String sql) throws SQLException {
+
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+            connection.createStatement().execute(sql);
+        } finally {
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
+        }
+    }
+
     public int update(String sql, Object[] params) throws SQLException {
 
         Connection connection = null;

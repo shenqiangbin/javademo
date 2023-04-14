@@ -33,8 +33,8 @@ public class GuangMingOnlineHandleAuthorAndWord {
     }
 
     static void mysqlToFile() throws Exception {
-        String format = "select * from gm_articles_has_author order by id asc";
-        String sumsql = "select count(*) as val from gm_articles_has_author";
+        String format = "select * from gm_articles_has_author where db = '博士' or  db = '硕士' order by id asc";
+        String sumsql = "select count(*) as val from gm_articles_has_author where db = '博士' or  db = '硕士'";
 
         String countStr = mySqlHelper.executeScalar(sumsql, null);
         Long totalCount = Long.parseLong(countStr);
@@ -94,6 +94,7 @@ public class GuangMingOnlineHandleAuthorAndWord {
 
             String[] codeArr = authorCode.split(";");
             String[] nameArr = author.split(";");
+            String[] orgArr = org.split(";");
 
 //            if (codeArr.length != nameArr.length) {
 //                System.out.println("数量不匹配" + authorCode + ":::" + author);
@@ -104,12 +105,13 @@ public class GuangMingOnlineHandleAuthorAndWord {
                 //String code = codeArr[i];
                 String code = "";
                 String name = nameArr[i];
+                String orgItem = orgArr[i];
 
 //                if (StringUtils.isBlank(code)) {
 //                    continue;
 //                }
 
-                splitWorlds(keyword, code, name, builder, sqlbuilder);
+                splitWorlds(keyword, code, name, orgItem, builder, sqlbuilder);
                 // 只记录第一作者
                 //break;
             }
@@ -117,7 +119,7 @@ public class GuangMingOnlineHandleAuthorAndWord {
         }
     }
 
-    static void splitWorlds(String keyword, String code, String name, StringBuilder builder, StringBuilder sqlbuilder) throws SQLException {
+    static void splitWorlds(String keyword, String code, String name, String org, StringBuilder builder, StringBuilder sqlbuilder) throws SQLException {
         String[] keywordArr = keyword.split(";;");
         for (String item : keywordArr) {
             String key = code + name + item;
@@ -129,7 +131,7 @@ public class GuangMingOnlineHandleAuthorAndWord {
                         " 0, '" + "author-keyword" + "', NULL, '2022-11-23 10:03:00', '2022-11-23 10:03:00');";
                 sqlbuilder.append(sql).append("\r\n");
 
-                params.add(Arrays.asList(item,name));
+                params.add(Arrays.asList(item,name, org));
 
                 if (params.size() > 0 && params.size() % 5000 == 0) {
                     save();
@@ -144,8 +146,8 @@ public class GuangMingOnlineHandleAuthorAndWord {
 
     static void save() throws SQLException {
         if (params.size() > 0) {
-            String sql = "INSERT INTO `dwd_expert_ins_rel` (`word`, `name`, `score`, `type`, `master`, `db`, `rel_id`, `createTime`, `moifyTime`) " +
-                    "VALUES (?,?, 1,0,0,'author-keyword', NULL, '2022-11-23 10:03:00', '2022-11-23 10:03:00')";
+            String sql = "INSERT INTO `dwd_expert_ins_rel_ext` (`word`, `name`, `org`,  `score`, `type`, `master`, `db`, `rel_id`, `createTime`, `moifyTime`) " +
+                    "VALUES (?,?,?, 1,0,0,'author-keyword', NULL, '2022-11-23 10:03:00', '2022-11-23 10:03:00')";
             mySqlHelper.executeSqlBatch(sql, params);
             params.clear();
         }
