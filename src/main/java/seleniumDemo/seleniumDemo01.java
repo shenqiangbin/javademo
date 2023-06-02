@@ -1,5 +1,6 @@
 package seleniumDemo;
 
+import ExcelDemo.Excel2007Utils;
 import common.P;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -12,43 +13,50 @@ import java.io.IOException;
 import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.Thread.*;
 
 public class seleniumDemo01 {
-    public static void main(String[] args) throws InterruptedException {
+
+    /* 数据集合 */
+    static List<List<Object>> dataList = new ArrayList<>();
+
+    public static void main(String[] args) throws InterruptedException, IOException {
 
         /*
         https://chromedriver.storage.googleapis.com/index.html?path=73.0.3683.68/
         * */
 
-        System.setProperty("webdriver.chrome.driver", "c:/chromedriver_win32/chromedriver.exe");
+        //System.setProperty("webdriver.chrome.driver", "c:/chromedriver_win32/chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", "/Users/adminqian/shenqb/soft/chromeDriver/chromedriver_mac64/chromedriver");
 
         ChromeOptions chromeOptions = new ChromeOptions();
-        //chromeOptions.addArguments("--headless");
-        //chromeOptions.addArguments("--window-size=1280,768");
+        chromeOptions.addArguments("--headless");
+        chromeOptions.addArguments("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36");
+        chromeOptions.addArguments("--window-size=1280,768");
 
         WebDriver driver = new ChromeDriver(chromeOptions);
 
-        driver.get("http://www.sqber.com");
-        //driver.get("http://10.170.2.161:8161/models");
-        //driver.get("http://www.baidu.com");
-        driver.manage().window().maximize();
+        driver.get("https://www.qctsw.com/complaint/search?brandId=32");
+        //driver.manage().window().maximize();
 
+        Thread.sleep(2000);
 
         WebElement element = driver.findElement(By.className("el-pager"));
-
         List<WebElement> eles = element.findElements(By.tagName("li"));
-        WebElement lastEle = eles.get(eles.size() - 1);
 
-        String text = lastEle.getText();
+        int currentPage = getCurrentPage(eles);
 
-
-        int currentPage = getCurrentPage(driver);
-
-        while (currentPage <= Integer.parseInt(text)) {
+        WebElement lastPageEle = eles.get(eles.size() - 1);
+        String lastPageStr = lastPageEle.getText();
+        while (currentPage <= Integer.parseInt(lastPageStr) && currentPage <= 25) {
+            System.out.println("currentPage：" + currentPage);
+            if (currentPage >= 1) {
+                handleCurrentPage(driver);
+            }
 
             WebElement ele = null;
             try {
@@ -57,16 +65,21 @@ public class seleniumDemo01 {
 
             }
 
-            find(driver);
-
-            if (ele != null)
+            if (ele != null) {
                 ele.click();
-            {
+                Thread.sleep(3000);
+            } else {
                 break;
             }
 
+
+            WebElement element2 = driver.findElement(By.className("el-pager"));
+            List<WebElement> eles2 = element2.findElements(By.tagName("li"));
+            currentPage = getCurrentPage(eles2);
+
         }
 
+        saveToExcel();
 
 //        File srcFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
 //        String val = srcFile.getPath();
@@ -118,6 +131,7 @@ public class seleniumDemo01 {
         * */
     }
 
+    // 得到下一个按钮
     private static WebElement getNextButton(WebDriver driver) {
         WebElement elementPager = driver.findElement(By.className("el-pager"));
         List<WebElement> elesLi = elementPager.findElements(By.tagName("li"));
@@ -133,24 +147,95 @@ public class seleniumDemo01 {
         return null;
     }
 
-    private static int getCurrentPage(WebDriver driver) {
-        WebElement elementActive = driver.findElement(By.className("active"));
-        String val = elementActive.getText();
-        return Integer.parseInt(val);
+    private static int getCurrentPage(List<WebElement> eles) {
+        for (WebElement ele : eles) {
+            String cssVal = ele.getAttribute("class");
+            if (cssVal.contains("is-active")) {
+                return Integer.parseInt(ele.getText());
+            }
+        }
+        throw new RuntimeException("not found");
     }
 
 
-    private static void find(WebDriver driver) throws InterruptedException {
-        List<WebElement> imgs = driver.findElements(By.tagName("img"));
-        for (WebElement img : imgs) {
-            if (img.getAttribute("src").contains("/images/img.png")) {
-                img.click();
+//    private static void find(WebDriver driver) throws InterruptedException {
+//        List<WebElement> imgs = driver.findElements(By.tagName("img"));
+//        for (WebElement img : imgs) {
+//            if (img.getAttribute("src").contains("/images/img.png")) {
+//                img.click();
+//
+//                Thread.sleep(2000);
+//                driver.findElement(By.className("ht-d")).click();
+//                Thread.sleep(2000);
+//            }
+//        }
+//    }
 
-                Thread.sleep(2000);
-                driver.findElement(By.className("ht-d")).click();
-                Thread.sleep(2000);
-            }
+    private static void handleCurrentPage(WebDriver driver) throws InterruptedException {
+
+        List<WebElement> nameEles = driver.findElements(By.className("public-hover"));
+        for (WebElement nameEle : nameEles) {
+
+            nameEle.click();
+
+            Thread.sleep(3000);
+
+            handleDetailPage(driver);
+
+            Thread.sleep(3000);
         }
     }
 
+    private static void handleDetailPage(WebDriver driver) {
+
+        List<Object> rowData = new ArrayList<>();
+
+        String winStr = driver.getWindowHandles().toArray()[1].toString();
+        driver.switchTo().window(winStr);
+
+        String currentUrl = driver.getCurrentUrl();
+        String pageSource = driver.getPageSource();
+        System.out.println(currentUrl);
+        rowData.add(currentUrl);
+
+        WebElement titleEle = driver.findElement(By.className("text-title"));
+        String content = titleEle.getText();
+
+        System.out.println(content);
+        rowData.add(content);
+
+        List<WebElement> contentEles = driver.findElements(By.className("table-content"));
+        for (int i = 0; i < contentEles.size(); i++) {
+            WebElement ele = contentEles.get(i);
+            if (i == 3 || i == 6) {
+                String text = ele.getText();
+                System.out.println(text);
+                rowData.add(text);
+            }
+        }
+
+//        WebElement contentEle = driver.findElement(By.className("mtb-24"));
+//        String contentEleText = contentEle.getText();
+//        rowData.add(contentEleText);
+
+        // 关闭当前 tab 页
+        driver.close();
+
+        winStr = driver.getWindowHandles().toArray()[0].toString();
+        driver.switchTo().window(winStr);
+
+        dataList.add(rowData);
+    }
+
+    static void saveToExcel() throws IOException {
+        Excel2007Utils.writeExcelData("/Users/adminqian/shenqb", "data.xls", "sheet1", dataList);
+    }
 }
+
+/**
+ * 1、selenium 关闭当前 tab 页
+ * <p>
+ * 再切换回第一个 tab 页
+ * winStr = driver.getWindowHandles().toArray()[0].toString();
+ * driver.switchTo().window(winStr);
+ **/
