@@ -2,7 +2,7 @@ package dbmgr.kbaseAccess;
 
 import com.kbase.jdbc.ResultSetImpl;
 import com.kbase.jdbc.StatementImpl;
-import com.mysql.cj.util.StringUtils;
+import com.mysql.jdbc.StringUtils;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import common.P;

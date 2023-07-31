@@ -1,14 +1,11 @@
 import MyDate.DateUtil;
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+//import sun.misc.BASE64Decoder;
+//import sun.misc.BASE64Encoder;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterOutputStream;
 
@@ -56,8 +53,11 @@ public class TestTY {
             out = new ByteArrayOutputStream();
             deflaterOutputStream = new DeflaterOutputStream(out);
             deflaterOutputStream.write(text.getBytes("UTF-8"));
-            BASE64Encoder encoder = new BASE64Encoder();
-            return encoder.encode(out.toByteArray());
+//            BASE64Encoder encoder = new BASE64Encoder();
+//            return encoder.encode(out.toByteArray());
+            // 从JKD 9开始rt.jar包已废除，从JDK 1.8开始使用java.util.Base64.Encoder
+            Base64.Encoder encoder = Base64.getEncoder();
+            return encoder.encodeToString(out.toByteArray());
         } finally {
             if (out != null) {
                 out.close();
@@ -75,11 +75,14 @@ public class TestTY {
      * @return
      */
     public static String unzipBase64(String text) throws IOException {
-        BASE64Decoder decoder = new BASE64Decoder();
+//        BASE64Decoder decoder = new BASE64Decoder();
+        // 从JKD 9开始rt.jar包已废除，从JDK 1.8开始使用java.util.Base64.Encoder
+        Base64.Decoder decoder = Base64.getDecoder();
 
         try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
             try (InflaterOutputStream outputStream = new InflaterOutputStream(os)) {
-                outputStream.write(decoder.decodeBuffer(text));
+//                outputStream.write(decoder.decodeBuffer(text));
+                outputStream.write(decoder.decode(text));
             }
             return new String(os.toByteArray(), "UTF-8");
         }

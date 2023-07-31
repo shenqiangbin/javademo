@@ -1,12 +1,13 @@
 package fileDemo;
 
 import org.mozilla.universalchardet.UniversalDetector;
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+//import sun.misc.BASE64Decoder;
+//import sun.misc.BASE64Encoder;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 // 类似 commons-io 下的 FileUtils
@@ -70,6 +71,7 @@ public class FileHelper {
 
     /**
      * 在指定目录按文件名字查找文件（包括子目录）
+     *
      * @param dir
      * @param name
      * @return 返回找到得对象集合
@@ -82,7 +84,7 @@ public class FileHelper {
             throw new FileNotFoundException("目录不存在");
         }
         if (file.isFile()) {
-            if(file.getName().equalsIgnoreCase(name)){
+            if (file.getName().equalsIgnoreCase(name)) {
                 list.add(file);
             }
         } else {
@@ -97,6 +99,7 @@ public class FileHelper {
 
     /**
      * 在指定目录按文件名字查找文件（包括子目录）
+     *
      * @param dir
      * @param name
      * @return 返回找到得对象集合
@@ -109,7 +112,7 @@ public class FileHelper {
             throw new FileNotFoundException("目录不存在");
         }
         if (file.isFile()) {
-            if(file.getName().equalsIgnoreCase(name)){
+            if (file.getName().equalsIgnoreCase(name)) {
                 list.add(file);
             }
         } else {
@@ -240,8 +243,13 @@ public class FileHelper {
         }
         fileInputStream.close();
         String val = arrayOutputStream.toString();
-        BASE64Encoder encoder = new BASE64Encoder();
-        String str = encoder.encode(arrayOutputStream.toByteArray());
+//        BASE64Encoder encoder = new BASE64Encoder();
+//        String str = encoder.encode(arrayOutputStream.toByteArray());
+
+        // 从JKD 9开始rt.jar包已废除，从JDK 1.8开始使用java.util.Base64.Encoder
+        Base64.Encoder encoder = Base64.getEncoder();
+        String str = encoder.encodeToString(arrayOutputStream.toByteArray());
+
         return str;
     }
 
@@ -276,9 +284,14 @@ public class FileHelper {
         //String abc = new String(arrayOutputStream.toByteArray(),"UTF-8");
         // abc.getBytes();
 
-        BASE64Encoder encoder = new BASE64Encoder();
-        //String str = encoder.encode(arrayOutputStream.toByteArray());
-        String str = encoder.encode(val.getBytes());
+//        BASE64Encoder encoder = new BASE64Encoder();
+//        //String str = encoder.encode(arrayOutputStream.toByteArray());
+//        String str = encoder.encode(val.getBytes());
+
+        // 从JKD 9开始rt.jar包已废除，从JDK 1.8开始使用java.util.Base64.Encoder
+        Base64.Encoder encoder = Base64.getEncoder();
+        String str = encoder.encodeToString(val.getBytes());
+
         return str;
     }
 
@@ -319,8 +332,13 @@ public class FileHelper {
      * @throws IOException
      */
     public static void byteContentToFile(String path, String content) throws IOException {
-        BASE64Decoder decoder = new BASE64Decoder();
-        byte[] newBy = decoder.decodeBuffer(content);
+//        BASE64Decoder decoder = new BASE64Decoder();
+//        byte[] newBy = decoder.decodeBuffer(content);
+
+        // 从JKD 9开始rt.jar包已废除，从JDK 1.8开始使用java.util.Base64.Encoder
+        Base64.Decoder decoder = Base64.getDecoder();
+        byte[] newBy = decoder.decode(content);
+
         FileOutputStream fileOutputStream = new FileOutputStream(path, false);
         fileOutputStream.write(newBy);
     }
