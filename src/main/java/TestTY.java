@@ -18,6 +18,24 @@ public class TestTY {
     // 研究文本压缩
     public static void main(String[] args) throws Exception {
 
+        List<String> result = new ArrayList<>();
+        result.add("1");
+        result.add("2");
+
+        List<String> noExperts = new ArrayList<>();
+        noExperts.add("a");
+        noExperts.add("b");
+        noExperts.add("a1");
+        noExperts.add("b2");
+        noExperts.add("c3");
+
+        int otherCount = 5 - result.size();
+        List<String> dwdExpertInsRels = noExperts.subList(0, Math.min(otherCount, noExperts.size()));
+        result.addAll(dwdExpertInsRels);
+
+        System.out.println(result);
+
+
         //String content = fileDemo.FileHelper.readTxtFile("d:/1.txt");
         String content = fileDemo.FileHelper.readTxtFile("d:/1017.txt");
 

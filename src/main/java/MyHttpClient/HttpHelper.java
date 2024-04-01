@@ -129,7 +129,7 @@ public class HttpHelper {
      * @param filePath
      * @throws IOException
      */
-    public static void downloadFile(String url, Map<String, String> headMap, String filePath) throws IOException {
+    public static void  downloadFile(String url, Map<String, String> headMap, String filePath) throws IOException {
         File newFile = new File(filePath);
         if (!newFile.exists()) {
             newFile.createNewFile();
@@ -259,9 +259,9 @@ public class HttpHelper {
     private static RequestConfig getRequestConfig() {
         //setSocketTimeout 获取数据的超时时间
         return RequestConfig.custom()
-                .setConnectTimeout(5000)
-                .setConnectionRequestTimeout(1000)
-                .setSocketTimeout(5000)
+                .setConnectTimeout(15000)
+                .setConnectionRequestTimeout(11000)
+                .setSocketTimeout(15000)
                 .build();
     }
 }

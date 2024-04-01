@@ -35,7 +35,7 @@ public class GuangMingOnlineDataFile {
     public static void main(String[] args) throws Exception {
         //处理从线上获取的四个库的文件，入到 mysql 数据库中
         //String[] dbs = new String[]{"food","livestock","farming","fishery"};
-        String[] dbs = new String[]{"fishery"};
+        String[] dbs = new String[]{"livestock","fishery"};
         for (String db : dbs) {
             dataToMysql(db);
         }
@@ -43,9 +43,10 @@ public class GuangMingOnlineDataFile {
 
     static void dataToMysql(String db) throws Exception {
         //String[] files = new String[]{"food_2018.txt","food_2019.txt","food_2020.txt","food_2021.txt","food_2022.txt"};
-        String[] files = new String[]{"food_DM_2018.txt", "food_DM_2019.txt", "food_DM_2020.txt", "food_DM_2021.txt", "food_DM_2022.txt"};
+        //String[] files = new String[]{"food_DM_2018.txt", "food_DM_2019.txt", "food_DM_2020.txt", "food_DM_2021.txt", "food_DM_2022.txt"};
 
-        //String[] files = new String[]{"food_2018.txt","food_2019.txt","food_2020.txt","food_2021.txt","food_2022.txt"};
+        //String[] files = new String[]{"food_DM_2023.txt", "food_2023.txt" };
+        String[] files = new String[]{"food_2023.txt" };
 
         for (String file : files) {
             file = file.replace("food", db);
@@ -161,7 +162,7 @@ public class GuangMingOnlineDataFile {
         HikariConfig config = new HikariConfig();
 
         //config.setJdbcUrl("jdbc:mysql://:3306/bd?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC");
-        config.setJdbcUrl("jdbc:mysql://192.168.52.63:13306/gmgj?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC");
+        config.setJdbcUrl("jdbc:mysql://10.120.130.175:13306/gmgj_mid_data?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC");
         config.setUsername("root");
         config.setDriverClassName("com.mysql.cj.jdbc.Driver");
         config.setPassword("123456");

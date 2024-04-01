@@ -8,14 +8,22 @@ import org.apache.poi.openxml4j.opc.internal.FileHelper;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class Test {
     public static void main(String[] args) throws Exception {
 
+        // 创建临时目录 && 临时文件
+        Path tmp = Files.createTempDirectory("tmp");
+        String fileId = UUID.randomUUID().toString().replaceAll("-", "");
+        Path docPath = Files.createTempFile(tmp, "", ".doc");
+        Path pngPath = Files.createTempFile(tmp, "", ".png");
 
-        String str =  fileDemo.FileHelper.fileToByteConent("e:/1.jpg");
+        String str =  fileDemo.FileHelper.fileToByteConent("d:/2-test2.png");
 
         Map<String, String> paramsMap = new HashMap<>();
         paramsMap.put("fileName","1.jpg");

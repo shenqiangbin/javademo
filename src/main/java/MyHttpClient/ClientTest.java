@@ -23,15 +23,22 @@ import static org.apache.xmlbeans.impl.store.Public2.test;
 
 public class ClientTest {
     public static void main(String[] args) throws Exception {
-        //testUpload();
+        testUpload();
         //saveFileToLocal();
         //saveHtmlToLocal();
-        testGet();
+        //testGet();
+
+//        String url = "http://localhost:9998/file/get?filename=46f33d0eb2f740a79f7db65a2c07004d.png";
+//        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//        HttpHelper.downloadFile(url, null, byteArrayOutputStream);
+//        byte[] byteArray = byteArrayOutputStream.toByteArray();
+
     }
 
     public static void testUpload() throws Exception {
-        String serverUrl = "http://localhost:8182//normalValue/fileImport";
-        String localFilePath = "e:/abc.png";
+        //String serverUrl = "http://localhost:9998/file/upload";
+        String serverUrl = "http://10.120.130.49:9998/file/upload";
+        String localFilePath = "e:/1.docx";
         Map<String, String> map = new HashMap<>();
         map.put("key", "value");
         String result = HttpHelper.uploadFile(serverUrl, localFilePath, "file", map, null);

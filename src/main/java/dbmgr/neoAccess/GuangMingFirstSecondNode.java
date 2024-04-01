@@ -14,6 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * 导出图谱上面一级二级词。
+ */
 public class GuangMingFirstSecondNode {
     static Neo4jHelper neo4jHelper = initOnlineHelper();
     //    static HikariDataSource dataSource = new HikariDataSource(getConfig());
