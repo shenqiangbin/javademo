@@ -357,6 +357,13 @@
             <version>7.6.2</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.groupdocs</groupId>
+            <artifactId>groupdocs-conversion</artifactId>
+            <version>23.10</version>
+        </dependency>
+
+
     </dependencies>
 
 
@@ -374,8 +381,11 @@
             <url>https://artifacts.elastic.co/maven</url>
         </repository>
 
-
-
+        <repository>
+            <id>repository.groupdocs.com</id>
+            <name>GroupDocs Repository</name>
+            <url>https://repository.groupdocs.com/repo/</url>
+        </repository>
 
     </repositories>
 
