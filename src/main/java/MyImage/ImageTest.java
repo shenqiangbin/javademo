@@ -16,16 +16,13 @@ import org.apache.commons.io.FilenameUtils;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -54,12 +51,18 @@ public class ImageTest {
     }
 
     // jp2 图片转 png 图片
-    private static void testjp2ToPng() {
-        ImgUtil.convertImgToPng("E:\\预警系统\\全文抽取测试\\d5196bcd340d4f6897ec7dd300e2b677\\第285页--1241769773-img652.jp2",
-                "E:\\预警系统\\全文抽取测试\\d5196bcd340d4f6897ec7dd300e2b677\\第285页--1241769773-img652-imgUtilTest.png");
+    private static void testjp2ToPng() throws IOException {
+//        ImgUtil.convertImgToPng("E:\\预警系统\\全文抽取测试\\d5196bcd340d4f6897ec7dd300e2b677\\第285页--1241769773-img652.jp2",
+//                "E:\\预警系统\\全文抽取测试\\d5196bcd340d4f6897ec7dd300e2b677\\第285页--1241769773-img652-imgUtilTest.png");
+//
+//        ImgUtil.convertImgToJpg("E:\\预警系统\\全文抽取测试\\d5196bcd340d4f6897ec7dd300e2b677\\第285页--1241769773-img652.jp2",
+//                "E:\\预警系统\\全文抽取测试\\d5196bcd340d4f6897ec7dd300e2b677\\第285页--1241769773-img652-imgUtilTest.jpg");
 
-        ImgUtil.convertImgToJpg("E:\\预警系统\\全文抽取测试\\d5196bcd340d4f6897ec7dd300e2b677\\第285页--1241769773-img652.jp2",
-                "E:\\预警系统\\全文抽取测试\\d5196bcd340d4f6897ec7dd300e2b677\\第285页--1241769773-img652-imgUtilTest.jpg");
+//        ImgUtil.convertImgToJpg2("E:\\预警系统\\全文抽取测试\\第285页--1241769773-img652.jp2",
+//                "E:\\预警系统\\全文抽取测试\\第285页--1241769773-img652-imgUtilTest.jpg");
+
+        ImgUtil.convertImgToJpg3("E:\\预警系统\\全文抽取测试\\第285页--1241769773-img652.jp2",
+                "E:\\预警系统\\全文抽取测试\\第285页--1241769773-img652-imgUtilTest.jpg");
     }
 
     //图片上写字
@@ -458,21 +461,21 @@ public class ImageTest {
     public static CompletableFuture<String> doTask(Path item, String dest){
         return CompletableFuture.supplyAsync(() -> {
 
-            ImageConvertOptions convertOptions = new ImageConvertOptions();
-            convertOptions.setFormat(ImageFileType.Jpg);
-            convertOptions.setPagesCount(1);
-            convertOptions.setHorizontalResolution(50);
-            convertOptions.setVerticalResolution(50);
-
-            Converter converter = null;
-
-            String outputDirectory = "E:\\预警系统\\全文抽取测试\\tmp";
-            String cachePath = new File(outputDirectory, "cache").getPath();
-
-            FileCache cache = new FileCache(cachePath);
-
-            ConverterSettings settingsFactory =  new ConverterSettings();
-            settingsFactory.setCache(cache);
+//            ImageConvertOptions convertOptions = new ImageConvertOptions();
+//            convertOptions.setFormat(ImageFileType.Jpg);
+//            convertOptions.setPagesCount(1);
+//            convertOptions.setHorizontalResolution(50);
+//            convertOptions.setVerticalResolution(50);
+//
+//            Converter converter = null;
+//
+//            String outputDirectory = "E:\\预警系统\\全文抽取测试\\tmp";
+//            String cachePath = new File(outputDirectory, "cache").getPath();
+//
+//            FileCache cache = new FileCache(cachePath);
+//
+//            ConverterSettings settingsFactory =  new ConverterSettings();
+//            settingsFactory.setCache(cache);
 
 //            System.out.println(item.toString());
 //            System.out.println(dest.toString());
@@ -480,8 +483,14 @@ public class ImageTest {
 
 
 //            converter = new Converter(item.toString(), () -> settingsFactory);
-            converter = new Converter(item.toString());
-            converter.convert(dest, convertOptions);
+//            converter = new Converter(item.toString());
+//            converter.convert(dest, convertOptions);
+
+            try {
+                ImgUtil.convertImgToJpg3(item.toString(), dest);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
             try {
                 Files.deleteIfExists(item);
