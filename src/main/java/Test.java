@@ -1,10 +1,10 @@
 import MyDate.DateUtil;
+import cn.hutool.core.io.FileUtil;
 
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class Test {
 
@@ -13,6 +13,24 @@ public class Test {
     static int QUAN = 5;
 
     public static void main(String[] args) throws Exception {
+
+        String content = FileUtil.readString("e:/exclude2024_04_24_14_14_58_202404230942110499.txt","UTF-8");
+        String[] split = content.split(",");
+
+        List<Integer> exclude  = new ArrayList<>();
+        exclude.add(1);
+        exclude.add(2);
+        exclude.add(3);
+        if(exclude.size()> 2) {
+            exclude = exclude.subList(0, 2);
+        }
+
+        System.out.println(exclude);
+
+        String tbContent = "123";
+
+        String time = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date());
+        FileUtil.writeString(tbContent, "c:/tbContent" + time + ".txt", Charset.forName("UTF-8"));
 
         connect();
 

@@ -2,6 +2,7 @@ package dbmgr.neoAccess;
 
 import org.apache.commons.lang3.StringUtils;
 import org.neo4j.driver.*;
+import org.neo4j.driver.Record;
 import org.neo4j.driver.types.Node;
 import org.neo4j.driver.types.Relationship;
 import org.neo4j.driver.util.Pair;
