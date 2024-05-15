@@ -40,7 +40,7 @@ public class LegalService_CN {
                 String additionalInfo = getAdditionalInfo(notificationModelList);
                 String infoBefore = getInfoBefore(notificationModelList);
                 String infoAfter = getInfoAfter(notificationModelList);
-                String category = getCategory(notificationModelList);
+                String category = getCategory(notificationModelList, legalStatus);
 
                 String invalidatioDecisionDate = getTheCodeValFromNotificationModelList(notificationModelList, "无效宣告决定日");
                 String invalidatioDecisionNum = getTheCodeValFromNotificationModelList(notificationModelList, "无效宣告决定号");
@@ -231,12 +231,14 @@ public class LegalService_CN {
      * @param notificationModelList
      * @return
      */
-    static String getCategory(List<Notification> notificationModelList) {
+    static String getCategory(List<Notification> notificationModelList, String legalStatus) {
         List<String> codeList = notificationModelList.stream().map(m -> m.getCode()).collect(Collectors.toList());
         if (oneItemContain(codeList, "出质人") && oneItemContain(codeList, "质权人")) {
             return "质押";
         } else if (oneItemContain(codeList, " 变更后:申请人") || oneItemContain(codeList, "变更前:专利权人")) {
-            return "转移";
+            if(legalStatus.contains("专利申请权、专利权的转移")) {
+                return "转移";
+            }
         } else if (oneItemContain(codeList, "受让人") && oneItemContain(codeList, "让与人")) {
             return "实施许可";
         }
