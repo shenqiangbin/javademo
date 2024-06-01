@@ -163,6 +163,22 @@
             <version>3.17</version>
         </dependency>
 
+   <!--     <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>4.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>4.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-scratchpad</artifactId>
+            <version>4.1.0</version>
+        </dependency>-->
+
         <!-- https://mvnrepository.com/artifact/com.opencsv/opencsv -->
         <dependency>
             <groupId>com.opencsv</groupId>
@@ -357,11 +373,24 @@
             <version>7.6.2</version>
         </dependency>
 
+
+        <dependency>
+            <groupId>com.aspose</groupId>
+            <artifactId>aspose-words</artifactId>
+            <version>15.8</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/aspose-words-15.8.0-jdk162.jar</systemPath>
+        </dependency>
+
     </dependencies>
 
 
     <repositories>
 
+        <repository>
+            <id>aspose-maven-repository</id>
+            <url>http://artifact.aspose.com/repo/</url>
+        </repository>
 
         <!--        <repository>-->
         <!--        <id>alimaven</id>-->
