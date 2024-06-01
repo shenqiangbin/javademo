@@ -379,14 +379,18 @@
             <artifactId>aspose-words</artifactId>
             <version>15.8</version>
             <scope>system</scope>
+<!--
             <systemPath>${project.basedir}/lib/aspose-words-15.8.0-jdk162.jar</systemPath>
+-->
+            <systemPath>${project.basedir}/lib/aspose-words-24.01-jdk17-jie.jar</systemPath>
+
         </dependency>
 
-        <dependency>
+       <!-- <dependency>
             <groupId>com.groupdocs</groupId>
             <artifactId>groupdocs-conversion</artifactId>
             <version>23.10</version>
-        </dependency>
+        </dependency>-->
 
 <!--        <dependency>-->
 <!--            <groupId>com.aspose</groupId>-->
