@@ -24,6 +24,7 @@ public class demo02Change {
         scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
+                System.out.println("schedule :" + taskId + "---start:" + Thread.currentThread().toString() + " " + DateTime.now());
                 doservice.execute(new Runnable() {
                     @Override
                     public void run() {
@@ -32,7 +33,7 @@ public class demo02Change {
                         if(taskId>10){
                             return;
                         }
-                        System.out.println("taskId:" + taskId + "---start:" + Thread.currentThread() + " " + DateTime.now());
+                        System.out.println("taskId:" + taskId + "---start:" + Thread.currentThread().toString() + " " + DateTime.now());
                         try {
                             if(taskId == 1){
                                 // 第一个任务运行 20 s

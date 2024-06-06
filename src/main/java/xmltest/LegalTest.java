@@ -55,9 +55,6 @@ public class LegalTest {
         Assert.assertEquals("a", "a");
     }
 
-
-
-
     public static List<Object> getObjectToValue(Object obj) throws IllegalAccessException {
         List<Object> result = new ArrayList<>();
         Class<?> clazz = obj.getClass();
@@ -72,6 +69,44 @@ public class LegalTest {
         }
         return result;
     }
+
+
+
+    @Test
+    public void testLegalOrigiServiceXml() throws Exception {
+//        String file = "C:\\Users\\cnki52\\Desktop\\CN117322164A.xml";
+//        String openNumber = "CN117322164A";
+
+//        String file = "C:\\Users\\cnki52\\Desktop\\CN106067413B8.xml";
+//        String openNumber = "CN106067413B8";
+
+//        String file = "C:\\Users\\cnki52\\Desktop\\CN1051443C.xml";
+//        String openNumber = "CN1051443C";
+
+        String file = "C:\\Users\\cnki52\\Desktop\\CN1274241C.xml";
+        String openNumber = "CN1274241C";
+
+        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document document = builder.parse(new FileInputStream(file));
+
+        List<LegalOrigiModel> list = LegalOrigiService.getLegalEvents(document, openNumber);
+
+        List<List<Object>> objects = list.stream().map(m -> {
+            try {
+                return getObjectToValue(m);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }).collect(Collectors.toList());
+
+        List<String> cols = Arrays.asList(new String[]{
+                "id","日期","事件编码","序号","法律描述","类别code","类别","状态标识符","公开编码","申请编号","自由文本","请求者","生效日期","新拥有者"
+        });
+        Excel2007Utils.writeExcel("E:\\temp", "legal_origi_" + openNumber, "sheet1", cols, openNumber, objects, false);
+
+        Assert.assertEquals("a", "a");
+    }
+
 
 
 
