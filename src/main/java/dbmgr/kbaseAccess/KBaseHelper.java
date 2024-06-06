@@ -2,12 +2,12 @@ package dbmgr.kbaseAccess;
 
 import com.kbase.jdbc.ResultSetImpl;
 import com.kbase.jdbc.StatementImpl;
-import com.mysql.jdbc.StringUtils;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import common.P;
 import dbmgr.microsoftAccess.ResultSetHelper;
 import dbmgr.mySqlAccess.MySqlHelper;
+import org.apache.commons.lang3.StringUtils;
 
 import java.sql.*;
 import java.text.SimpleDateFormat;
@@ -216,10 +216,10 @@ public class KBaseHelper {
                 for (int i = 0; i < 55; i++) {
 
                     String area = resultSet.getString(i);// 获取字段值
-                    if (StringUtils.isEmptyOrWhitespaceOnly(area))
+                    if (StringUtils.isEmpty(area))
                         area = "0";
                     area = area.replace("######", "");
-                    if (StringUtils.isEmptyOrWhitespaceOnly(area))
+                    if (StringUtils.isEmpty(area))
                         area = "0";
 
 

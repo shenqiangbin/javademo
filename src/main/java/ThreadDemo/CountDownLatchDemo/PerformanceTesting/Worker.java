@@ -34,14 +34,14 @@ public class Worker implements Runnable {
 
     void doWork() throws Exception {
         //dosomething
-        System.out.println(index + "do something - " + " " + DateUtil.format(new Date()) + " " + System.currentTimeMillis());
+        System.out.println(index + " - do something - " + " " + DateUtil.format(new Date()) + " " + System.currentTimeMillis());
 
         String task = getWaitTask();
         if (task == null) {
-            System.out.println(index + "没有任务了 - " + " " + DateUtil.format(new Date()) + " " + System.currentTimeMillis());
+            System.out.println(index + " - 没有任务了 - " + " " + DateUtil.format(new Date()) + " " + System.currentTimeMillis());
         }
 
-        System.out.println(index + "处理任务 - " + task + " " + DateUtil.format(new Date()) + " " + System.currentTimeMillis());
+        System.out.println(index + " - 处理任务 - " + task + " " + DateUtil.format(new Date()) + " " + System.currentTimeMillis());
 
     }
 

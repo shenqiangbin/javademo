@@ -1,9 +1,9 @@
 package MyImage;
 
-import com.groupdocs.conversion.Converter;
-import com.groupdocs.conversion.filetypes.ImageFileType;
-import com.groupdocs.conversion.options.convert.ImageConvertOptions;
-import com.groupdocs.conversion.options.convert.ImageFlipModes;
+//import com.groupdocs.conversion.Converter;
+//import com.groupdocs.conversion.filetypes.ImageFileType;
+//import com.groupdocs.conversion.options.convert.ImageConvertOptions;
+//import com.groupdocs.conversion.options.convert.ImageFlipModes;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
@@ -102,24 +102,24 @@ public class ImgUtil {
     }
 
     public static void convertImgToPng(String imgFile, String destPng) {
-        Converter converter = new Converter(imgFile);
-        ImageConvertOptions convertOptions = new ImageConvertOptions();
-        convertOptions.setFormat(ImageFileType.Png);
-        convertOptions.setPagesCount(1);
-        convertOptions.setHorizontalResolution(50);
-        convertOptions.setVerticalResolution(50);
-        converter.convert(destPng, convertOptions);
+//        Converter converter = new Converter(imgFile);
+//        ImageConvertOptions convertOptions = new ImageConvertOptions();
+//        convertOptions.setFormat(ImageFileType.Png);
+//        convertOptions.setPagesCount(1);
+//        convertOptions.setHorizontalResolution(50);
+//        convertOptions.setVerticalResolution(50);
+//        converter.convert(destPng, convertOptions);
 
     }
 
     public static void convertImgToJpg(String imgFile, String destPng) {
-        Converter converter = new Converter(imgFile);
-        ImageConvertOptions convertOptions = new ImageConvertOptions();
-        convertOptions.setFormat(ImageFileType.Jpg);
-        convertOptions.setPagesCount(1);
-        convertOptions.setHorizontalResolution(50);
-        convertOptions.setVerticalResolution(50);
-        converter.convert(destPng, convertOptions);
+//        Converter converter = new Converter(imgFile);
+//        ImageConvertOptions convertOptions = new ImageConvertOptions();
+//        convertOptions.setFormat(ImageFileType.Jpg);
+//        convertOptions.setPagesCount(1);
+//        convertOptions.setHorizontalResolution(50);
+//        convertOptions.setVerticalResolution(50);
+//        converter.convert(destPng, convertOptions);
 
     }
 
