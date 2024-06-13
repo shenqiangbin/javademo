@@ -1,6 +1,5 @@
-package ThreadDemo.CountDownLatchDemo.PerformanceTesting;
+package ThreadDemo.CountDownLatchDemo.PerformanceTesting01;
 
-import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 

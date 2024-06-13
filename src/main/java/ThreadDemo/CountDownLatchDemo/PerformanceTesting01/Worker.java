@@ -1,9 +1,10 @@
-package ThreadDemo.CountDownLatchDemo.PerformanceTesting;
+package ThreadDemo.CountDownLatchDemo.PerformanceTesting01;
 
 import MyDate.DateUtil;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import dbmgr.mySqlAccess.MySqlHelper;
+import org.apache.commons.lang3.StringUtils;
 
 import java.sql.SQLException;
 import java.util.Date;
@@ -40,11 +41,10 @@ public class Worker implements Runnable {
         String taskId = getWaitTask();
         if (taskId == null) {
             System.out.println(index + " - 没有任务了 - " + " " + DateUtil.format(new Date()) + " " + System.currentTimeMillis());
+        }else {
+            int effectrow = handleTask(taskId);
+            System.out.println(index + " - 处理任务 - " + taskId + " " + DateUtil.format(new Date()) + " " + System.currentTimeMillis() + " effectrow:" + effectrow);
         }
-        int effectrow = handleTask(taskId);
-
-        System.out.println(index + " - 处理任务 - " + taskId + " " + DateUtil.format(new Date()) + " " + System.currentTimeMillis() + " effectrow:" + effectrow);
-
     }
 
 
@@ -57,9 +57,26 @@ public class Worker implements Runnable {
         if (linkedHashMaps != null && linkedHashMaps.size() > 0) {
             String id = linkedHashMaps.get(0).get("id").toString();
             String name = linkedHashMaps.get(0).get("name").toString();
-            return id;
+            String version = linkedHashMaps.get(0).get("version").toString();
+
+            if (updateVersionSuccess(id, version)) {
+                return id;
+            } else {
+                // 如果没成功，再获取一次任务
+                String secondId = getWaitTask();
+                if (!StringUtils.isBlank(secondId)) {
+                    return secondId;
+                }
+            }
+
         }
         return null;
+    }
+
+    private boolean updateVersionSuccess(String id, String currentVersion) throws SQLException {
+        System.out.println("version:" + currentVersion);
+        int effectrow = mySqlHelper.update("update task set version = version + 1 where id = ? and version = ?", new Object[]{id, currentVersion});
+        return effectrow > 0;
     }
 
     private int handleTask(String task) throws SQLException {
