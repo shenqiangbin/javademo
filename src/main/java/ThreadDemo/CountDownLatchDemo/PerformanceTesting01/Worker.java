@@ -16,6 +16,8 @@ public class Worker implements Runnable {
     private final int index;
     private final CountDownLatch startSignal;
 
+    // state: 2-处理完成  1-处理中 0-待领取
+
     public Worker(int index, CountDownLatch startSignal) {
         this.index = index;
         this.startSignal = startSignal;
@@ -59,7 +61,8 @@ public class Worker implements Runnable {
             String name = linkedHashMaps.get(0).get("name").toString();
             String version = linkedHashMaps.get(0).get("version").toString();
 
-            if (updateVersionSuccess(id, version)) {
+            // 状态改变成功，才能说明拿到了这个任务
+            if (changeStateWithVersion(id, version)) {
                 return id;
             } else {
                 // 如果没成功，再获取一次任务
@@ -73,14 +76,29 @@ public class Worker implements Runnable {
         return null;
     }
 
-    private boolean updateVersionSuccess(String id, String currentVersion) throws SQLException {
+    /**
+     * 改变任务状态（附加版本号条件）
+     * 注意：这里必须同时改变获取任务时的查询条件，保证不会这个语句执行完毕之后，还会检索到任务。
+     * @param id
+     * @param currentVersion
+     * @return
+     * @throws SQLException
+     */
+    private boolean changeStateWithVersion(String id, String currentVersion) throws SQLException {
         System.out.println("version:" + currentVersion);
-        int effectrow = mySqlHelper.update("update task set version = version + 1 where id = ? and version = ?", new Object[]{id, currentVersion});
+        int effectrow = mySqlHelper.update("update task set version = version + 1, state = 1 where id = ? and version = ?", new Object[]{id, currentVersion});
         return effectrow > 0;
     }
 
     private int handleTask(String task) throws SQLException {
-        int effectrow = mySqlHelper.update("update task set state = 1 where id = ?", new Object[]{task});
+        // state: 2-处理完成  1-处理中 0-待领取
+        try {
+            System.out.println("处理中");
+            Thread.sleep(1000*5);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        int effectrow = mySqlHelper.update("update task set state = 2 where id = ?", new Object[]{task});
         return effectrow;
 
     }
@@ -101,8 +119,8 @@ public class Worker implements Runnable {
         HikariConfig config = new HikariConfig();
 
         //config.setJdbcUrl("jdbc:mysql://:3306/bd?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC");
-        //config.setJdbcUrl("jdbc:mysql://10.31.68.13:3306/tablebigdata54?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC");
-        config.setJdbcUrl("jdbc:mysql://localhost:3306/world?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC");
+        config.setJdbcUrl("jdbc:mysql://10.31.68.13:3306/tablebigdata54?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC");
+        //config.setJdbcUrl("jdbc:mysql://localhost:3306/world?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC");
         config.setUsername("root");
         config.setDriverClassName("com.mysql.cj.jdbc.Driver");
         config.setPassword("123456");
