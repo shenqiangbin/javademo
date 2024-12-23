@@ -1,10 +1,12 @@
 import MyDate.DateUtil;
 import cn.hutool.core.io.FileUtil;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Test {
 
@@ -12,7 +14,39 @@ public class Test {
     static int MINUTE = 0;
     static int QUAN = 5;
 
+    public static <T> List<T> paginate(List<T> list, int pageNumber, int pageSize) {
+        if (list == null || list.isEmpty() || pageNumber < 1 || pageSize < 1) {
+            return List.of(); // 返回一个空的不可变列表
+        }
+
+        int startIndex = (pageNumber - 1) * pageSize; // 计算起始索引
+        return list.stream()
+                .skip(startIndex) // 跳过前面的元素
+                .limit(pageSize) // 限制结果集的大小为每页大小
+                .collect(Collectors.toList()); // 收集结果到新的List
+    }
+
+    public static Set<String> splitToSet(String str, String joining) {
+
+        if (StringUtils.isBlank(str)) {
+            return new LinkedHashSet<>();
+        }
+
+        return Arrays.stream(str.split(joining))
+                .map(String::trim) // 去除空格
+                .filter(a -> !a.isBlank()) // 过滤空字符串
+                .collect(Collectors.toCollection(LinkedHashSet::new)); // 转换为 Set
+    }
+
     public static void main(String[] args) throws Exception {
+
+        String qutotaion = "";
+        Set<String> qutotaionArr = splitToSet(qutotaion,";");
+        List<String> qutotaionListAll = new ArrayList<>();
+        qutotaionListAll.addAll(qutotaionArr);
+
+        // 分页处理，避免爆栈
+        List<String> pageQutotaionList = paginate(qutotaionListAll, 1, 2);
 
         String content = FileUtil.readString("e:/exclude2024_04_24_14_14_58_202404230942110499.txt","UTF-8");
         String[] split = content.split(",");

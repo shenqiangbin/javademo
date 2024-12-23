@@ -13,8 +13,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>8</source>
-                    <target>8</target>
+                    <source>11</source>
+                    <target>11</target>
                 </configuration>
             </plugin>
         </plugins>
@@ -193,6 +193,14 @@
             <version>5.8.26</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/net.coobird/thumbnailator -->
+        <dependency>
+            <groupId>net.coobird</groupId>
+            <artifactId>thumbnailator</artifactId>
+            <version>0.4.20</version>
+        </dependency>
+
+
         <dependency>
             <groupId>net.sf.supercsv</groupId>
             <artifactId>super-csv</artifactId>
@@ -210,7 +218,21 @@
             <artifactId>cnki-kbase-sdk-core</artifactId>
             <version>1.0.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/kbase-java.jar</systemPath>
+            <systemPath>${project.basedir}/lib/kbase-java-2.0.29.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>cnki.kbase</groupId>
+            <artifactId>cnki-kbase-jna-sdk-core</artifactId>
+            <version>1.0.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/kbase-jna-2.0.29.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>cnki.kbase</groupId>
+            <artifactId>cnki-jna2-sdk-core</artifactId>
+            <version>1.0.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/jna-4.5.2.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -418,6 +440,12 @@
             <artifactId>lombok</artifactId>
             <version>1.18.26</version>
             <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.16.1</version>
         </dependency>
 
     </dependencies>

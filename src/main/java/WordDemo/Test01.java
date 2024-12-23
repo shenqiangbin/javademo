@@ -24,6 +24,15 @@ import java.io.IOException;
  */
 public class Test01 {
     public static void main(String[] args) throws IOException {
+
+        int width = 529;
+        int height = 296;
+        double ratio = width / (double) height;
+        if (ratio < 2) {
+            System.out.println("ok");
+        }
+
+
         File file = new File("d:/测试文档.docx");
         FileInputStream fis = new FileInputStream(file);
         XWPFDocument document = new XWPFDocument(fis);

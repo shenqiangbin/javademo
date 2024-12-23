@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
+import java.net.URLEncoder;
 
 public class ChangeImageSize {
     public static void main(String[] args) {
@@ -18,13 +19,13 @@ public class ChangeImageSize {
 //            ImgUtil.thumbnailImg(new File("d:/th.jpg"),400,null,outputStream);
 //            ImgUtil.thumbnailImg(new URL("http://bigdata.cnki.net/img/1.bed4469b.png"),100,null,outputStream);
 
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //test2();
-//        test3();
-//        test4();
-        //test5();
+
+        //ImgUtil.scale(new ByteArrayInputStream(byteData), byteArrayOutputStream, scale);
     }
 
 

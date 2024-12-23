@@ -11,6 +11,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
+import java.util.Base64;
 
 /**
  * 使用方法：
@@ -26,6 +27,31 @@ import java.net.URL;
  * </pre>
  */
 public class ImgUtil {
+
+    public static void main(String[] args) throws IOException {
+        String base64 = ImgUtil.Img2Base64("d:/2.png");
+        System.out.println(base64);
+
+    }
+
+    /**
+     * 图片转Base64
+     * @param path
+     * @return
+     * @throws IOException
+     */
+    public static String Img2Base64(String path) throws IOException {
+        BufferedImage preImage = ImageIO.read(new File(path));
+
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        ImageIO.write(preImage, "png", output);
+        output.flush();
+        output.close();
+
+        byte[] byteArr = output.toByteArray();
+
+        return "data:image/png;base64," + Base64.getEncoder().encodeToString(byteArr);
+    }
 
     /**
      * 获取图片的缩略图（解决了背景是黑色的问题）
@@ -148,6 +174,7 @@ public class ImgUtil {
      * @throws IOException
      */
     public static void convertImgToJpg3(String imgFile, String dest) throws IOException {
+
 
         // 创建一个可以读取JPEG 2000文件的ImageInputStream
         ImageInputStream imageInputStream = ImageIO.createImageInputStream(new File(imgFile));

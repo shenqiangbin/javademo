@@ -1,5 +1,6 @@
 package dbmgr.kbaseAccess;
 
+import com.kbase.jdbc.ConnectionImpl;
 import com.kbase.jdbc.ResultSetImpl;
 import com.kbase.jdbc.StatementImpl;
 import com.zaxxer.hikari.HikariConfig;
@@ -7,6 +8,8 @@ import com.zaxxer.hikari.HikariDataSource;
 import common.P;
 import dbmgr.microsoftAccess.ResultSetHelper;
 import dbmgr.mySqlAccess.MySqlHelper;
+import kbase.KBaseClient;
+import kbase.struct.TPI_RETURN_RESULT;
 import org.apache.commons.lang3.StringUtils;
 
 import java.sql.*;
@@ -80,18 +83,48 @@ public class KBaseHelper {
         return null;
     }
 
-    public String execute(String sql) throws SQLException {
+    public boolean execute(String sql) throws SQLException {
         Connection connection = null;
         try {
             connection = getConnection();
             Statement statement = connection.createStatement();
-            statement.execute(sql);
+            return statement.execute(sql);
         } finally {
             if (connection != null && !connection.isClosed()) {
                 connection.close();
             }
         }
-        return null;
+    }
+
+    /**
+     * 提交到后台执行
+     * @param sql
+     * @return
+     * @throws SQLException
+     */
+    public int executeNoQueryWithBack(String sql) throws SQLException {
+        int rs = 0;
+        Connection conn = null;
+        Statement pst = null;
+        try {
+
+            conn = getConnection();
+            ConnectionImpl kbaseconnect = (ConnectionImpl) conn;
+            KBaseClient client = kbaseconnect.getKbaseClient();
+            int connectHSet = kbaseconnect.getConnectionHset();
+            boolean bUnicode = false;
+            int pEventHandle = 0;
+            TPI_RETURN_RESULT sresult = client.KBase_ExecMgrSqlEx(connectHSet, sql, pEventHandle, bUnicode);
+//            int nRetCode = KBaseJNA.TPI_ERR_EVENTNOEND;
+//            while (nRetCode == KBaseJNA.TPI_ERR_EVENTNOEND) {
+//                Thread.sleep(2000);//2秒监听一次
+//                nRetCode = client.KBase_QueryEvent(connectHSet, sresult.rtnInt);
+//            }
+            //rs = nRetCode;
+        } finally {
+            conn.close();
+        }
+        return rs;
     }
 
     public <T> List<T> query(String sql, List<Object> params, Class<T> type, String[] dbfields) {

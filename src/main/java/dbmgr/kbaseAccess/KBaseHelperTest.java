@@ -3,6 +3,7 @@ package dbmgr.kbaseAccess;
 import common.P;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -14,7 +15,44 @@ public class KBaseHelperTest {
         //testSearch();
         //testSort();
         //testSort2();
-        guangmingAuthor();
+        //guangmingAuthor();
+        //testKbase();
+        testKbaseSort();
+    }
+
+    public static void testKbase() throws SQLException {
+        KBaseHelper kBaseHelper = new KBaseHelper("jdbc:kbase://10.31.68.44", "DBOWN", "");
+        String sql = "select 公开号 from EKR_BIBLIOGRAPHIC2018 limit 10 ";
+        String[] fields = new String[]{"公开号"};
+        List<LinkedHashMap<String, Object>> list = kBaseHelper.query(sql, fields);
+        for (LinkedHashMap<String, Object> item : list) {
+            P.print(item.toString());
+        }
+    }
+
+    public static void testKbaseSort() throws SQLException {
+        KBaseHelper kBaseHelper = new KBaseHelper("jdbc:kbase://10.31.68.44", "DBOWN", "");
+        List<String> sqlList = new ArrayList<String>() {{
+            //add("dbum make sortcol by CPCCLASSNUMBER (EKR_BIBLIOGRAPHIC2018.CPC分类号)");
+//            add("dbum make sortcol by CPCCLASSNUMBER (EKR_BIBLIOGRAPHIC2018.CPC其他分类号)");
+//            add("dbum make sortcol by CPCCLASSXZ (EKR_BIBLIOGRAPHIC2018.IPC分类号小组)");
+//            add("dbum make sortcol by CPCCLASSHEAD (EKR_BIBLIOGRAPHIC2018.IPC主分类号部)");
+//            add("dbum make sortcol by CPCCLASSDL (EKR_BIBLIOGRAPHIC2018.IPC主分类号大类)");
+//            add("dbum make sortcol by CPCCLASSXL (EKR_BIBLIOGRAPHIC2018.IPC主分类号小类)");
+//            add("dbum make sortcol by CPCCLASSDZ (EKR_BIBLIOGRAPHIC2018.IPC主分类号大组)");
+//            add("dbum make sortcol by CPCCLASSXZ (EKR_BIBLIOGRAPHIC2018.IPC主分类号小组)");
+//            add("dbum make sortcol by CPCCLASSNUMBER (EKR_BIBLIOGRAPHIC2018.FI主分类号)");
+//            add("dbum make sortcol by CPCCLASSHEAD (EKR_BIBLIOGRAPHIC2018.FI主分类号部)");
+            add("dbum make sortcol by CPCCLASSDL (EKR_BIBLIOGRAPHIC2018.CPC分类号大类)");
+            add("dbum make sortcol by INTEGER (EKR_BIBLIOGRAPHIC2018.简单同族国家_地区数量)");
+//            add("dbum make sortcol by CPCCLASSXL (EKR_BIBLIOGRAPHIC2018.FI主分类号小类)\nGO");
+//            add("dbum make sortcol by CPCCLASSDZ (EKR_BIBLIOGRAPHIC2018.FI主分类号大组)\nGO");
+//            add("dbum make sortcol by CPCCLASSXZ (EKR_BIBLIOGRAPHIC2018.FI主分类号小组)\r\nGO");
+            add("DBUM REFRESH SORTFILE OF TABLE EKR_BIBLIOGRAPHIC2018");
+        }};
+        for (String sql : sqlList) {
+            kBaseHelper.executeNoQueryWithBack(sql);
+        }
     }
 
     public static void guangmingAuthor() throws SQLException {
@@ -26,12 +64,12 @@ public class KBaseHelperTest {
 
         String format = "select 专家姓名,学者,H指数,G指数,当前职称,学者职称,职称级别,研究方向,研究领域,第一作者篇数,第一学者篇数,是否专家数据 from newauthor1,newauthor2,newauthor3,newauthor4,newauthor5,newauthor6,newauthor7, newauthorl where 专家姓名 = '励建荣' limit 10";
 
-        for(String author : authors.split(";")){
+        for (String author : authors.split(";")) {
             String sql = format.replace("励建荣", author);
 
-            String[] args = new String[]{"专家姓名","学者","H指数","G指数","当前职称","学者职称","职称级别","研究方向","研究领域","第一作者篇数","第一学者篇数",
+            String[] args = new String[]{"专家姓名", "学者", "H指数", "G指数", "当前职称", "学者职称", "职称级别", "研究方向", "研究领域", "第一作者篇数", "第一学者篇数",
                     "是否专家数据"};
-            args = new String[]{"专家姓名","学者","H指数","G指数","当前职称","学者职称","是否专家数据"};
+            args = new String[]{"专家姓名", "学者", "H指数", "G指数", "当前职称", "学者职称", "是否专家数据"};
             List<LinkedHashMap<String, Object>> list = kBaseHelper.query(sql, args);
             for (LinkedHashMap<String, Object> item : list) {
                 P.print(item.toString());
@@ -102,7 +140,8 @@ public class KBaseHelperTest {
             List<LinkedHashMap<String, Object>> list = kBaseHelper.query(sql, new String[]{"modelname"});
             for (LinkedHashMap<String, Object> item : list) {
                 P.print(item.get("modelname"));
-            }        } catch (SQLException e) {
+            }
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
